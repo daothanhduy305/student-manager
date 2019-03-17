@@ -55,6 +55,7 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib'
     implementation 'no.tornado:tornadofx:1.7.18'
+    implementation group: 'org.mapdb', name: 'mapdb', version: '3.0.7'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

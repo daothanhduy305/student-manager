@@ -1,12 +1,12 @@
 package com.ebolo.studentmanager.views
 
-import com.ebolo.studentmanager.controllers.SMControllerCentral
 import com.ebolo.studentmanager.models.SMUserModel
+import com.ebolo.studentmanager.services.SMServiceCentral
 import javafx.geometry.Orientation
 import tornadofx.*
 
 class SMLoginFormView : View("StuMan v0.0.1-SNAPSHOT") {
-    private val controllerCentral: SMControllerCentral by di()
+    private val serviceCentral: SMServiceCentral by di()
 
     val user = SMUserModel()
 
@@ -20,7 +20,7 @@ class SMLoginFormView : View("StuMan v0.0.1-SNAPSHOT") {
             }
             button("Đăng nhập") {
                 action {
-                    if (controllerCentral.userController.login(user.getEntity())) {
+                    if (serviceCentral.userService.login(user.getEntity())) {
                         replaceWith<SMMainView>(
                             sizeToScene = true,
                             centerOnScreen = true
