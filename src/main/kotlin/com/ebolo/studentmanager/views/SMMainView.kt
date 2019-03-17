@@ -1,5 +1,6 @@
 package com.ebolo.studentmanager.views
 
+import javafx.application.Platform
 import tornadofx.*
 
 class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
@@ -17,7 +18,12 @@ class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
                         item("Twitter")
                     }
                     item("Save")
-                    item("Quit")
+                    item("Quit") {
+                        action {
+                            Platform.exit()
+                            System.exit(0)
+                        }
+                    }
                 }
                 menu("Edit") {
                     item("Copy")
