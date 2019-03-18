@@ -22,5 +22,5 @@ class SMAuditorAware(
     @Autowired private val cacheService: SMCacheService
 ) : AuditorAware<String> {
     override fun getCurrentAuditor() = Optional
-        .of(cacheService.cache.getOrDefault(SMGlobal.CACHE_ENTRY_LOGGING_USER, "") as String)
+        .of(cacheService.cache.getOrDefault(SMGlobal.CACHE_ENTRY_LOGGING_USER, SMGlobal.SYSTEM_USER) as String)
 }
