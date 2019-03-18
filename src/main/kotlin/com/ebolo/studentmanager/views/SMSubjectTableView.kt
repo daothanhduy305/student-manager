@@ -1,7 +1,7 @@
 package com.ebolo.studentmanager.views
 
-import com.ebolo.common.utils.loggerFor
 import com.ebolo.studentmanager.models.SMSubjectModel
+import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.SMSubjectRefreshEvent
 import com.ebolo.studentmanager.services.SMSubjectRefreshRequest
 import javafx.geometry.Pos
@@ -9,7 +9,7 @@ import javafx.stage.Modality
 import tornadofx.*
 
 class SMSubjectTableView : View() {
-    private val logger = loggerFor(SMSubjectTableView::class.java)
+    private val serviceCentral: SMServiceCentral by di()
 
     override val root = borderpane {
         top = hbox(spacing = 20, alignment = Pos.CENTER_LEFT) {
@@ -32,6 +32,18 @@ class SMSubjectTableView : View() {
             }
 
             smartResize()
+
+            contextmenu {
+                item("Sửa...").action {
+                    selectedItem?.apply { println("Sending Email to $name") }
+                }
+                item("Xóa").action {
+                    if (selectedItem != null) runAsync {
+                        serviceCentral.subjectService.deleteSubject(selectedItem!!.id)
+                        fire(SMSubjectRefreshRequest)
+                    }
+                }
+            }
         }
     }
 
