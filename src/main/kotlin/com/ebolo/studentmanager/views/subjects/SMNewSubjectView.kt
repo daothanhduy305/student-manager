@@ -1,4 +1,4 @@
-package com.ebolo.studentmanager.views
+package com.ebolo.studentmanager.views.subjects
 
 import com.ebolo.studentmanager.models.SMSubjectModel
 import com.ebolo.studentmanager.services.SMServiceCentral

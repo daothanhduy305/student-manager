@@ -1,5 +1,7 @@
 package com.ebolo.studentmanager.views
 
+import com.ebolo.studentmanager.views.students.SMStudentTableView
+import com.ebolo.studentmanager.views.subjects.SMSubjectTableView
 import javafx.application.Platform
 import tornadofx.*
 
