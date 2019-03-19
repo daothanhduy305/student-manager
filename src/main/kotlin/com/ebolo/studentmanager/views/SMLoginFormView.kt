@@ -26,7 +26,7 @@ class SMLoginFormView : View("StuMan v0.0.1-SNAPSHOT") {
 
                 button("Đăng nhập") {
                     action {
-                        if (serviceCentral.userService.login(user.getEntity())) {
+                        if (user.validate() && serviceCentral.userService.login(user.getEntity())) {
                             replaceWith<SMMainView>(
                                 sizeToScene = true,
                                 centerOnScreen = true
