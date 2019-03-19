@@ -1,11 +1,9 @@
 package com.ebolo.studentmanager.models
 
 import com.ebolo.studentmanager.entities.SMUserEntity
-import tornadofx.ItemViewModel
-import tornadofx.getProperty
-import tornadofx.property
+import tornadofx.*
 
-class SMUserModel : SMBaseModel<SMUserEntity>, ItemViewModel<SMUserModel.SMUserDto>() {
+class SMUserModel : SMBaseModel<SMUserEntity, SMUserModel.SMUserDto>() {
 
     // region dto
     /**
@@ -17,7 +15,7 @@ class SMUserModel : SMBaseModel<SMUserEntity>, ItemViewModel<SMUserModel.SMUserD
      * @property username (kotlin.String..kotlin.String?)
      * @property password (kotlin.String..kotlin.String?)
      */
-    class SMUserDto {
+    class SMUserDto : SMBaseDto() {
         var username by property<String>()
         fun usernameProperty() = getProperty(SMUserDto::username)
 
@@ -32,7 +30,7 @@ class SMUserModel : SMBaseModel<SMUserEntity>, ItemViewModel<SMUserModel.SMUserD
     // endregion
 
     override fun getEntity() = SMUserEntity().also {
-        it.username = username.value ?: ""
-        it.password = password.value ?: ""
+        it.username = username.value
+        it.password = password.value
     }
 }

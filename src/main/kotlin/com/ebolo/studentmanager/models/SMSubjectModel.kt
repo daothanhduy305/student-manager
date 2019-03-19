@@ -3,20 +3,16 @@ package com.ebolo.studentmanager.models
 import com.ebolo.studentmanager.entities.SMSubjectEntity
 import tornadofx.*
 
-class SMSubjectModel : SMBaseModel<SMSubjectEntity>, ItemViewModel<SMSubjectModel.SMSubjectDto>() {
+class SMSubjectModel : SMBaseModel<SMSubjectEntity, SMSubjectModel.SMSubjectDto>() {
 
     // region dto
-    class SMSubjectDto {
-        var id by property<String>()
-        fun idProperty() = getProperty(SMSubjectDto::id)
-
+    class SMSubjectDto : SMBaseDto() {
         var name by property<String>()
         fun nameProperty() = getProperty(SMSubjectDto::name)
     }
     // endregion
 
     // region bindings
-    val id = bind(SMSubjectDto::idProperty)
     val name = bind(SMSubjectDto::nameProperty)
     // endregion
 

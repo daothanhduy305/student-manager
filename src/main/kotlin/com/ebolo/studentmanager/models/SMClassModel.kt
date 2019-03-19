@@ -1,13 +1,11 @@
 package com.ebolo.studentmanager.models
 
 import com.ebolo.studentmanager.entities.SMClassEntity
-import tornadofx.ItemViewModel
-import tornadofx.getProperty
-import tornadofx.property
+import tornadofx.*
 
-class SMClassModel : SMBaseModel<SMClassEntity>, ItemViewModel<SMClassModel.SMClassDto>() {
+class SMClassModel : SMBaseModel<SMClassEntity, SMClassModel.SMClassDto>() {
     // region dto
-    class SMClassDto {
+    class SMClassDto : SMBaseDto() {
         var name by property<String>()
         fun nameProperty() = getProperty(SMClassDto::name)
 
