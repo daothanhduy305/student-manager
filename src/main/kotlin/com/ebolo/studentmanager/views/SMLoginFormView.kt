@@ -25,7 +25,7 @@ class SMLoginFormView : View("StuMan v0.0.1-SNAPSHOT") {
                 paddingTop = 10
 
                 button("Đăng nhập") {
-                    enableWhen { user.valid }
+                    enableWhen(user.valid)
                     action {
                         if (serviceCentral.userService.login(user.getEntity())) {
                             replaceWith<SMMainView>(
