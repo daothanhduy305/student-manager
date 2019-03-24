@@ -14,6 +14,9 @@ class SMClassModel : SMBaseModel<SMClassEntity, SMClassModel.SMClassDto>(SMClass
 
         var subject by property<String>()
         fun subjectProperty() = getProperty(SMClassDto::subject)
+
+        var tuitionFee by property<Int>()
+        fun tuitionFeeProperty() = getProperty(SMClassDto::tuitionFee)
     }
     // endregion
 
@@ -21,6 +24,7 @@ class SMClassModel : SMBaseModel<SMClassEntity, SMClassModel.SMClassDto>(SMClass
     val name = bind(SMClassDto::nameProperty)
     val teacher = bind(SMClassDto::teacherProperty)
     val subject = bind(SMClassDto::subjectProperty)
+    val tuitionFee = bind(SMClassDto::tuitionFeeProperty)
     // endregion
 
     override fun specificEntitySetup(entity: SMClassEntity) {

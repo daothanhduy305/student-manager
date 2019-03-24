@@ -25,7 +25,8 @@ class SMClassEntity(
     var startDate: Instant? = null,
     var studentPerformanceList: MutableList<SMStudentPerformanceInfo> = mutableListOf(),
     var studentList: MutableList<String> = mutableListOf(),
-    var numberOfExams: Int = 0
+    var numberOfExams: Int = 0,
+    var tuitionFee: Int = 0
 ) : EboloBaseEntity()
 
 /**
