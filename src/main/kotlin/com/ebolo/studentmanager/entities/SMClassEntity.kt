@@ -2,7 +2,7 @@ package com.ebolo.studentmanager.entities
 
 import com.ebolo.common.database.entities.EboloBaseEntity
 import org.springframework.data.mongodb.core.mapping.Document
-import java.util.*
+import java.time.Instant
 
 /**
  * Entity class for the class data
@@ -13,7 +13,7 @@ import java.util.*
  * @property name String
  * @property teacher String
  * @property startDate Date?
- * @property studentList MutableList<SMStudentPerformanceInfo>
+ * @property studentPerformanceList MutableList<SMStudentPerformanceInfo>
  * @property numberOfExams Int
  * @constructor
  */
@@ -22,8 +22,9 @@ class SMClassEntity(
     var name: String = "",
     var teacher: String = "",
     var subject: String = "",
-    var startDate: Date? = null,
-    var studentList: MutableList<SMStudentPerformanceInfo> = mutableListOf(),
+    var startDate: Instant? = null,
+    var studentPerformanceList: MutableList<SMStudentPerformanceInfo> = mutableListOf(),
+    var studentList: MutableList<String> = mutableListOf(),
     var numberOfExams: Int = 0
 ) : EboloBaseEntity()
 
