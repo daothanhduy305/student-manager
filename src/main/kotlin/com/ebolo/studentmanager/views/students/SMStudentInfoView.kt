@@ -1,5 +1,6 @@
 package com.ebolo.studentmanager.views.students
 
+import com.ebolo.studentmanager.entities.EducationLevel
 import com.ebolo.studentmanager.models.SMStudentModel
 import com.ebolo.studentmanager.services.SMServiceCentral
 import javafx.geometry.Orientation
@@ -26,12 +27,31 @@ class SMStudentInfoView : View("Thông tin học viên") {
                     }
 
                     field("Nickname") {
-                        textfield(studentModel.nickname).required()
+                        textfield(studentModel.nickname)
                     }
 
                     field("Ngày sinh") {
-                        datepicker {
-                            valueProperty().bindBidirectional(studentModel.birthday)
+                        datepicker(studentModel.birthday)
+                    }
+
+                    field("Số điện thoại") {
+                        textfield(studentModel.phone).required()
+                    }
+
+                    field("Số điện thoại phụ huynh") {
+                        textfield(studentModel.parentPhone)
+                    }
+
+                    field("Địa chỉ") {
+                        textfield(studentModel.address)
+                    }
+
+                    field("Học vấn") {
+                        combobox(
+                            studentModel.educationLevel,
+                            values = EducationLevel.values().toList()
+                        ) {
+                            cellFormat { text = it.title }
                         }
                     }
                 }
