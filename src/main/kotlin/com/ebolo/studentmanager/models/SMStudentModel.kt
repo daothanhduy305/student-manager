@@ -31,9 +31,6 @@ class SMStudentModel : SMBaseModel<SMStudentEntity, SMStudentModel.SMStudentDto>
         var address by property<String>()
         fun addressProperty() = getProperty(SMStudentDto::address)
 
-        var joinedTime by property<LocalDate>()
-        fun joinedTimeProperty() = getProperty(SMStudentDto::joinedTime)
-
         var educationLevel by property<EducationLevel>()
         fun educationLevelProperty() = getProperty(SMStudentDto::educationLevel)
     }
@@ -47,7 +44,6 @@ class SMStudentModel : SMBaseModel<SMStudentEntity, SMStudentModel.SMStudentDto>
     val phone = bind(SMStudentDto::phoneProperty)
     val parentPhone = bind(SMStudentDto::parentPhoneProperty)
     val address = bind(SMStudentDto::addressProperty)
-    val joinedTime = bind(SMStudentDto::joinedTimeProperty)
     val educationLevel = bind(SMStudentDto::educationLevelProperty)
     // endregion
 
@@ -61,7 +57,6 @@ class SMStudentModel : SMBaseModel<SMStudentEntity, SMStudentModel.SMStudentDto>
         it.phone = phone.value
         it.parentPhone = parentPhone.value
         it.address = address.value
-        it.joinedTime = joinedTime.value.atStartOfDay()?.toInstant(ZoneOffset.UTC)
         it.educationLevel = educationLevel.value
     }
 }
