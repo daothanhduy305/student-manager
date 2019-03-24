@@ -15,7 +15,7 @@ class SMStudentTableView : View() {
             textfield()
             button("Tạo mới") {
                 action {
-                    find<SMNewStudentView>().openModal(modality = Modality.WINDOW_MODAL, block = true)
+                    find<SMStudentInfoView>().openModal(modality = Modality.WINDOW_MODAL, block = true)
                 }
             }
         }
