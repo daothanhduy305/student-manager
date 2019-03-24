@@ -3,7 +3,7 @@ package com.ebolo.studentmanager.models
 import com.ebolo.studentmanager.entities.SMClassEntity
 import tornadofx.*
 
-class SMClassModel : SMBaseModel<SMClassEntity, SMClassModel.SMClassDto>() {
+class SMClassModel : SMBaseModel<SMClassEntity, SMClassModel.SMClassDto>(SMClassEntity::class) {
     // region dto
     class SMClassDto : SMBaseDto() {
         var name by property<String>()
@@ -23,5 +23,7 @@ class SMClassModel : SMBaseModel<SMClassEntity, SMClassModel.SMClassDto>() {
     val subject = bind(SMClassDto::subjectProperty)
     // endregion
 
-    override fun getEntity() = SMClassEntity()
+    override fun specificEntitySetup(entity: SMClassEntity) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }

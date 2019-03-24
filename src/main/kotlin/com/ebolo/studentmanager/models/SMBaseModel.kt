@@ -3,8 +3,13 @@ package com.ebolo.studentmanager.models
 import com.ebolo.common.database.entities.EboloBaseEntity
 import tornadofx.*
 import java.time.Instant
+import java.util.*
+import kotlin.reflect.KClass
+import kotlin.reflect.full.createInstance
 
-abstract class SMBaseModel<E : EboloBaseEntity, D : SMBaseModel.SMBaseDto> : ItemViewModel<D>() {
+abstract class SMBaseModel<E : EboloBaseEntity, D : SMBaseModel.SMBaseDto>(
+    val entityClass: KClass<E>
+) : ItemViewModel<D>() {
 
     abstract class SMBaseDto {
         var id by property<String>()
@@ -29,5 +34,32 @@ abstract class SMBaseModel<E : EboloBaseEntity, D : SMBaseModel.SMBaseDto> : Ite
     val lastModifiedTime = bind(SMBaseDto::lastModifiedTimeProperty)
     val lastModifiedBy = bind(SMBaseDto::lastModifiedByProperty)
 
-    abstract fun getEntity(): E
+    /**
+     * Method to create an entity object from the current model state
+     *
+     * @author ebolo(daothanhduy305@gmail.com)
+     * @since 0.0.1 - SNAPSHOT
+     *
+     * @return E
+     */
+    fun getEntity(): E = entityClass.createInstance().also { entity ->
+        // set the stamps up
+        Optional.ofNullable(id.value).ifPresent { entity.id = id.value }
+        Optional.ofNullable(createdBy.value).ifPresent { entity.createdBy = createdBy.value }
+        Optional.ofNullable(createdTime.value).ifPresent { entity.createdTime = createdTime.value }
+        Optional.ofNullable(lastModifiedBy.value).ifPresent { entity.lastModifiedBy = lastModifiedBy.value }
+        Optional.ofNullable(lastModifiedTime.value).ifPresent { entity.lastModifiedTime = lastModifiedTime.value }
+
+        specificEntitySetup(entity)
+    }
+
+    /**
+     * Method to be overridden by the inheritance to handle specific property setup for the returning entity
+     *
+     * @author ebolo(daothanhduy305@gmail.com)
+     * @since 0.0.1 - SNAPSHOT
+     *
+     * @param entity E
+     */
+    abstract fun specificEntitySetup(entity: E)
 }

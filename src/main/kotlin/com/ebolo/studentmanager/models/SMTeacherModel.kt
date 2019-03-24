@@ -3,7 +3,7 @@ package com.ebolo.studentmanager.models
 import com.ebolo.studentmanager.entities.SMTeacherEntity
 import tornadofx.*
 
-class SMTeacherModel : SMBaseModel<SMTeacherEntity, SMTeacherModel.SMTeacherDto>() {
+class SMTeacherModel : SMBaseModel<SMTeacherEntity, SMTeacherModel.SMTeacherDto>(SMTeacherEntity::class) {
 
     // region dto
     class SMTeacherDto : SMBaseDto() {
@@ -20,5 +20,7 @@ class SMTeacherModel : SMBaseModel<SMTeacherEntity, SMTeacherModel.SMTeacherDto>
     val lastName = bind(SMTeacherDto::lastNameProperty)
     // endregion
 
-    override fun getEntity() = SMTeacherEntity()
+    override fun specificEntitySetup(entity: SMTeacherEntity) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }

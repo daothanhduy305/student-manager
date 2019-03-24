@@ -3,7 +3,7 @@ package com.ebolo.studentmanager.models
 import com.ebolo.studentmanager.entities.SMUserEntity
 import tornadofx.*
 
-class SMUserModel : SMBaseModel<SMUserEntity, SMUserModel.SMUserDto>() {
+class SMUserModel : SMBaseModel<SMUserEntity, SMUserModel.SMUserDto>(SMUserEntity::class) {
 
     // region dto
     /**
@@ -29,8 +29,8 @@ class SMUserModel : SMBaseModel<SMUserEntity, SMUserModel.SMUserDto>() {
     val password = bind(SMUserDto::passwordProperty)
     // endregion
 
-    override fun getEntity() = SMUserEntity().also {
-        it.username = username.value
-        it.password = password.value
+    override fun specificEntitySetup(entity: SMUserEntity) {
+        entity.username = username.value
+        entity.password = password.value
     }
 }

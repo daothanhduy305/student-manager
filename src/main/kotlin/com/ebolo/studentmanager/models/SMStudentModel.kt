@@ -6,7 +6,7 @@ import tornadofx.*
 import java.time.LocalDate
 import java.time.ZoneOffset
 
-class SMStudentModel : SMBaseModel<SMStudentEntity, SMStudentModel.SMStudentDto>() {
+class SMStudentModel : SMBaseModel<SMStudentEntity, SMStudentModel.SMStudentDto>(SMStudentEntity::class) {
 
     // region dto
     class SMStudentDto : SMBaseDto() {
@@ -47,16 +47,14 @@ class SMStudentModel : SMBaseModel<SMStudentEntity, SMStudentModel.SMStudentDto>
     val educationLevel = bind(SMStudentDto::educationLevelProperty)
     // endregion
 
-    override fun getEntity() = SMStudentEntity().also {
-        it.id = id.value
-
-        it.firstName = firstName.value
-        it.lastName = lastName.value
-        it.nickname = nickname.value
-        it.birthday = birthday.value.atStartOfDay()?.toInstant(ZoneOffset.UTC)
-        it.phone = phone.value
-        it.parentPhone = parentPhone.value
-        it.address = address.value
-        it.educationLevel = educationLevel.value
+    override fun specificEntitySetup(entity: SMStudentEntity) {
+        entity.firstName = firstName.value
+        entity.lastName = lastName.value
+        entity.nickname = nickname.value
+        entity.birthday = birthday.value.atStartOfDay()?.toInstant(ZoneOffset.UTC)
+        entity.phone = phone.value
+        entity.parentPhone = parentPhone.value
+        entity.address = address.value
+        entity.educationLevel = educationLevel.value ?: EducationLevel.NONE
     }
 }

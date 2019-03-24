@@ -3,7 +3,7 @@ package com.ebolo.studentmanager.models
 import com.ebolo.studentmanager.entities.SMSubjectEntity
 import tornadofx.*
 
-class SMSubjectModel : SMBaseModel<SMSubjectEntity, SMSubjectModel.SMSubjectDto>() {
+class SMSubjectModel : SMBaseModel<SMSubjectEntity, SMSubjectModel.SMSubjectDto>(SMSubjectEntity::class) {
 
     // region dto
     class SMSubjectDto : SMBaseDto() {
@@ -16,8 +16,7 @@ class SMSubjectModel : SMBaseModel<SMSubjectEntity, SMSubjectModel.SMSubjectDto>
     val name = bind(SMSubjectDto::nameProperty)
     // endregion
 
-    override fun getEntity() = SMSubjectEntity().also {
-        it.name = name.value
-        it.id = id.value
+    override fun specificEntitySetup(entity: SMSubjectEntity) {
+        entity.name = name.value
     }
 }
