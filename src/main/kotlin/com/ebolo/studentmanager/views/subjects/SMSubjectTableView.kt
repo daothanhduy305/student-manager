@@ -35,8 +35,9 @@ class SMSubjectTableView : View() {
 
             contextmenu {
                 item("Sửa...").action {
-                    selectedItem?.apply { println("Sending Email to $name") }
+                    // TODO: implement this action
                 }
+
                 item("Xóa").action {
                     if (selectedItem != null) runAsync {
                         serviceCentral.subjectService.deleteSubject(selectedItem!!.id)
