@@ -3,7 +3,8 @@ package com.ebolo.studentmanager.models
 import com.ebolo.studentmanager.entities.EducationLevel
 import com.ebolo.studentmanager.entities.SMStudentEntity
 import tornadofx.*
-import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
 
 class SMStudentModel : SMBaseModel<SMStudentEntity, SMStudentModel.SMStudentDto>() {
 
@@ -18,19 +19,19 @@ class SMStudentModel : SMBaseModel<SMStudentEntity, SMStudentModel.SMStudentDto>
         var nickname by property<String>()
         fun nicknameProperty() = getProperty(SMStudentDto::nickname)
 
-        var birthday by property<Instant?>()
+        var birthday by property<LocalDate>()
         fun birthdayProperty() = getProperty(SMStudentDto::birthday)
 
-        var phone by property<String?>()
+        var phone by property<String>()
         fun phoneProperty() = getProperty(SMStudentDto::phone)
 
-        var parentPhone by property<String?>()
+        var parentPhone by property<String>()
         fun parentPhoneProperty() = getProperty(SMStudentDto::parentPhone)
 
-        var address by property<String?>()
+        var address by property<String>()
         fun addressProperty() = getProperty(SMStudentDto::address)
 
-        var joinedTime by property<Instant?>()
+        var joinedTime by property<LocalDate>()
         fun joinedTimeProperty() = getProperty(SMStudentDto::joinedTime)
 
         var educationLevel by property<EducationLevel>()
@@ -56,11 +57,11 @@ class SMStudentModel : SMBaseModel<SMStudentEntity, SMStudentModel.SMStudentDto>
         it.firstName = firstName.value
         it.lastName = lastName.value
         it.nickname = nickname.value
-        it.birthday = birthday.value?.value
-        it.phone = phone.value?.value
-        it.parentPhone = parentPhone.value?.value
-        it.address = address.value?.value
-        it.joinedTime = joinedTime.value?.value
+        it.birthday = birthday.value.atStartOfDay()?.toInstant(ZoneOffset.UTC)
+        it.phone = phone.value
+        it.parentPhone = parentPhone.value
+        it.address = address.value
+        it.joinedTime = joinedTime.value.atStartOfDay()?.toInstant(ZoneOffset.UTC)
         it.educationLevel = educationLevel.value
     }
 }
