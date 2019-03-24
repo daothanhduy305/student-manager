@@ -34,22 +34,21 @@ class SMNewSubjectView : View() {
                     }
 
                     button("Hoàn tất") {
+                        enableWhen(subjectModel.valid)
                         action {
                             messageColor.value = Color.BLACK
                             message.value = ""
 
-                            if (subjectModel.validate()) {
-                                message.value = "Đang xử lý..."
+                            message.value = "Đang xử lý..."
 
-                                val result = serviceCentral.subjectService.createNewSubject(subjectModel.name.value)
+                            val result = serviceCentral.subjectService.createNewSubject(subjectModel)
 
-                                if (result.success) {
-                                    fire(SMSubjectRefreshRequest)
-                                    close()
-                                } else {
-                                    messageColor.value = Color.RED
-                                    message.value = result.errorMessage
-                                }
+                            if (result.success) {
+                                fire(SMSubjectRefreshRequest)
+                                close()
+                            } else {
+                                messageColor.value = Color.RED
+                                message.value = result.errorMessage
                             }
                         }
                     }

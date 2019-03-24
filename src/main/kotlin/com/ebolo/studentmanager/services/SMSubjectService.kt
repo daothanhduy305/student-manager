@@ -2,7 +2,7 @@ package com.ebolo.studentmanager.services
 
 import com.ebolo.common.utils.getWhenPresentOr
 import com.ebolo.common.utils.loggerFor
-import com.ebolo.studentmanager.entities.SMSubjectEntity
+import com.ebolo.common.utils.reflect.unsafeCastTo
 import com.ebolo.studentmanager.models.SMSubjectModel
 import com.ebolo.studentmanager.repositories.SMClassRepository
 import com.ebolo.studentmanager.repositories.SMSubjectRepository
@@ -35,10 +35,7 @@ class SMSubjectService(
      * @return List<SMSubjectModel>
      */
     fun getAllAvailableSubjects() = subjectRepository.findAll().map { subjectEntity ->
-        SMSubjectModel.SMSubjectDto().also {
-            it.name = subjectEntity.name
-            it.id = subjectEntity.id
-        }
+        subjectEntity unsafeCastTo SMSubjectModel.SMSubjectDto::class
     }
 
     /**
@@ -50,13 +47,11 @@ class SMSubjectService(
      * @param subjectName String
      * @return SMCRUDResult
      */
-    fun createNewSubject(subjectName: String): SMCRUDResult {
-        val added = subjectRepository.getByName(subjectName).isPresent
+    fun createNewSubject(subjectModel: SMSubjectModel): SMCRUDResult {
+        val added = subjectRepository.getByName(subjectModel.name.value).isPresent
 
         if (!added) {
-            subjectRepository.save(SMSubjectEntity().also {
-                it.name = subjectName
-            })
+            subjectRepository.save(subjectModel.getEntity())
         }
 
         return SMCRUDResult(
