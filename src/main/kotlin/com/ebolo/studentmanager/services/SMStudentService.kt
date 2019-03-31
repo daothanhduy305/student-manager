@@ -1,6 +1,5 @@
 package com.ebolo.studentmanager.services
 
-import com.ebolo.common.utils.getWhenPresent
 import com.ebolo.common.utils.getWhenPresentOr
 import com.ebolo.common.utils.loggerFor
 import com.ebolo.common.utils.reflect.copyProperties
@@ -11,7 +10,6 @@ import com.ebolo.studentmanager.utils.SMCRUDUtils
 import org.springframework.stereotype.Service
 import tornadofx.*
 import java.time.ZoneOffset
-import java.util.*
 import javax.annotation.PostConstruct
 
 /**
@@ -35,7 +33,7 @@ class SMStudentService(
     fun setupSubscriptions() {
         // register the student list refresh request and event
         subscribe<SMStudentRefreshRequest> {
-            fire(SMStudentRefreshEvent(getStudentList(Optional.empty())))
+            fire(SMStudentRefreshEvent(getStudentList()))
         }
     }
 
@@ -61,31 +59,24 @@ class SMStudentService(
      * @author ebolo (daothanhduy305@gmail.com)
      * @since 0.0.1-SNAPSHOT
      *
-     * @param classId Optional<String> can be provided to get the list for specific class
      * @return List<SMStudentModel.SMStudentDto>
      */
-    fun getStudentList(classId: Optional<String>): List<SMStudentModel.SMStudentDto> = classId
-        .getWhenPresentOr(
-            ifPresentHandler = { id ->
-                classRepository.findById(id).getWhenPresent { classEntity ->
-                    studentRepository.findAllByIdIn(classEntity.studentList)
-                }
-            },
-            otherwise = { studentRepository.findAll() }
-        )!!.map { studentEntity ->
-        studentEntity.copyProperties(
-            destination = SMStudentModel.SMStudentDto(),
-            preProcessedValues = mapOf(
-                // pre-process the birthday since we must use LocalDate for the model - for datepicker
-                "birthday" to (
-                    if (studentEntity.birthday != null)
-                        studentEntity.birthday!!.atOffset(ZoneOffset.UTC).toLocalDate()
-                    else
-                        null
-                    )
+    fun getStudentList(): List<SMStudentModel.SMStudentDto> = studentRepository
+        .findAll()
+        .map { studentEntity ->
+            studentEntity.copyProperties(
+                destination = SMStudentModel.SMStudentDto(),
+                preProcessedValues = mapOf(
+                    // pre-process the birthday since we must use LocalDate for the model - for datepicker
+                    "birthday" to (
+                        if (studentEntity.birthday != null)
+                            studentEntity.birthday!!.atOffset(ZoneOffset.UTC).toLocalDate()
+                        else
+                            null
+                        )
+                )
             )
-        )
-    }
+        }
 
     /**
      * Method to delete a student by id

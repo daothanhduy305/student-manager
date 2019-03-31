@@ -1,6 +1,7 @@
 package com.ebolo.studentmanager.entities
 
 import com.ebolo.common.database.entities.EboloBaseEntity
+import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.Instant
 
@@ -20,11 +21,11 @@ import java.time.Instant
 @Document("Classes")
 class SMClassEntity(
     var name: String = "",
-    var teacher: String = "",
+    @DBRef(lazy = true) var teacher: SMTeacherEntity = SMTeacherEntity(),
     var subject: String = "",
     var startDate: Instant? = null,
     var studentPerformanceList: MutableList<SMStudentPerformanceInfo> = mutableListOf(),
-    var studentList: MutableSet<String> = mutableSetOf(),
+    @DBRef(lazy = true) var studentList: MutableSet<SMStudentEntity> = mutableSetOf(),
     var numberOfExams: Int = 0,
     var tuitionFee: Int = 0
 ) : EboloBaseEntity()
@@ -44,4 +45,12 @@ class SMStudentPerformanceInfo(
     var student: String = "",
     var note: String = "",
     var results: MutableList<Int> = mutableListOf()
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        return other is SMStudentPerformanceInfo && other.student == this.student
+    }
+
+    override fun hashCode(): Int {
+        return student.hashCode()
+    }
+}
