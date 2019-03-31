@@ -13,7 +13,8 @@ import javafx.scene.layout.Priority
 import tornadofx.*
 
 class SMStudentInfoView : View("Thông tin học viên") {
-    private val studentModel: SMStudentModel = SMStudentModel()
+    private val studentModel: SMStudentModel by inject()
+
     private val serviceCentral: SMServiceCentral by di()
     private val mode: SMCRUDUtils.CRUDMode by param()
 
@@ -110,6 +111,13 @@ class SMStudentInfoView : View("Thông tin học viên") {
 
         tab("Thông tin học phí") {
 
+        }
+    }
+
+    override fun onDock() {
+        super.onDock()
+        if (mode == SMCRUDUtils.CRUDMode.NEW) {
+            studentModel.item = SMStudentModel.SMStudentDto()
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.ebolo.studentmanager.views.students
 
 import com.ebolo.studentmanager.models.SMStudentModel
+import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.SMStudentRefreshEvent
 import com.ebolo.studentmanager.services.SMStudentRefreshRequest
 import com.ebolo.studentmanager.utils.SMCRUDUtils
@@ -9,6 +10,8 @@ import javafx.stage.Modality
 import tornadofx.*
 
 class SMStudentTableView : View() {
+    private val serviceCentral: SMServiceCentral by di()
+    private val studentModel: SMStudentModel by inject()
 
     override val root = borderpane {
         top = hbox(spacing = 20, alignment = Pos.CENTER_LEFT) {
@@ -35,6 +38,22 @@ class SMStudentTableView : View() {
             readonlyColumn("Số điện thoại", SMStudentModel.SMStudentDto::phone)
 
             smartResize()
+
+            // set up the context menu
+            contextmenu {
+                item("Sửa...").action {
+                    find<SMStudentInfoView>("mode" to SMCRUDUtils.CRUDMode.EDIT)
+                        .apply { studentModel.item = selectedItem ?: SMStudentModel.SMStudentDto() }
+                        .openModal(modality = Modality.WINDOW_MODAL, block = true)
+                }
+
+                item("Xóa").action {
+                    if (selectedItem != null) runAsync {
+                        serviceCentral.studentService.deleteStudent(selectedItem!!.id)
+                        fire(SMStudentRefreshRequest)
+                    }
+                }
+            }
 
             // subscribe to the refresh event to reset the list
             subscribe<SMStudentRefreshEvent> { event ->
