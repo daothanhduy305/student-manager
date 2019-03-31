@@ -91,7 +91,7 @@ class SMStudentService(
         studentRepository.deleteById(id)
         SMCRUDUtils.SMCRUDResult(true)
     } catch (e: Exception) {
-        SMCRUDUtils.SMCRUDResult(false, errorMessage = e.message ?: "")
+        SMCRUDUtils.SMCRUDResult(false, errorMessage = e.message ?: "Something went wrong")
     }
 
     /**
