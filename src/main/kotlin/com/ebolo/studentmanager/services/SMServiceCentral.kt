@@ -1,6 +1,5 @@
 package com.ebolo.studentmanager.services
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 /**
@@ -14,7 +13,8 @@ import org.springframework.stereotype.Service
  */
 @Service
 class SMServiceCentral(
-    @Autowired val userService: SMUserService,
-    @Autowired val cacheService: SMCacheService,
-    @Autowired val subjectService: SMSubjectService
+    val userService: SMUserService,
+    val cacheService: SMCacheService,
+    val subjectService: SMSubjectService,
+    val studentService: SMStudentService
 )
