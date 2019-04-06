@@ -17,5 +17,6 @@ class SMServiceCentral(
     val cacheService: SMCacheService,
     val subjectService: SMSubjectService,
     val studentService: SMStudentService,
-    val teacherService: SMTeacherService
+    val teacherService: SMTeacherService,
+    val classService: SMClassService
 )

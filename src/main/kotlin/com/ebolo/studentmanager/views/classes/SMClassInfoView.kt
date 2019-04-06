@@ -1,11 +1,13 @@
 package com.ebolo.studentmanager.views.classes
 
 import com.ebolo.studentmanager.models.SMClassModel
+import com.ebolo.studentmanager.services.SMClassRefreshRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import javafx.beans.binding.Bindings
 import javafx.collections.FXCollections
 import javafx.geometry.Orientation
+import javafx.scene.control.ButtonType
 import javafx.scene.layout.Priority
 import tornadofx.*
 
@@ -76,9 +78,9 @@ class SMClassInfoView : View("Thông tin lớp học") {
 
                     action {
                         // base on the crud mode, we define the appropriate action
-                        /*val result: SMCRUDUtils.SMCRUDResult = when (mode) {
-                            SMCRUDUtils.CRUDMode.NEW -> serviceCentral.teacherService.createNewTeacher(teacherModel)
-                            SMCRUDUtils.CRUDMode.EDIT -> serviceCentral.teacherService.editTeacher(teacherModel)
+                        val result: SMCRUDUtils.SMCRUDResult = when (mode) {
+                            SMCRUDUtils.CRUDMode.NEW -> serviceCentral.classService.createNewClass(classModel)
+                            SMCRUDUtils.CRUDMode.EDIT -> serviceCentral.classService.editClass(classModel)
                             else -> {
                                 error("Đã xảy ra lỗi", "Unsupported CRUD mode", ButtonType.CLOSE)
                                 SMCRUDUtils.SMCRUDResult(false)
@@ -86,11 +88,11 @@ class SMClassInfoView : View("Thông tin lớp học") {
                         }
                         // refresh if success
                         if (result.success) {
-                            fire(SMTeacherRefreshRequest)
+                            fire(SMClassRefreshRequest)
                             modalStage?.close()
                         } else {
                             error("Đã xảy ra lỗi", result.errorMessage, ButtonType.CLOSE)
-                        }*/
+                        }
                     }
                 }
 

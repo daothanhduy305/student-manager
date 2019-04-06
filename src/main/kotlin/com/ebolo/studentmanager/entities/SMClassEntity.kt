@@ -24,11 +24,11 @@ import java.time.Instant
 @Document("Classes")
 class SMClassEntity(
     var name: String = "",
-    @DBRef(lazy = true) var teacher: SMTeacherEntity = SMTeacherEntity(),
-    @DBRef(lazy = true) var subject: SMSubjectEntity = SMSubjectEntity(),
+    @DBRef var teacher: SMTeacherEntity = SMTeacherEntity(),
+    @DBRef var subject: SMSubjectEntity = SMSubjectEntity(),
     var startDate: Instant? = null,
     var studentPerformanceList: MutableList<SMStudentPerformanceInfo> = mutableListOf(),
-    @DBRef(lazy = true) var studentList: MutableSet<SMStudentEntity> = mutableSetOf(),
+    @DBRef var studentList: MutableSet<SMStudentEntity> = mutableSetOf(),
     var numberOfExams: Int = 0,
     var tuitionFee: Int = 0
 ) : EboloBaseEntity()
