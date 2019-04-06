@@ -103,8 +103,6 @@ class SMStudentInfoView : View("Thông tin học viên") {
                             action { modalStage?.close() }
                         }
                     }
-
-                    width
                 }
             }
         }
