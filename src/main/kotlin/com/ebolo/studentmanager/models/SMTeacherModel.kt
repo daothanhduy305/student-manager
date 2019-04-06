@@ -22,7 +22,7 @@ class SMTeacherModel : SMBaseModel<SMTeacherEntity, SMTeacherModel.SMTeacherDto>
         fun addressProperty() = getProperty(SMTeacherDto::address)
 
         var birthday by property<LocalDate>()
-        fun birthdayProperty() = getProperty(SMTeacherModel.SMTeacherDto::birthday)
+        fun birthdayProperty() = getProperty(SMTeacherDto::birthday)
     }
     // endregion
 

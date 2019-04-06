@@ -79,8 +79,6 @@ class SMTeacherInfoView : View("Thông tin giáo viên") {
                     action { modalStage?.close() }
                 }
             }
-
-            width
         }
     }
 
