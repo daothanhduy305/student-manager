@@ -12,17 +12,20 @@ import java.time.Instant
  * @since 0.0.1-SNAPSHOT
  *
  * @property name String
- * @property teacher String
- * @property startDate Date?
+ * @property teacher SMTeacherEntity
+ * @property subject SMSubjectEntity
+ * @property startDate Instant?
  * @property studentPerformanceList MutableList<SMStudentPerformanceInfo>
+ * @property studentList MutableSet<SMStudentEntity>
  * @property numberOfExams Int
+ * @property tuitionFee Int
  * @constructor
  */
 @Document("Classes")
 class SMClassEntity(
     var name: String = "",
     @DBRef(lazy = true) var teacher: SMTeacherEntity = SMTeacherEntity(),
-    var subject: String = "",
+    @DBRef(lazy = true) var subject: SMSubjectEntity = SMSubjectEntity(),
     var startDate: Instant? = null,
     var studentPerformanceList: MutableList<SMStudentPerformanceInfo> = mutableListOf(),
     @DBRef(lazy = true) var studentList: MutableSet<SMStudentEntity> = mutableSetOf(),
