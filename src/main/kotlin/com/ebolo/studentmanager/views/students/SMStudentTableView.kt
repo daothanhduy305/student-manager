@@ -11,7 +11,6 @@ import tornadofx.*
 
 class SMStudentTableView : View() {
     private val serviceCentral: SMServiceCentral by di()
-    private val studentModel: SMStudentModel by inject()
 
     override val root = borderpane {
         top = hbox(spacing = 20, alignment = Pos.CENTER_LEFT) {
@@ -21,8 +20,9 @@ class SMStudentTableView : View() {
             textfield()
             button("Tạo mới") {
                 action {
-                    find<SMStudentInfoView>("mode" to SMCRUDUtils.CRUDMode.NEW)
-                        .openModal(modality = Modality.WINDOW_MODAL, block = true)
+                    find<SMStudentInfoFragment>(
+                        "mode" to SMCRUDUtils.CRUDMode.NEW
+                    ).openModal(modality = Modality.WINDOW_MODAL, block = true)
                 }
             }
         }
@@ -42,8 +42,9 @@ class SMStudentTableView : View() {
             // set up the context menu
             contextmenu {
                 item("Sửa...").action {
-                    find<SMStudentInfoView>("mode" to SMCRUDUtils.CRUDMode.EDIT)
-                        .apply { studentModel.item = selectedItem ?: SMStudentModel.SMStudentDto() }
+                    find<SMStudentInfoFragment>(
+                        "mode" to SMCRUDUtils.CRUDMode.EDIT,
+                        "studentModel" to SMStudentModel(selectedItem))
                         .openModal(modality = Modality.WINDOW_MODAL, block = true)
                 }
 

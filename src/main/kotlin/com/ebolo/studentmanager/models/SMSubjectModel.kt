@@ -3,7 +3,9 @@ package com.ebolo.studentmanager.models
 import com.ebolo.studentmanager.entities.SMSubjectEntity
 import tornadofx.*
 
-class SMSubjectModel : SMBaseModel<SMSubjectEntity, SMSubjectModel.SMSubjectDto>(SMSubjectEntity::class) {
+class SMSubjectModel(
+    item: SMSubjectDto? = null
+) : SMBaseModel<SMSubjectEntity, SMSubjectModel.SMSubjectDto>(SMSubjectEntity::class, item) {
 
     // region dto
     class SMSubjectDto : SMBaseDto() {

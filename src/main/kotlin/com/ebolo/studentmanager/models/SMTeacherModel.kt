@@ -5,7 +5,9 @@ import tornadofx.*
 import java.time.LocalDate
 import java.time.ZoneOffset
 
-class SMTeacherModel : SMBaseModel<SMTeacherEntity, SMTeacherModel.SMTeacherDto>(SMTeacherEntity::class) {
+class SMTeacherModel(
+    item: SMTeacherDto? = null
+) : SMBaseModel<SMTeacherEntity, SMTeacherModel.SMTeacherDto>(SMTeacherEntity::class, item) {
 
     // region dto
     class SMTeacherDto : SMBaseDto() {

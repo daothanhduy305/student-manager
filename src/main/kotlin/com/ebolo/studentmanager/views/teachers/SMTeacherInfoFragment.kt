@@ -10,11 +10,10 @@ import javafx.scene.control.ButtonType
 import javafx.scene.layout.Priority
 import tornadofx.*
 
-class SMTeacherInfoView : View("Thông tin giáo viên") {
-    private val teacherModel: SMTeacherModel by inject()
-
+class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
     private val serviceCentral: SMServiceCentral by di()
     private val mode: SMCRUDUtils.CRUDMode by param()
+    private val teacherModel: SMTeacherModel by param(SMTeacherModel())
 
     override val root = form {
         hbox {
@@ -79,13 +78,6 @@ class SMTeacherInfoView : View("Thông tin giáo viên") {
                     action { modalStage?.close() }
                 }
             }
-        }
-    }
-
-    override fun onDock() {
-        super.onDock()
-        if (mode == SMCRUDUtils.CRUDMode.NEW) {
-            teacherModel.item = SMTeacherModel.SMTeacherDto()
         }
     }
 }

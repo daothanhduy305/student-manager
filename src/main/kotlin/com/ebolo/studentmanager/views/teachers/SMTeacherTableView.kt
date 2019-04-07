@@ -10,7 +10,6 @@ import javafx.stage.Modality
 import tornadofx.*
 
 class SMTeacherTableView : View() {
-    private val teacherModel: SMTeacherModel by inject()
     private val serviceCentral: SMServiceCentral by di()
 
     override val root = borderpane {
@@ -21,7 +20,7 @@ class SMTeacherTableView : View() {
             textfield()
             button("Tạo mới") {
                 action {
-                    find<SMTeacherInfoView>("mode" to SMCRUDUtils.CRUDMode.NEW)
+                    find<SMTeacherInfoFragment>("mode" to SMCRUDUtils.CRUDMode.NEW)
                         .openModal(modality = Modality.WINDOW_MODAL, block = true)
                 }
             }
@@ -37,9 +36,10 @@ class SMTeacherTableView : View() {
             // set up the context menu
             contextmenu {
                 item("Sửa...").action {
-                    find<SMTeacherInfoView>("mode" to SMCRUDUtils.CRUDMode.EDIT)
-                        .apply { teacherModel.item = selectedItem ?: SMTeacherModel.SMTeacherDto() }
-                        .openModal(modality = Modality.WINDOW_MODAL, block = true)
+                    find<SMTeacherInfoFragment>(
+                        "mode" to SMCRUDUtils.CRUDMode.EDIT,
+                        "teacherModel" to SMTeacherModel(selectedItem)
+                    ).openModal(modality = Modality.WINDOW_MODAL, block = true)
                 }
 
                 item("Xóa").action {

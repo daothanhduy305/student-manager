@@ -19,7 +19,7 @@ class SMSubjectTableView : View() {
             textfield()
             button("Tạo mới") {
                 action {
-                    find<SMNewSubjectView>().openModal(modality = Modality.WINDOW_MODAL, block = true)
+                    find<SMSubjectInfoFragment>().openModal(modality = Modality.WINDOW_MODAL, block = true)
                 }
             }
         }

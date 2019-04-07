@@ -3,7 +3,9 @@ package com.ebolo.studentmanager.models
 import com.ebolo.studentmanager.entities.SMUserEntity
 import tornadofx.*
 
-class SMUserModel : SMBaseModel<SMUserEntity, SMUserModel.SMUserDto>(SMUserEntity::class) {
+class SMUserModel(
+    item: SMUserDto? = null
+) : SMBaseModel<SMUserEntity, SMUserModel.SMUserDto>(SMUserEntity::class, item) {
 
     // region dto
     /**

@@ -10,8 +10,8 @@ import javafx.geometry.Pos
 import javafx.scene.paint.Color
 import tornadofx.*
 
-class SMNewSubjectView : View() {
-    private val subjectModel = SMSubjectModel()
+class SMSubjectInfoFragment : Fragment() {
+    private val subjectModel: SMSubjectModel by param(SMSubjectModel())
     private val serviceCentral: SMServiceCentral by di()
     private val message: StringProperty = SimpleStringProperty()
     private val messageColor: PojoProperty<Color> = PojoProperty(bean = Color.BLACK, propName = "MessageColor")

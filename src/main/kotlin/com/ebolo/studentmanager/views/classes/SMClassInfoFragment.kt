@@ -11,11 +11,10 @@ import javafx.scene.control.ButtonType
 import javafx.scene.layout.Priority
 import tornadofx.*
 
-class SMClassInfoView : View("Thông tin lớp học") {
-    private val classModel: SMClassModel by inject()
-
+class SMClassInfoFragment : Fragment("Thông tin lớp học") {
     private val serviceCentral: SMServiceCentral by di()
     private val mode: SMCRUDUtils.CRUDMode by param()
+    private val classModel: SMClassModel by param(SMClassModel())
 
     private val subjectList by lazy { FXCollections.observableList(serviceCentral.subjectService.getAllAvailableSubjects()) }
     private val teacherList by lazy { FXCollections.observableList(serviceCentral.teacherService.getTeacherList()) }
@@ -30,6 +29,9 @@ class SMClassInfoView : View("Thông tin lớp học") {
 
                     field("Môn học") {
                         combobox(classModel.subject, values = subjectList) {
+                            if (mode != SMCRUDUtils.CRUDMode.NEW) {
+                                value = subjectList.first { it.id == classModel.item.subject.id }
+                            }
                             cellFormat { subject -> text = subject.name }
                             vgrow = Priority.ALWAYS
                             useMaxWidth = true
@@ -38,6 +40,9 @@ class SMClassInfoView : View("Thông tin lớp học") {
 
                     field("Giáo viên") {
                         combobox(classModel.teacher, values = teacherList) {
+                            if (mode != SMCRUDUtils.CRUDMode.NEW) {
+                                value = teacherList.first { it.id == classModel.item.teacher.id }
+                            }
                             cellFormat { teacher -> text = "${teacher.lastName} ${teacher.firstName}" }
                             vgrow = Priority.ALWAYS
                             useMaxWidth = true
@@ -103,13 +108,6 @@ class SMClassInfoView : View("Thông tin lớp học") {
                     action { modalStage?.close() }
                 }
             }
-        }
-    }
-
-    override fun onDock() {
-        super.onDock()
-        if (mode == SMCRUDUtils.CRUDMode.NEW) {
-            classModel.item = SMClassModel.SMClassDto()
         }
     }
 }

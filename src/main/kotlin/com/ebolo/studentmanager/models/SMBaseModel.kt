@@ -8,8 +8,9 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
 abstract class SMBaseModel<E : EboloBaseEntity, D : SMBaseModel.SMBaseDto>(
-    val entityClass: KClass<E>
-) : ItemViewModel<D>() {
+    val entityClass: KClass<E>,
+    item: D? = null
+) : ItemViewModel<D>(item) {
 
     abstract class SMBaseDto {
         var id by property<String>()
