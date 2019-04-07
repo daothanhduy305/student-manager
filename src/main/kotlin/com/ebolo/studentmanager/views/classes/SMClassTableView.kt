@@ -32,7 +32,9 @@ class SMClassTableView : View() {
             readonlyColumn("Giáo viên", SMClassModel.SMClassDto::teacher) {
                 cellFormat { teacher -> text = "${teacher.lastName} ${teacher.firstName}" }
             }
-            readonlyColumn("Môn", SMClassModel.SMClassDto::subject)
+            readonlyColumn("Môn", SMClassModel.SMClassDto::subject) {
+                cellFormat { subject -> text = subject.name }
+            }
 
             smartResize()
 

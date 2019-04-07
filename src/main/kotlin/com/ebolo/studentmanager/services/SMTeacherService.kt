@@ -1,13 +1,11 @@
 package com.ebolo.studentmanager.services
 
 import com.ebolo.common.utils.getWhenPresentOr
-import com.ebolo.common.utils.reflect.copyProperties
 import com.ebolo.studentmanager.models.SMTeacherModel
 import com.ebolo.studentmanager.repositories.SMTeacherRepository
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import org.springframework.stereotype.Service
 import tornadofx.*
-import java.time.ZoneOffset
 import javax.annotation.PostConstruct
 
 /**
@@ -41,20 +39,7 @@ class SMTeacherService(
      */
     fun getTeacherList(): List<SMTeacherModel.SMTeacherDto> = teacherRepository
         .findAll()
-        .map { teacherEntity ->
-            teacherEntity.copyProperties(
-                destination = SMTeacherModel.SMTeacherDto(),
-                preProcessedValues = mapOf(
-                    // pre-process the birthday since we must use LocalDate for the model - for datepicker
-                    "birthday" to (
-                        if (teacherEntity.birthday != null)
-                            teacherEntity.birthday!!.atOffset(ZoneOffset.UTC).toLocalDate()
-                        else
-                            null
-                        )
-                )
-            )
-        }
+        .map { it.toDto() }
 
     /**
      * Method to create new teacher

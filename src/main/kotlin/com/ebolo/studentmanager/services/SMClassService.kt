@@ -2,15 +2,11 @@ package com.ebolo.studentmanager.services
 
 import com.ebolo.common.utils.getWhenPresentOr
 import com.ebolo.common.utils.loggerFor
-import com.ebolo.common.utils.reflect.copyProperties
 import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.repositories.SMClassRepository
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import org.springframework.stereotype.Service
-import tornadofx.Controller
-import tornadofx.EventBus
-import tornadofx.FXEvent
-import java.time.ZoneOffset
+import tornadofx.*
 import javax.annotation.PostConstruct
 
 @Service
@@ -35,14 +31,7 @@ class SMClassService(
      *
      * @return List<SMClassDto>
      */
-    fun getClassList() = classRepository.findAll().map { classEntity ->
-        classEntity.copyProperties(
-            destination = SMClassModel.SMClassDto(),
-            preProcessedValues = mapOf(
-                "startDate" to classEntity.startDate?.atOffset(ZoneOffset.UTC)?.toLocalDate()
-            )
-        )
-    }
+    fun getClassList() = classRepository.findAll().map { it.toDto() }
 
     /**
      * Method to create a new class object

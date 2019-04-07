@@ -2,7 +2,6 @@ package com.ebolo.studentmanager.services
 
 import com.ebolo.common.utils.getWhenPresentOr
 import com.ebolo.common.utils.loggerFor
-import com.ebolo.common.utils.reflect.unsafeCastTo
 import com.ebolo.studentmanager.models.SMSubjectModel
 import com.ebolo.studentmanager.repositories.SMSubjectRepository
 import com.ebolo.studentmanager.utils.SMCRUDUtils
@@ -42,9 +41,7 @@ class SMSubjectService(
      *
      * @return List<SMSubjectModel>
      */
-    fun getAllAvailableSubjects(): List<SMSubjectModel.SMSubjectDto> = subjectRepository.findAll().map { subjectEntity ->
-        subjectEntity unsafeCastTo SMSubjectModel.SMSubjectDto::class
-    }
+    fun getAllAvailableSubjects(): List<SMSubjectModel.SMSubjectDto> = subjectRepository.findAll().map { it.toDto() }
 
     /**
      * Method check if the db has already contained the subject or not and add new if not

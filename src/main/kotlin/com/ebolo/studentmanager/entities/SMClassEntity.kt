@@ -1,9 +1,12 @@
 package com.ebolo.studentmanager.entities
 
 import com.ebolo.common.database.entities.EboloBaseEntity
+import com.ebolo.common.utils.reflect.copyProperties
+import com.ebolo.studentmanager.models.SMClassModel
 import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.Instant
+import java.time.ZoneOffset
 
 /**
  * Entity class for the class data
@@ -31,7 +34,17 @@ class SMClassEntity(
     @DBRef var studentList: MutableSet<SMStudentEntity> = mutableSetOf(),
     var numberOfExams: Int = 0,
     var tuitionFee: Int = 0
-) : EboloBaseEntity()
+) : EboloBaseEntity(), SMIEntity<SMClassModel.SMClassDto> {
+
+    override fun toDto(): SMClassModel.SMClassDto = this.copyProperties(
+        destination = SMClassModel.SMClassDto(),
+        preProcessedValues = mapOf(
+            "startDate" to this.startDate?.atOffset(ZoneOffset.UTC)?.toLocalDate(),
+            "teacher" to this.teacher.toDto(),
+            "subject" to this.subject.toDto()
+        )
+    )
+}
 
 /**
  * Class to represent the student's performance per class
