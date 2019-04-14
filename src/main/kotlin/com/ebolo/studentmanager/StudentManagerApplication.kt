@@ -7,9 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.data.mongodb.config.EnableMongoAuditing
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
-import tornadofx.App
-import tornadofx.DIContainer
-import tornadofx.FX
+import tornadofx.*
 import kotlin.reflect.KClass
 
 @SpringBootApplication
@@ -20,6 +18,7 @@ class StudentManagerApplication : App(SMLoginFormView::class) {
     private lateinit var context: ConfigurableApplicationContext
 
     override fun init() {
+        importStylesheet("/css/jfx-table-view.css")
         this.context = SpringApplication.run(this.javaClass)
         context.autowireCapableBeanFactory.autowireBean(this)
         FX.dicontainer = object : DIContainer {
