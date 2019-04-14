@@ -3,6 +3,7 @@ package com.ebolo.studentmanager.views
 import com.ebolo.studentmanager.models.SMUserModel
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.jfoenix.controls.JFXButton
+import com.jfoenix.controls.JFXPasswordField
 import com.jfoenix.controls.JFXTextField
 import javafx.application.Platform
 import javafx.geometry.Orientation
@@ -26,7 +27,7 @@ class SMLoginFormView : View("StuMan v0.0.1-SNAPSHOT") {
             }
 
             field("Mật khẩu") {
-                this += JFXTextField().apply {
+                this += JFXPasswordField().apply {
                     bind(user.password)
                     required()
                 }
