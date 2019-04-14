@@ -2,6 +2,7 @@ package com.ebolo.studentmanager.views
 
 import com.ebolo.studentmanager.models.SMUserModel
 import com.ebolo.studentmanager.services.SMServiceCentral
+import com.jfoenix.controls.JFXButton
 import javafx.application.Platform
 import javafx.geometry.Orientation
 import tornadofx.*
@@ -24,7 +25,13 @@ class SMLoginFormView : View("StuMan v0.0.1-SNAPSHOT") {
             hbox(spacing = 10) {
                 paddingTop = 10
 
-                button("Đăng nhập") {
+                this += JFXButton("Đăng nhập").apply {
+                    buttonType = JFXButton.ButtonType.RAISED
+
+                    style {
+                        backgroundColor += c("#ffffff")
+                    }
+
                     enableWhen(user.valid)
                     action {
                         if (serviceCentral.userService.login(user.getEntity())) {
@@ -38,7 +45,13 @@ class SMLoginFormView : View("StuMan v0.0.1-SNAPSHOT") {
                     }
                 }
 
-                button("Thoát") {
+                this += JFXButton("Thoát").apply {
+                    buttonType = JFXButton.ButtonType.RAISED
+
+                    style {
+                        backgroundColor += c("#ffffff")
+                    }
+
                     action {
                         Platform.exit()
                         System.exit(0)
