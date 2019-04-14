@@ -30,7 +30,7 @@ class SMClassModel(
         var startDate by property<LocalDate>()
         fun startDateProperty() = getProperty(SMClassDto::startDate)
 
-        var studentList = FXCollections.emptyObservableSet<SMStudentModel.SMStudentDto>()
+        var studentList = FXCollections.emptyObservableList<SMStudentModel.SMStudentDto>()
 
         var studentPerformanceList = FXCollections.emptyObservableList<SMStudentPerformanceInfo>()
     }
@@ -56,7 +56,7 @@ class SMClassModel(
         entity.teacher = SMTeacherModel().apply { item = teacher.value }.getEntity()
         entity.studentList = this.studentList.value
             .map { dto -> SMStudentModel().apply { item = dto }.getEntity() }
-            .toMutableSet()
+            .toMutableList()
         entity.studentPerformanceList = this.studentPerformanceList.value.toMutableList()
     }
 }

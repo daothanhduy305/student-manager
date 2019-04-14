@@ -4,6 +4,7 @@ import com.ebolo.common.database.entities.EboloBaseEntity
 import com.ebolo.common.database.repositories.mongo.CascadeSave
 import com.ebolo.common.utils.reflect.copyProperties
 import com.ebolo.studentmanager.models.SMClassModel
+import javafx.collections.FXCollections
 import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.Instant
@@ -38,7 +39,7 @@ class SMClassEntity(
     var studentPerformanceList: MutableList<SMStudentPerformanceInfo> = mutableListOf(),
     @DBRef
     @CascadeSave
-    var studentList: MutableSet<SMStudentEntity> = mutableSetOf(),
+    var studentList: MutableList<SMStudentEntity> = mutableListOf(),
     var numberOfExams: Int = 0,
     var tuitionFee: Int = 0
 ) : EboloBaseEntity(), SMIEntity<SMClassModel.SMClassDto> {
@@ -48,7 +49,8 @@ class SMClassEntity(
         preProcessedValues = mapOf(
             "startDate" to this.startDate?.atOffset(ZoneOffset.UTC)?.toLocalDate(),
             "teacher" to this.teacher.toDto(),
-            "subject" to this.subject.toDto()
+            "subject" to this.subject.toDto(),
+            "studentList" to FXCollections.observableArrayList(this.studentList)
         )
     )
 }

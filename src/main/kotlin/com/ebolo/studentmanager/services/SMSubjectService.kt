@@ -29,7 +29,7 @@ class SMSubjectService(
     fun setupSubscriptions() {
         // register the subject list refresh request and event
         subscribe<SMSubjectRefreshRequest> {
-            fire(SMSubjectRefreshEvent(getAllAvailableSubjects()))
+            fire(SMSubjectRefreshEvent(getSubjects()))
         }
     }
 
@@ -41,7 +41,7 @@ class SMSubjectService(
      *
      * @return List<SMSubjectModel>
      */
-    fun getAllAvailableSubjects(): List<SMSubjectModel.SMSubjectDto> = subjectRepository.findAll().map { it.toDto() }
+    fun getSubjects(): List<SMSubjectModel.SMSubjectDto> = subjectRepository.findAll().map { it.toDto() }
 
     /**
      * Method check if the db has already contained the subject or not and add new if not
