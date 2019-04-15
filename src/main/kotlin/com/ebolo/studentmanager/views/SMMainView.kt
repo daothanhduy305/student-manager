@@ -44,13 +44,13 @@ class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
                     }
                 }
 
-                item("Lớp học") {
+                item("Lớp học", expanded = true) {
                     borderpane {
                         center = classTableView.root
                     }
                 }
 
-                item("Học sinh", expanded = true) {
+                item("Học sinh") {
                     borderpane {
                         center = studentTableView.root
                     }

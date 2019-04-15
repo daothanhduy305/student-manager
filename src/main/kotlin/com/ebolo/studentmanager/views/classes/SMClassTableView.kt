@@ -5,29 +5,71 @@ import com.ebolo.studentmanager.services.SMClassListRefreshEvent
 import com.ebolo.studentmanager.services.SMClassListRefreshRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.utils.SMCRUDUtils
+import com.jfoenix.controls.JFXButton
+import com.jfoenix.controls.JFXTextField
+import javafx.collections.FXCollections
+import javafx.collections.ObservableList
+import javafx.collections.transformation.FilteredList
 import javafx.geometry.Pos
+import javafx.scene.layout.Priority
 import javafx.stage.Modality
 import tornadofx.*
 
 class SMClassTableView : View() {
     private val serviceCentral: SMServiceCentral by di()
 
+    private val classList: ObservableList<SMClassModel.SMClassDto> = FXCollections.observableArrayList()
+    private val filteredClassList: FilteredList<SMClassModel.SMClassDto> = FilteredList(classList)
+
+    private var searchBox by singleAssign<JFXTextField>()
+
     override val root = borderpane {
-        top = hbox(spacing = 20, alignment = Pos.CENTER_LEFT) {
+        top = hbox {
             paddingAll = 20
 
-            label("Tìm kiếm")
-            textfield()
-            button("Tạo mới") {
-                action {
-                    find<SMClassInfoFragment>(
-                        "mode" to SMCRUDUtils.CRUDMode.NEW
-                    ).openModal(modality = Modality.WINDOW_MODAL, block = true)
+            // Action buttons
+            hbox {
+                alignment = Pos.CENTER_LEFT
+                hgrow = Priority.ALWAYS
+
+                this += JFXButton("Thêm lớp").apply {
+                    buttonType = JFXButton.ButtonType.RAISED
+
+                    action {
+                        find<SMClassInfoFragment>(
+                            "mode" to SMCRUDUtils.CRUDMode.NEW
+                        ).openModal(modality = Modality.WINDOW_MODAL, block = true)
+                    }
+
+                    style {
+                        backgroundColor += c("#ffffff")
+                    }
                 }
+            }
+
+            // Search box and misc
+            hbox {
+                alignment = Pos.CENTER_RIGHT
+                hgrow = Priority.ALWAYS
+
+                searchBox = JFXTextField().apply {
+                    promptText = "Tìm kiếm"
+
+                    textProperty().addListener { _, _, _ ->
+                        filteredClassList.setPredicate { classDto ->
+                            classDto.name.toLowerCase().contains(this.text.toLowerCase())
+                                || classDto.subject.name.toLowerCase().contains(this.text.toLowerCase())
+                                || classDto.teacher.firstName.toLowerCase().contains(this.text.toLowerCase())
+                                || classDto.teacher.lastName.toLowerCase().contains(this.text.toLowerCase())
+                        }
+                    }
+                }
+
+                this += searchBox
             }
         }
 
-        center = tableview<SMClassModel.SMClassDto> {
+        center = tableview<SMClassModel.SMClassDto>(filteredClassList) {
             readonlyColumn("Tên lớp", SMClassModel.SMClassDto::name)
             readonlyColumn("Giáo viên", SMClassModel.SMClassDto::teacher) {
                 cellFormat { teacher -> text = "${teacher.lastName} ${teacher.firstName}" }
@@ -48,26 +90,17 @@ class SMClassTableView : View() {
                 }
 
                 item("Xóa").action {
-                    runAsync {
-                        with(serviceCentral.classService) {
-                            if (selectedItem != null) {
-                                val choosingStudent = selectedItem!!
-                                choosingStudent
-                                selectedItem
-                            }
-                        }
+                    if (selectedItem != null) runAsync {
+                        serviceCentral.classService.deleteClass(selectedItem!!.id)
+                        fire(SMClassListRefreshRequest)
                     }
-
-                    /*if (selectedItem != null) runAsync {
-                        serviceCentral.studentService.deleteStudent(selectedItem!!.id)
-                        fire(SMStudentRefreshRequest)
-                    }*/
                 }
             }
 
             // subscribe to the refresh event to reset the list
             subscribe<SMClassListRefreshEvent> { event ->
-                asyncItems { event.classes }
+                searchBox.text = ""
+                runAsync { classList.setAll(event.classes) }
             }
         }
     }
