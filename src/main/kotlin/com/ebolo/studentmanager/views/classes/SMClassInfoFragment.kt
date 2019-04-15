@@ -2,7 +2,10 @@ package com.ebolo.studentmanager.views.classes
 
 import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.models.SMStudentModel
+import com.ebolo.studentmanager.models.SMSubjectModel
+import com.ebolo.studentmanager.models.SMTeacherModel
 import com.ebolo.studentmanager.services.SMClassListRefreshRequest
+import com.ebolo.studentmanager.services.SMClassRefreshEvent
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.jfoenix.controls.JFXAutoCompletePopup
@@ -12,6 +15,7 @@ import javafx.beans.binding.Bindings
 import javafx.collections.FXCollections
 import javafx.geometry.Orientation
 import javafx.scene.control.ButtonType
+import javafx.scene.control.ComboBox
 import javafx.scene.control.TabPane
 import javafx.scene.layout.Priority
 import tornadofx.*
@@ -26,6 +30,9 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
     private val teacherList by lazy { FXCollections.observableList(serviceCentral.teacherService.getTeacherList()) }
     private val studentList by lazy { FXCollections.observableList(serviceCentral.studentService.getStudentList()) }
 
+    private var teacherComboBox by singleAssign<ComboBox<SMTeacherModel.SMTeacherDto>>()
+    private var subjectComboBox by singleAssign<ComboBox<SMSubjectModel.SMSubjectDto>>()
+
     override val root = tabpane {
         tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE
 
@@ -39,18 +46,21 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                             }
 
                             field("Môn học") {
-                                combobox(classModel.subject, values = subjectList) {
+                                subjectComboBox = combobox(classModel.subject, values = subjectList) {
                                     if (mode != SMCRUDUtils.CRUDMode.NEW) {
                                         value = subjectList.first { it.id == classModel.item.subject.id }
                                     }
+
                                     cellFormat { subject -> text = subject.name }
                                     vgrow = Priority.ALWAYS
                                     useMaxWidth = true
-                                }.required()
+
+                                    required()
+                                }
                             }
 
                             field("Giáo viên") {
-                                combobox(classModel.teacher, values = teacherList) {
+                                teacherComboBox = combobox(classModel.teacher, values = teacherList) {
                                     if (mode != SMCRUDUtils.CRUDMode.NEW) {
                                         value = teacherList.first { it.id == classModel.item.teacher.id }
                                     }
@@ -59,7 +69,9 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                     }
                                     vgrow = Priority.ALWAYS
                                     useMaxWidth = true
-                                }.required()
+
+                                    required()
+                                }
                             }
 
                             field("Ngày bắt đầu") {
@@ -195,6 +207,17 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                         }
                     }
                 }
+            }
+        }
+
+        // Re-bind the value for the teacher and subject combo boxes
+        subscribe<SMClassRefreshEvent> { event ->
+            teacherComboBox.value = teacherList.first {
+                event.classDto.teacher.id == it.id
+            }
+
+            subjectComboBox.value = subjectList.first {
+                event.classDto.subject.id == it.id
             }
         }
     }
