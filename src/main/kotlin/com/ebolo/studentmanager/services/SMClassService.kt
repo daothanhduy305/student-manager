@@ -3,7 +3,9 @@ package com.ebolo.studentmanager.services
 import com.ebolo.common.utils.getWhenPresentOr
 import com.ebolo.common.utils.loggerFor
 import com.ebolo.studentmanager.models.SMClassModel
+import com.ebolo.studentmanager.models.SMStudentModel
 import com.ebolo.studentmanager.repositories.SMClassRepository
+import com.ebolo.studentmanager.repositories.SMStudentRepository
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import org.springframework.stereotype.Service
 import tornadofx.*
@@ -11,15 +13,16 @@ import javax.annotation.PostConstruct
 
 @Service
 class SMClassService(
-    private val classRepository: SMClassRepository
+    private val classRepository: SMClassRepository,
+    private val studentRepository: SMStudentRepository
 ) : Controller() {
     val logger = loggerFor(SMClassService::class.java)
 
     @PostConstruct
     fun setupSubscriptions() {
         // register the student list refresh request and event
-        subscribe<SMClassRefreshRequest> {
-            fire(SMClassRefreshEvent(getClassList()))
+        subscribe<SMClassListRefreshRequest> {
+            fire(SMClassListRefreshEvent(getClassList()))
         }
     }
 
@@ -86,6 +89,76 @@ class SMClassService(
                 SMCRUDUtils.SMCRUDResult(false, "Class '${classModel.id.value}' could not be found")
             }
         )
+
+    /**
+     * Method to register a student into a class
+     *
+     * @author ebolo
+     * @since 0.0.1-SNAPSHOT
+     *
+     * @receiver SMStudentModel.SMStudentDto
+     * @param classModel SMClassModel
+     */
+    infix fun SMStudentModel.SMStudentDto.registerToClass(classModel: SMClassModel): SMCRUDUtils.SMCRUDResult = classRepository
+        .findById(classModel.item.id)
+        .getWhenPresentOr(
+            ifPresentHandler = { classEntity ->
+                studentRepository.findById(this.id).getWhenPresentOr(
+                    ifPresentHandler = { studentEntity ->
+                        if (classEntity.studentList.any { student -> student.id == this@registerToClass.id })
+                            SMCRUDUtils.SMCRUDResult(false, "Học viên đã được đăng kí vào lớp này")
+                        else {
+                            classRepository.save(classEntity.apply {
+                                this.studentList.add(studentEntity)
+                            })
+
+                            fire(SMClassRefreshEvent(classEntity.toDto()))
+                            SMCRUDUtils.SMCRUDResult(true)
+                        }
+                    },
+                    otherwise = {
+                        SMCRUDUtils.SMCRUDResult(false, "Học viên không tồn tại trong hệ thống")
+                    }
+                )
+            },
+            otherwise = {
+                SMCRUDUtils.SMCRUDResult(false, "Lớp  học không tồn tại trong hệ thống")
+            }
+        )
+
+    /**
+     * Method to deregister a student from a class
+     *
+     * @author ebolo
+     * @since 0.0.1-SNAPSHOT
+     *
+     * @receiver SMStudentModel.SMStudentDto
+     * @param classModel SMClassModel
+     */
+    infix fun SMStudentModel.SMStudentDto.deregisterFromClass(classModel: SMClassModel): SMCRUDUtils.SMCRUDResult = classRepository
+        .findById(classModel.item.id)
+        .getWhenPresentOr(
+            ifPresentHandler = { classEntity ->
+                studentRepository.findById(this.id).getWhenPresentOr(
+                    ifPresentHandler = {
+                        classRepository.save(classEntity.apply {
+                            this.studentList.removeIf {
+                                it.id == this@deregisterFromClass.id
+                            }
+                        })
+
+                        fire(SMClassRefreshEvent(classEntity.toDto()))
+                        SMCRUDUtils.SMCRUDResult(true)
+                    },
+                    otherwise = {
+                        SMCRUDUtils.SMCRUDResult(false, "Học viên không tồn tại trong hệ thống")
+                    }
+                )
+            },
+            otherwise = {
+                SMCRUDUtils.SMCRUDResult(false, "Lớp  học không tồn tại trong hệ thống")
+            }
+        )
 }
 
 /**
@@ -94,7 +167,7 @@ class SMClassService(
  * @author ebolo (daothanhduy305@gmail.com)
  * @since 0.0.1-SNAPSHOT
  */
-object SMClassRefreshRequest : FXEvent(EventBus.RunOn.BackgroundThread)
+object SMClassListRefreshRequest : FXEvent(EventBus.RunOn.BackgroundThread)
 
 /**
  * Event to refresh the class list when received
@@ -102,4 +175,12 @@ object SMClassRefreshRequest : FXEvent(EventBus.RunOn.BackgroundThread)
  * @author ebolo (daothanhduy305@gmail.com)
  * @since 0.0.1-SNAPSHOT
  */
-class SMClassRefreshEvent(val classes: List<SMClassModel.SMClassDto>) : FXEvent()
+class SMClassListRefreshEvent(val classes: List<SMClassModel.SMClassDto>) : FXEvent()
+
+/**
+ * Event to refresh a class info
+ *
+ * @author ebolo (daothanhduy305@gmail.com)
+ * @since 0.0.1-SNAPSHOT
+ */
+class SMClassRefreshEvent(val classDto: SMClassModel.SMClassDto) : FXEvent()

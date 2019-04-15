@@ -52,7 +52,7 @@ class SMTeacherTableView : View() {
 
             // subscribe to the refresh event to reset the list
             subscribe<SMTeacherRefreshEvent> { event ->
-                items.setAll(event.teachers)
+                asyncItems { event.teachers }
             }
         }
     }

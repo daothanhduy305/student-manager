@@ -2,8 +2,8 @@ package com.ebolo.studentmanager.views.classes
 
 import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.models.SMStudentModel
+import com.ebolo.studentmanager.services.SMClassRefreshEvent
 import com.ebolo.studentmanager.services.SMServiceCentral
-import com.ebolo.studentmanager.services.SMStudentRefreshRequest
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.ebolo.studentmanager.views.students.SMStudentInfoFragment
 import javafx.stage.Modality
@@ -36,10 +36,21 @@ class SMClassStudentListFragment : Fragment() {
 
             item("Xóa").action {
                 if (selectedItem != null) runAsync {
-                    serviceCentral.studentService.deleteStudent(selectedItem!!.id)
-                    fire(SMStudentRefreshRequest)
+                    with(serviceCentral.classService) {
+                        selectedItem!! deregisterFromClass classModel
+                    }
                 }
             }
+        }
+
+        // Subscribe to events
+        subscribe<SMClassRefreshEvent> { event ->
+            if (event.classDto.id == classModel.item.id) {
+                classModel.item = event.classDto
+
+                asyncItems { classModel.studentList.value }
+            }
+
         }
     }
 }

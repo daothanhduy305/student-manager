@@ -50,7 +50,7 @@ class SMClassEntity(
             "startDate" to this.startDate?.atOffset(ZoneOffset.UTC)?.toLocalDate(),
             "teacher" to this.teacher.toDto(),
             "subject" to this.subject.toDto(),
-            "studentList" to FXCollections.observableArrayList(this.studentList)
+            "studentList" to FXCollections.observableArrayList(this.studentList.map { it.toDto() })
         )
     )
 }

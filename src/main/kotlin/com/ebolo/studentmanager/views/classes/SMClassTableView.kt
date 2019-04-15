@@ -1,8 +1,8 @@
 package com.ebolo.studentmanager.views.classes
 
 import com.ebolo.studentmanager.models.SMClassModel
-import com.ebolo.studentmanager.services.SMClassRefreshEvent
-import com.ebolo.studentmanager.services.SMClassRefreshRequest
+import com.ebolo.studentmanager.services.SMClassListRefreshEvent
+import com.ebolo.studentmanager.services.SMClassListRefreshRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import javafx.geometry.Pos
@@ -48,6 +48,16 @@ class SMClassTableView : View() {
                 }
 
                 item("Xóa").action {
+                    runAsync {
+                        with(serviceCentral.classService) {
+                            if (selectedItem != null) {
+                                val choosingStudent = selectedItem!!
+                                choosingStudent
+                                selectedItem
+                            }
+                        }
+                    }
+
                     /*if (selectedItem != null) runAsync {
                         serviceCentral.studentService.deleteStudent(selectedItem!!.id)
                         fire(SMStudentRefreshRequest)
@@ -56,14 +66,14 @@ class SMClassTableView : View() {
             }
 
             // subscribe to the refresh event to reset the list
-            subscribe<SMClassRefreshEvent> { event ->
-                items.setAll(event.classes)
+            subscribe<SMClassListRefreshEvent> { event ->
+                asyncItems { event.classes }
             }
         }
     }
 
     override fun onDock() {
         super.onDock()
-        fire(SMClassRefreshRequest)
+        fire(SMClassListRefreshRequest)
     }
 }

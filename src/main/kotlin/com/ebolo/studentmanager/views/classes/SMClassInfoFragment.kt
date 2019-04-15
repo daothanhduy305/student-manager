@@ -2,7 +2,7 @@ package com.ebolo.studentmanager.views.classes
 
 import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.models.SMStudentModel
-import com.ebolo.studentmanager.services.SMClassRefreshRequest
+import com.ebolo.studentmanager.services.SMClassListRefreshRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.jfoenix.controls.JFXAutoCompletePopup
@@ -106,7 +106,7 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                 }
                                 // refresh if success
                                 if (result.success) {
-                                    fire(SMClassRefreshRequest)
+                                    fire(SMClassListRefreshRequest)
                                     modalStage?.close()
                                 } else {
                                     error("Đã xảy ra lỗi", result.errorMessage, ButtonType.CLOSE)
@@ -146,7 +146,14 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                         // add the student into the student list of the class
                                         val chosenStudent = event.getObject()
                                         this@studentSearchTextField.text = ""
-                                        classModel.item.studentList.add(chosenStudent)
+                                        //classModel.item.studentList.add(chosenStudent)
+
+                                        // Register this student into class
+                                        runAsync {
+                                            with(serviceCentral.classService) {
+                                                chosenStudent registerToClass classModel
+                                            }
+                                        }
                                     }
 
                                     // Make the cells in the auto-complete popup to show the student's name

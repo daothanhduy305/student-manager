@@ -77,14 +77,17 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
 
                             action {
                                 // base on the crud mode, we define the appropriate action
-                                val result: SMCRUDUtils.SMCRUDResult = when (mode) {
-                                    SMCRUDUtils.CRUDMode.NEW -> serviceCentral.studentService.createNewStudent(studentModel)
-                                    SMCRUDUtils.CRUDMode.EDIT -> serviceCentral.studentService.editStudent(studentModel)
-                                    else -> {
-                                        error("Đã xảy ra lỗi", "Unsupported CRUD mode", ButtonType.CLOSE)
-                                        SMCRUDUtils.SMCRUDResult(false)
+                                val result: SMCRUDUtils.SMCRUDResult = runAsync {
+                                    when (mode) {
+                                        SMCRUDUtils.CRUDMode.NEW -> serviceCentral.studentService.createNewStudent(studentModel)
+                                        SMCRUDUtils.CRUDMode.EDIT -> serviceCentral.studentService.editStudent(studentModel)
+                                        else -> {
+                                            error("Đã xảy ra lỗi", "Unsupported CRUD mode", ButtonType.CLOSE)
+                                            SMCRUDUtils.SMCRUDResult(false)
+                                        }
                                     }
-                                }
+                                }.get()
+
                                 // refresh if success
                                 if (result.success) {
                                     fire(SMStudentRefreshRequest)
