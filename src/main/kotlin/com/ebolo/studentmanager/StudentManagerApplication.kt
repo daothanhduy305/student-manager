@@ -19,6 +19,7 @@ class StudentManagerApplication : App(SMLoginFormView::class) {
 
     override fun init() {
         importStylesheet("/css/jfx-table-view.css")
+        importStylesheet("/css/jfx-tab-pane.css")
         this.context = SpringApplication.run(this.javaClass)
         context.autowireCapableBeanFactory.autowireBean(this)
         FX.dicontainer = object : DIContainer {
