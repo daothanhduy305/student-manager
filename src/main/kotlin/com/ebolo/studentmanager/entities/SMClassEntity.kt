@@ -50,7 +50,22 @@ class SMClassEntity(
             "startDate" to this.startDate?.atOffset(ZoneOffset.UTC)?.toLocalDate(),
             "teacher" to this.teacher.toDto(),
             "subject" to this.subject.toDto(),
-            "studentList" to FXCollections.observableArrayList(this.studentList.map { it.toDto() })
+            "studentList" to FXCollections.observableArrayList(this.studentList.map {
+                it.toDto().apply {
+                    this.gradeList = generateSequence { -1 }
+                        .take(this@SMClassEntity.numberOfExams)
+                        .toMutableList()
+                    val performanceInfo = studentPerformanceList.firstOrNull { studentPerformanceInfo ->
+                        studentPerformanceInfo.student == this.id
+                    }
+
+                    if (performanceInfo != null) {
+                        for (i in 0..(performanceInfo.results.size - 1)) {
+                            this.gradeList[i] = performanceInfo.results[i]
+                        }
+                    }
+                }
+            })
         )
     )
 }

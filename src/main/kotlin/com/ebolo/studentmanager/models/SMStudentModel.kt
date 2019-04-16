@@ -35,6 +35,8 @@ class SMStudentModel(
 
         var educationLevel by property<EducationLevel>()
         fun educationLevelProperty() = getProperty(SMStudentDto::educationLevel)
+
+        var gradeList: MutableList<Int> = mutableListOf()
     }
     // endregion
 

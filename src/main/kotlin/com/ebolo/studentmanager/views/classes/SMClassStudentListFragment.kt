@@ -6,6 +6,7 @@ import com.ebolo.studentmanager.services.SMClassRefreshEvent
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.ebolo.studentmanager.views.students.SMStudentInfoFragment
+import javafx.scene.control.TableColumn
 import javafx.stage.Modality
 import tornadofx.*
 
@@ -16,12 +17,19 @@ class SMClassStudentListFragment : Fragment() {
     override val root = tableview(classModel.studentList.value) {
         readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName)
         readonlyColumn("Họ", SMStudentModel.SMStudentDto::lastName)
-        readonlyColumn("Nickname", SMStudentModel.SMStudentDto::nickname)
-        readonlyColumn("Sinh nhật", SMStudentModel.SMStudentDto::birthday)
-        readonlyColumn("Học vấn", SMStudentModel.SMStudentDto::educationLevel) {
-            cellFormat { text = it.title }
+
+        // Dynamically add the grade columns
+        for (i in 0..(classModel.numberOfExams.value.toInt() - 1)) {
+            this.addColumnInternal(TableColumn<SMStudentModel.SMStudentDto, String>("Cột điểm ${i + 1}").apply {
+                this.value {
+                    if (it.value.gradeList[i] > -1) {
+                        it.value.gradeList[i].toString()
+                    } else {
+                        ""
+                    }
+                }
+            })
         }
-        readonlyColumn("Số điện thoại", SMStudentModel.SMStudentDto::phone)
 
         smartResize()
 
