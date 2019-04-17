@@ -8,7 +8,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
 abstract class SMBaseModel<E : EboloBaseEntity, D : SMBaseModel.SMBaseDto>(
-    val entityClass: KClass<E>,
+    private val entityClass: KClass<E>,
     item: D? = null
 ) : ItemViewModel<D>(item) {
 
