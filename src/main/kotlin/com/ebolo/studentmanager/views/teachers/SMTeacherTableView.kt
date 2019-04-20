@@ -5,28 +5,69 @@ import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.SMTeacherRefreshEvent
 import com.ebolo.studentmanager.services.SMTeacherRefreshRequest
 import com.ebolo.studentmanager.utils.SMCRUDUtils
+import com.jfoenix.controls.JFXButton
+import com.jfoenix.controls.JFXTextField
+import javafx.collections.FXCollections
+import javafx.collections.ObservableList
+import javafx.collections.transformation.FilteredList
 import javafx.geometry.Pos
+import javafx.scene.layout.Priority
 import javafx.stage.Modality
 import tornadofx.*
 
 class SMTeacherTableView : View() {
     private val serviceCentral: SMServiceCentral by di()
 
+    private val teacherList: ObservableList<SMTeacherModel.SMTeacherDto> = FXCollections.observableArrayList()
+    private val filteredTeacherList: FilteredList<SMTeacherModel.SMTeacherDto> = FilteredList(teacherList)
+
+    private var searchBox by singleAssign<JFXTextField>()
+
     override val root = borderpane {
-        top = hbox(spacing = 20, alignment = Pos.CENTER_LEFT) {
+        top = hbox {
             paddingAll = 20
 
-            label("Tìm kiếm")
-            textfield()
-            button("Tạo mới") {
-                action {
-                    find<SMTeacherInfoFragment>("mode" to SMCRUDUtils.CRUDMode.NEW)
-                        .openModal(modality = Modality.WINDOW_MODAL, block = true)
+            // Action buttons
+            hbox {
+                alignment = Pos.CENTER_LEFT
+                hgrow = Priority.ALWAYS
+
+                this += JFXButton("Thêm giáo viên").apply {
+                    buttonType = JFXButton.ButtonType.RAISED
+
+                    action {
+                        find<SMTeacherInfoFragment>(
+                            "mode" to SMCRUDUtils.CRUDMode.NEW
+                        ).openModal(modality = Modality.WINDOW_MODAL, block = true)
+                    }
+
+                    style {
+                        backgroundColor += c("#ffffff")
+                    }
                 }
+            }
+
+            // Search box and misc
+            hbox {
+                alignment = Pos.CENTER_RIGHT
+                hgrow = Priority.ALWAYS
+
+                searchBox = JFXTextField().apply {
+                    promptText = "Tìm kiếm"
+
+                    textProperty().addListener { _, _, _ ->
+                        filteredTeacherList.setPredicate { studentDto ->
+                            studentDto.firstName.toLowerCase().contains(this.text.toLowerCase())
+                                || studentDto.lastName.toLowerCase().contains(this.text.toLowerCase())
+                        }
+                    }
+                }
+
+                this += searchBox
             }
         }
 
-        center = tableview<SMTeacherModel.SMTeacherDto> {
+        center = tableview<SMTeacherModel.SMTeacherDto>(filteredTeacherList) {
             makeIndexColumn("STT").apply {
                 style {
                     alignment = Pos.TOP_CENTER
@@ -58,7 +99,7 @@ class SMTeacherTableView : View() {
 
             // subscribe to the refresh event to reset the list
             subscribe<SMTeacherRefreshEvent> { event ->
-                asyncItems { event.teachers }
+                runAsync { teacherList.setAll(event.teachers) }
             }
         }
     }

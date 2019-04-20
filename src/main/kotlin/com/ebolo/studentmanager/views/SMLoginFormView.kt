@@ -18,6 +18,10 @@ class SMLoginFormView : View("StuMan v0.0.1-SNAPSHOT") {
     override val root = form {
         prefWidth = 300.0
 
+        style {
+            backgroundColor += c("#fff")
+        }
+
         fieldset("Trung tâm giảng dạy", labelPosition = Orientation.VERTICAL) {
             field("Tên người dùng") {
                 this += JFXTextField().apply {

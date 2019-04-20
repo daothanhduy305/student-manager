@@ -4,6 +4,9 @@ import com.ebolo.studentmanager.models.SMTeacherModel
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.SMTeacherRefreshRequest
 import com.ebolo.studentmanager.utils.SMCRUDUtils
+import com.jfoenix.controls.JFXButton
+import com.jfoenix.controls.JFXDatePicker
+import com.jfoenix.controls.JFXTextField
 import javafx.beans.binding.Bindings
 import javafx.geometry.Orientation
 import javafx.scene.control.ButtonType
@@ -16,38 +19,67 @@ class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
     private val teacherModel: SMTeacherModel by param(SMTeacherModel())
 
     override val root = form {
+        paddingAll = 20
+
+        style {
+            backgroundColor += c("#fff")
+        }
+
         hbox {
             vbox {
-                fieldset(labelPosition = Orientation.HORIZONTAL) {
+                fieldset("Thông tin chung", labelPosition = Orientation.HORIZONTAL) {
+                    spacing = 20.0
+
                     field("Tên") {
-                        textfield(teacherModel.firstName).required()
+                        this += JFXTextField().apply {
+                            bind(teacherModel.firstName)
+                            required()
+                        }
                     }
 
                     field("Họ và tên lót") {
-                        textfield(teacherModel.lastName).required()
+                        this += JFXTextField().apply {
+                            bind(teacherModel.lastName)
+                            required()
+                        }
                     }
 
                     field("Ngày sinh") {
-                        datepicker(teacherModel.birthday)
+                        this += JFXDatePicker().apply {
+                            bind(teacherModel.birthday)
+
+                            defaultColor = c("#3f51b5")
+                            isOverLay = false
+                        }
                     }
 
                     field("Số điện thoại") {
-                        textfield(teacherModel.phone).required()
+                        this += JFXTextField().apply {
+                            bind(teacherModel.firstName)
+                            required()
+                        }
                     }
 
                     field("Địa chỉ") {
-                        textfield(teacherModel.address)
+                        this += JFXTextField().apply {
+                            bind(teacherModel.address)
+                        }
                     }
                 }
             }
 
             vbox {
-                paddingLeft = 15.0
+                paddingLeft = 20.0
                 spacing = 10.0
 
-                button("Hoàn tất") {
+                this += JFXButton("Hoàn tất").apply {
                     vgrow = Priority.ALWAYS
                     useMaxWidth = true
+                    buttonType = JFXButton.ButtonType.RAISED
+
+                    style {
+                        backgroundColor += c("#fff")
+                    }
 
                     enableWhen(Bindings.and(teacherModel.dirty, teacherModel.valid))
 
@@ -74,9 +106,14 @@ class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
                     }
                 }
 
-                button("Hủy bỏ") {
+                this += JFXButton("Hủy bỏ").apply {
                     vgrow = Priority.ALWAYS
                     useMaxWidth = true
+                    buttonType = JFXButton.ButtonType.RAISED
+
+                    style {
+                        backgroundColor += c("#fff")
+                    }
 
                     action { modalStage?.close() }
                 }

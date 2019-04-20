@@ -31,14 +31,23 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
     private var subjectComboBox by singleAssign<JFXComboBox<SMSubjectModel.SMSubjectDto>>()
 
     override val root = stackpane {
+
+        style {
+            backgroundColor += c("#fff")
+        }
+
         this += JFXTabPane().apply {
             tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE
 
             tab("Thông tin lớp") {
                 form {
+                    paddingAll = 20
+
                     hbox {
                         vbox {
                             fieldset(labelPosition = Orientation.HORIZONTAL) {
+                                spacing = 20.0
+
                                 field("Tên lớp") {
                                     this += JFXTextField().apply {
                                         bind(classModel.name)
@@ -88,11 +97,10 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                         bind(classModel.startDate)
 
                                         defaultColor = c("#3f51b5")
-                                        isOverLay = true
+                                        isOverLay = false
 
                                         required()
                                     }
-                                    //datepicker(classModel.startDate).required()
                                 }
 
                                 field("Học phí") {
@@ -119,7 +127,7 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                         }
 
                         vbox {
-                            paddingLeft = 15.0
+                            paddingLeft = 20.0
                             spacing = 10.0
 
                             this += JFXButton("Hoàn tất").apply {
@@ -169,70 +177,72 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                 }
             }
 
-            tab("Danh sách học viên") {
-                borderpane {
-                    center = find<SMClassStudentListFragment>(
-                        "classModel" to classModel
-                    ).root
+            if (mode != SMCRUDUtils.CRUDMode.NEW) {
+                tab("Danh sách học viên") {
+                    borderpane {
+                        center = find<SMClassStudentListFragment>(
+                            "classModel" to classModel
+                        ).root
 
-                    // Top is a search box to search for the student to add into the class
-                    top = form {
-                        fieldset(labelPosition = Orientation.VERTICAL) {
-                            field("Thêm học viên") {
-                                // Text field to search for the student
-                                this += JFXTextField().apply studentSearchTextField@{
-                                    val autoCompletePopup = JFXAutoCompletePopup<SMStudentModel.SMStudentDto>().apply {
-                                        fixedCellSize = 36.0
+                        // Top is a search box to search for the student to add into the class
+                        top = form {
+                            fieldset(labelPosition = Orientation.VERTICAL) {
+                                field("Thêm học viên") {
+                                    // Text field to search for the student
+                                    this += JFXTextField().apply studentSearchTextField@{
+                                        val autoCompletePopup = JFXAutoCompletePopup<SMStudentModel.SMStudentDto>().apply {
+                                            fixedCellSize = 36.0
 
-                                        suggestions.addAll(studentList)
-                                        setSelectionHandler { event ->
-                                            // When select, set the text field to be empty
-                                            // add the student into the student list of the class
-                                            val chosenStudent = event.getObject()
-                                            this@studentSearchTextField.text = ""
-                                            //classModel.item.studentList.add(chosenStudent)
+                                            suggestions.addAll(studentList)
+                                            setSelectionHandler { event ->
+                                                // When select, set the text field to be empty
+                                                // add the student into the student list of the class
+                                                val chosenStudent = event.getObject()
+                                                this@studentSearchTextField.text = ""
+                                                //classModel.item.studentList.add(chosenStudent)
 
-                                            // Register this student into class
-                                            runAsync {
-                                                with(serviceCentral.classService) {
-                                                    chosenStudent registerToClass classModel
+                                                // Register this student into class
+                                                runAsync {
+                                                    with(serviceCentral.classService) {
+                                                        chosenStudent registerToClass classModel
+                                                    }
                                                 }
                                             }
-                                        }
 
-                                        // Make the cells in the auto-complete popup to show the student's name
-                                        setSuggestionsCellFactory {
-                                            object : JFXListCell<SMStudentModel.SMStudentDto>() {
-                                                override fun updateItem(item: SMStudentModel.SMStudentDto?, empty: Boolean) {
-                                                    super.updateItem(item, empty)
+                                            // Make the cells in the auto-complete popup to show the student's name
+                                            setSuggestionsCellFactory {
+                                                object : JFXListCell<SMStudentModel.SMStudentDto>() {
+                                                    override fun updateItem(item: SMStudentModel.SMStudentDto?, empty: Boolean) {
+                                                        super.updateItem(item, empty)
 
-                                                    if (!empty) {
-                                                        text = "${item!!.lastName} ${item.firstName}"
+                                                        if (!empty) {
+                                                            text = "${item!!.lastName} ${item.firstName}"
+                                                        }
                                                     }
                                                 }
                                             }
                                         }
-                                    }
 
-                                    // Filter out the students in the return list
-                                    textProperty().addListener { _, _, _ ->
-                                        autoCompletePopup.filter { chosenStudent ->
-                                            val currentValue = this.text.toLowerCase()
-                                            !classModel.item.studentList.any { student ->
-                                                student.id == chosenStudent.id
-                                            } // This student has not already been in the class
-                                                && (chosenStudent.firstName.toLowerCase().contains(currentValue)
-                                                || chosenStudent.lastName.toLowerCase().contains(currentValue)
-                                                || chosenStudent.nickname.toLowerCase().contains(currentValue))
-                                        }
+                                        // Filter out the students in the return list
+                                        textProperty().addListener { _, _, _ ->
+                                            autoCompletePopup.filter { chosenStudent ->
+                                                val currentValue = this.text.toLowerCase()
+                                                !classModel.item.studentList.any { student ->
+                                                    student.id == chosenStudent.id
+                                                } // This student has not already been in the class
+                                                    && (chosenStudent.firstName.toLowerCase().contains(currentValue)
+                                                    || chosenStudent.lastName.toLowerCase().contains(currentValue)
+                                                    || chosenStudent.nickname.toLowerCase().contains(currentValue))
+                                            }
 
-                                        if (autoCompletePopup.filteredSuggestions.isEmpty() || this.text.isEmpty()) {
-                                            autoCompletePopup.hide()
-                                            // if you remove textField.getText.isEmpty()
-                                            // when text field is empty it suggests all options
-                                            // so you can choose
-                                        } else {
-                                            autoCompletePopup.show(this)
+                                            if (autoCompletePopup.filteredSuggestions.isEmpty() || this.text.isEmpty()) {
+                                                autoCompletePopup.hide()
+                                                // if you remove textField.getText.isEmpty()
+                                                // when text field is empty it suggests all options
+                                                // so you can choose
+                                            } else {
+                                                autoCompletePopup.show(this)
+                                            }
                                         }
                                     }
                                 }
