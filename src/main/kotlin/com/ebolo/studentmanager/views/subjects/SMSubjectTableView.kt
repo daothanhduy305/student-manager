@@ -25,6 +25,12 @@ class SMSubjectTableView : View() {
         }
 
         center = tableview<SMSubjectModel.SMSubjectDto> {
+            makeIndexColumn("STT").apply {
+                style {
+                    alignment = Pos.TOP_CENTER
+                }
+            }
+
             readonlyColumn("Tên môn học", SMSubjectModel.SMSubjectDto::name)
 
             subscribe<SMSubjectRefreshEvent> { event ->

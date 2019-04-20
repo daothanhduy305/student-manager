@@ -27,6 +27,12 @@ class SMTeacherTableView : View() {
         }
 
         center = tableview<SMTeacherModel.SMTeacherDto> {
+            makeIndexColumn("STT").apply {
+                style {
+                    alignment = Pos.TOP_CENTER
+                }
+            }
+
             readonlyColumn("Họ", SMTeacherModel.SMTeacherDto::lastName)
             readonlyColumn("Tên", SMTeacherModel.SMTeacherDto::firstName)
             readonlyColumn("Ngày sinh", SMTeacherModel.SMTeacherDto::birthday)

@@ -70,6 +70,12 @@ class SMClassTableView : View() {
         }
 
         center = tableview<SMClassModel.SMClassDto>(filteredClassList) {
+            makeIndexColumn("STT").apply {
+                style {
+                    alignment = Pos.TOP_CENTER
+                }
+            }
+
             readonlyColumn("Tên lớp", SMClassModel.SMClassDto::name)
             readonlyColumn("Giáo viên", SMClassModel.SMClassDto::teacher) {
                 cellFormat { teacher -> text = "${teacher.lastName} ${teacher.firstName}" }

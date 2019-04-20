@@ -28,6 +28,12 @@ class SMStudentTableView : View() {
         }
 
         center = tableview<SMStudentModel.SMStudentDto> {
+            makeIndexColumn("STT").apply {
+                style {
+                    alignment = Pos.TOP_CENTER
+                }
+            }
+
             readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName)
             readonlyColumn("Họ", SMStudentModel.SMStudentDto::lastName)
             readonlyColumn("Nickname", SMStudentModel.SMStudentDto::nickname)

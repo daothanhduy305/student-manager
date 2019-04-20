@@ -6,6 +6,7 @@ import com.ebolo.studentmanager.models.SMStudentModel
 import com.ebolo.studentmanager.services.SMClassRefreshEvent
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.views.utils.SMViewUtils
+import javafx.geometry.Pos
 import javafx.stage.Modality
 import javafx.util.StringConverter
 import javafx.util.converter.IntegerStringConverter
@@ -18,8 +19,14 @@ class SMClassStudentListFragment : Fragment() {
     override val root = tableview(classModel.studentList.value) {
         isEditable = true
 
+        makeIndexColumn("STT").apply {
+            style {
+                alignment = Pos.TOP_CENTER
+            }
+        }
+
+        readonlyColumn("Họ và tên lót", SMStudentModel.SMStudentDto::lastName)
         readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName)
-        readonlyColumn("Họ", SMStudentModel.SMStudentDto::lastName)
 
         // Dynamically add the grade columns
         for (i in 0..(classModel.numberOfExams.value.toInt() - 1)) {
@@ -28,22 +35,6 @@ class SMClassStudentListFragment : Fragment() {
             column<SMStudentModel.SMStudentDto, Int>("Cột điểm ${i + 1}", "grade_$i") {
                 cellFactory = SMViewUtils.JFXTextFieldTableCell.forTableColumn<SMStudentModel.SMStudentDto, Int>(IntegerStringConverter() as StringConverter<Int>)
             }
-
-            /*this.addColumnInternal(TableColumn<SMStudentModel.SMStudentDto, String>("Cột điểm ${i + 1}").apply {
-                this.value {
-                    if (it.value.gradeList[i] > -1) {
-                        it.value.gradeList[i].toString()
-                    } else {
-                        ""
-                    }
-                }
-
-                makeEditable()
-
-                onEditCommit {
-
-                }
-            })*/
         }
 
         smartResize()
