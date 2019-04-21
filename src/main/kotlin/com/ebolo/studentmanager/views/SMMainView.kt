@@ -109,6 +109,14 @@ class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
                 this.setSidePane(VBox().apply {
                     val menuButtons: MutableList<Pair<String, JFXButton>> = mutableListOf()
 
+                    /**
+                     * Method to build menu buttons for this drawer
+                     *
+                     * @author ebolo
+                     *
+                     * @param title String
+                     * @param representingRoot Node
+                     */
                     fun addMenuButton(title: String, representingRoot: Node) {
                         val button = JFXButton(title).apply {
                             prefWidth = 300.0
