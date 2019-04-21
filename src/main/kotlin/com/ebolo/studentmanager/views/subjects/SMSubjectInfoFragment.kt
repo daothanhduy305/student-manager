@@ -2,24 +2,28 @@ package com.ebolo.studentmanager.views.subjects
 
 import com.ebolo.studentmanager.models.SMSubjectModel
 import com.ebolo.studentmanager.services.SMServiceCentral
-import com.ebolo.studentmanager.services.SMSubjectRefreshRequest
-import javafx.beans.property.SimpleStringProperty
-import javafx.beans.property.StringProperty
+import com.ebolo.studentmanager.utils.SMCRUDUtils
+import com.jfoenix.controls.JFXButton
+import com.jfoenix.controls.JFXTextField
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
-import javafx.scene.paint.Color
 import tornadofx.*
 
 class SMSubjectInfoFragment : Fragment() {
     private val subjectModel: SMSubjectModel by param(SMSubjectModel())
     private val serviceCentral: SMServiceCentral by di()
-    private val message: StringProperty = SimpleStringProperty()
-    private val messageColor: PojoProperty<Color> = PojoProperty(bean = Color.BLACK, propName = "MessageColor")
 
     override val root = form {
+        style {
+            backgroundColor += c("#fff")
+        }
+
         fieldset("Thêm môn học mới", labelPosition = Orientation.HORIZONTAL) {
             field("Tên môn") {
-                textfield(subjectModel.name).required()
+                this += JFXTextField().apply {
+                    bind(subjectModel.name)
+                    required()
+                }
             }
 
             vbox(spacing = 10, alignment = Pos.CENTER_RIGHT) {
@@ -27,37 +31,38 @@ class SMSubjectInfoFragment : Fragment() {
                     paddingTop = 10
                     alignment = Pos.CENTER_RIGHT
 
-                    button("Hủy bỏ") {
+                    this += JFXButton("Hủy bỏ").apply {
+                        buttonType = JFXButton.ButtonType.RAISED
+
+                        style {
+                            backgroundColor += c("#fff")
+                        }
+
                         action {
                             close()
                         }
                     }
 
-                    button("Hoàn tất") {
+                    this += JFXButton("Hoàn tất").apply {
+                        buttonType = JFXButton.ButtonType.RAISED
+
+                        style {
+                            backgroundColor += c("#fff")
+                        }
+
                         enableWhen(subjectModel.valid)
+
                         action {
-                            messageColor.value = Color.BLACK
-                            message.value = ""
-
-                            message.value = "Đang xử lý..."
-
-                            val result = serviceCentral.subjectService.createNewSubject(subjectModel)
-
-                            if (result.success) {
-                                fire(SMSubjectRefreshRequest)
-                                close()
-                            } else {
-                                messageColor.value = Color.RED
-                                message.value = result.errorMessage
+                            var result: SMCRUDUtils.SMCRUDResult = SMCRUDUtils.SMCRUDResult(false)
+                            runAsync {
+                                result = serviceCentral.subjectService.createNewSubject(subjectModel)
+                            }.ui {
+                                if (result.success) {
+                                    close()
+                                }
                             }
                         }
                     }
-                }
-
-                label(message) {
-                    paddingTop = 10
-
-                    textFillProperty().bind(messageColor)
                 }
             }
         }

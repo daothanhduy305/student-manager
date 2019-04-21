@@ -59,6 +59,8 @@ class SMSubjectService(
             subjectRepository.save(subjectModel.getEntity())
         }
 
+        fire(SMSubjectRefreshRequest)
+
         return SMCRUDUtils.SMCRUDResult(
             success = !added,
             errorMessage = if (added) "Môn học đã có trong cơ sở dữ liệu" else ""
