@@ -109,7 +109,9 @@ class SMClassStudentListFragment : Fragment() {
             if (event.classDto.id == classModel.item.id) {
                 classModel.item = event.classDto
 
-                asyncItems { classModel.studentList.value }
+                asyncItems { classModel.studentList.value }.ui {
+                    smartResize()
+                }
             }
 
         }

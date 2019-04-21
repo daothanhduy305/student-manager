@@ -192,12 +192,13 @@ class SMClassService(
                         results[resultIndex] = newResult
                     }
 
-                    classEntity.studentPerformanceList.set(performanceInfoIndex, newInfo)
+                    classEntity.studentPerformanceList[performanceInfoIndex] = newInfo
                 }
 
                 classRepository.save(classEntity)
 
                 fire(SMClassRefreshEvent(classEntity.toDto()))
+                fire(SMClassListRefreshRequest)
 
                 SMCRUDUtils.SMCRUDResult(true)
             },
