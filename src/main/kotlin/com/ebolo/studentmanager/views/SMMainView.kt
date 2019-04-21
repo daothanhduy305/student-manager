@@ -8,9 +8,11 @@ import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXDrawer
 import com.jfoenix.controls.JFXHamburger
 import com.jfoenix.controls.JFXToolbar
-import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition
+import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition
+import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Pos
 import javafx.scene.Node
+import javafx.scene.control.Label
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
 import tornadofx.*
@@ -23,10 +25,11 @@ class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
     private val teacherTableView: SMTeacherTableView by inject()
 
     private var drawer: JFXDrawer by singleAssign()
-    private var backTransition: HamburgerBackArrowBasicTransition by singleAssign()
+    private var backTransition: HamburgerSlideCloseTransition by singleAssign()
     private var mainViewPanel: BorderPane by singleAssign()
 
     private val defaultView = "Lớp học"
+    private val toolbarTitle = SimpleStringProperty(defaultView)
 
     override val root = borderpane {
         top {
@@ -59,7 +62,7 @@ class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
                     }
 
                     leftItems += JFXHamburger().apply {
-                        backTransition = HamburgerBackArrowBasicTransition(this).apply {
+                        backTransition = HamburgerSlideCloseTransition(this).apply {
                             rate = -1.0
                         }
 
@@ -69,6 +72,16 @@ class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
                             } else {
                                 drawer.open()
                             }
+                        }
+                    }
+
+                    leftItems += Label().apply {
+                        bind(toolbarTitle)
+                        paddingLeft = 20
+
+                        style {
+                            textFill = c("#fff")
+                            fontSize = Dimension(24.0, Dimension.LinearUnits.pt)
                         }
                     }
                 }
@@ -103,7 +116,7 @@ class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
 
                             style {
                                 alignment = Pos.CENTER_LEFT
-                                fontSize = Dimension(13.0, Dimension.LinearUnits.pt)
+                                fontSize = Dimension(10.0, Dimension.LinearUnits.pt)
 
                                 if (title == defaultView) {
                                     backgroundColor += c("#ddd")
@@ -116,15 +129,16 @@ class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
                                 menuButtons.filter { it.first != title }.forEach {
                                     it.second.style {
                                         alignment = Pos.CENTER_LEFT
-                                        fontSize = Dimension(14.0, Dimension.LinearUnits.pt)
+                                        fontSize = Dimension(10.0, Dimension.LinearUnits.pt)
                                     }
                                 }
 
                                 style {
                                     alignment = Pos.CENTER_LEFT
-                                    fontSize = Dimension(14.0, Dimension.LinearUnits.pt)
+                                    fontSize = Dimension(10.0, Dimension.LinearUnits.pt)
                                     backgroundColor += c("#ddd")
                                 }
+                                toolbarTitle.value = title
                                 drawer.close()
                             }
                         }
