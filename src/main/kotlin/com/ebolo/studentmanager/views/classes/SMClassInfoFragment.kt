@@ -170,7 +170,7 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
             }
 
             if (mode != SMCRUDUtils.CRUDMode.NEW) {
-                tab("Danh sách học viên") {
+                tab("Điểm số") {
                     borderpane {
                         center = find<SMClassStudentListFragment>(
                             "classModel" to classModel
