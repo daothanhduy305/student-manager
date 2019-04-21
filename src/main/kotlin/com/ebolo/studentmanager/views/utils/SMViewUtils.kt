@@ -134,7 +134,8 @@ class SMViewUtils {
              * TableColumn, that enables textual editing of the content.
              */
             fun <S, T> forTableColumn(
-                converter: StringConverter<T>): Callback<TableColumn<S, T>, TableCell<S, T>> {
+                converter: StringConverter<T>
+            ): Callback<TableColumn<S, T>, TableCell<S, T>> {
                 return object : Callback<TableColumn<S, T>, TableCell<S, T>> {
                     override fun call(param: TableColumn<S, T>?): TableCell<S, T> {
                         return object : JFXTextFieldTableCell<S, T>(converter) {}
@@ -247,6 +248,30 @@ class SMViewUtils {
                 }
             }
             return textField
+        }
+    }
+
+    class SMGradeConverter : StringConverter<Int>() {
+        /** {@inheritDoc}  */
+        override fun fromString(value: String?): Int? {
+            if (value == null) return null
+            // If the specified value is null or zero-length, return null
+
+            val trimmedValue = value.trim { it <= ' ' }
+
+            return if (trimmedValue.isEmpty()) {
+                -1
+            } else Integer.valueOf(trimmedValue)
+
+        }
+
+        /** {@inheritDoc}  */
+        override fun toString(value: Int?): String {
+            // If the specified value is null, return a zero-length String
+            return if (value == null || value < 0) {
+                ""
+            } else Integer.toString(value.toInt())
+
         }
     }
 }

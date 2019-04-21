@@ -16,11 +16,11 @@ class SMClassPerformanceFragment : Fragment() {
     override val root = hbox {
         form {
             fieldset(labelPosition = Orientation.HORIZONTAL) {
-                for (i in 0..(studentInfo.gradeList.size - 1)) {
+                for (i in 0..(performanceInfo.results.size - 1)) {
                     field("Cột điểm ${i + 1}") {
                         this += JFXTextField().apply {
-                            if (studentInfo.gradeList[i] > -1) {
-                                text = studentInfo.gradeList[i].toString()
+                            if (performanceInfo.results[i] > -1) {
+                                text = performanceInfo.results[i].toString()
                             }
                         }
                     }
@@ -47,6 +47,8 @@ class SMClassPerformanceFragment : Fragment() {
 
             this += JFXButton("Hủy bỏ").apply {
                 buttonType = JFXButton.ButtonType.RAISED
+
+                action { modalStage?.close() }
 
                 style {
                     backgroundColor += c("#ffffff")

@@ -4,9 +4,9 @@ import com.ebolo.common.database.entities.EboloBaseEntity
 import com.ebolo.common.database.repositories.mongo.CascadeSave
 import com.ebolo.common.utils.reflect.copyProperties
 import com.ebolo.studentmanager.models.SMClassModel
-import javafx.collections.FXCollections
 import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
+import tornadofx.*
 import java.time.Instant
 import java.time.ZoneOffset
 
@@ -50,22 +50,10 @@ class SMClassEntity(
             "startDate" to this.startDate?.atOffset(ZoneOffset.UTC)?.toLocalDate(),
             "teacher" to this.teacher.toDto(),
             "subject" to this.subject.toDto(),
-            "studentList" to FXCollections.observableArrayList(this.studentList.map {
-                it.toDto().apply {
-                    this.gradeList = generateSequence { -1 }
-                        .take(this@SMClassEntity.numberOfExams)
-                        .toMutableList()
-                    val performanceInfo = studentPerformanceList.firstOrNull { studentPerformanceInfo ->
-                        studentPerformanceInfo.student == this.id
-                    }
-
-                    if (performanceInfo != null) {
-                        for (i in 0..(performanceInfo.results.size - 1)) {
-                            this.gradeList[i] = performanceInfo.results[i]
-                        }
-                    }
-                }
-            })
+            "studentList" to this.studentList.map {
+                it.toDto()
+            }.observable(),
+            "studentPerformanceList" to this.studentPerformanceList.observable()
         )
     )
 }

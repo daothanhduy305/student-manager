@@ -1,18 +1,20 @@
 package com.ebolo.studentmanager.views.classes
 
+import com.ebolo.common.utils.loggerFor
 import com.ebolo.studentmanager.entities.SMStudentPerformanceInfo
 import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.models.SMStudentModel
 import com.ebolo.studentmanager.services.SMClassRefreshEvent
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.views.utils.SMViewUtils
+import javafx.beans.property.SimpleIntegerProperty
 import javafx.geometry.Pos
 import javafx.stage.Modality
 import javafx.util.StringConverter
-import javafx.util.converter.IntegerStringConverter
 import tornadofx.*
 
 class SMClassStudentListFragment : Fragment() {
+    private val logger = loggerFor(SMClassStudentListFragment::class.java)
     private val serviceCentral: SMServiceCentral by di()
     private val classModel: SMClassModel by param()
 
@@ -30,10 +32,44 @@ class SMClassStudentListFragment : Fragment() {
 
         // Dynamically add the grade columns
         for (i in 0..(classModel.numberOfExams.value.toInt() - 1)) {
-            isEditable = true
-
             column<SMStudentModel.SMStudentDto, Int>("Cột điểm ${i + 1}", "grade_$i") {
-                cellFactory = SMViewUtils.JFXTextFieldTableCell.forTableColumn<SMStudentModel.SMStudentDto, Int>(IntegerStringConverter() as StringConverter<Int>)
+                isEditable = true
+
+                cellFactory = SMViewUtils
+                    .JFXTextFieldTableCell
+                    .forTableColumn<SMStudentModel.SMStudentDto, Int>(SMViewUtils.SMGradeConverter() as StringConverter<Int>)
+
+                setCellValueFactory { cellData ->
+                    val performanceInfo = classModel.studentPerformanceList.value.firstOrNull { info ->
+                        info.student == cellData.value.id
+                    }
+
+                    SimpleIntegerProperty(
+                        if (performanceInfo != null) performanceInfo.results[i]
+                        else -1
+                    ).observable(
+                        getter = SimpleIntegerProperty::get,
+                        setter = SimpleIntegerProperty::set,
+                        propertyName = "value",
+                        propertyType = Int::class
+                    )
+                }
+
+                this.setOnEditCommit { event ->
+                    runAsync {
+                        with(serviceCentral.classService) {
+                            event.rowValue.updateResult(
+                                classId = classModel.id.value,
+                                resultIndex = i,
+                                newResult = event.newValue
+                            )
+                        }
+                    }
+                }
+
+                style {
+                    alignment = Pos.TOP_CENTER
+                }
             }
         }
 

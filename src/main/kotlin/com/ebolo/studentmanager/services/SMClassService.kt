@@ -2,6 +2,7 @@ package com.ebolo.studentmanager.services
 
 import com.ebolo.common.utils.getWhenPresentOr
 import com.ebolo.common.utils.loggerFor
+import com.ebolo.studentmanager.entities.SMStudentPerformanceInfo
 import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.models.SMStudentModel
 import com.ebolo.studentmanager.repositories.SMClassRepository
@@ -157,6 +158,51 @@ class SMClassService(
             },
             otherwise = {
                 SMCRUDUtils.SMCRUDResult(false, "Lớp  học không tồn tại trong hệ thống")
+            }
+        )
+
+    /**
+     * Method to update a performance result for a student in a class
+     *
+     * @author ebolo
+     * @since 0.0.1-SNAPSHOT
+     *
+     * @receiver SMStudentModel.SMStudentDto
+     * @param classId String
+     * @param resultIndex Int The index of the result to be update
+     * @param newResult Int new value for the result
+     */
+    fun SMStudentModel.SMStudentDto.updateResult(
+        classId: String, resultIndex: Int, newResult: Int
+    ): SMCRUDUtils.SMCRUDResult = classRepository.findById(classId)
+        .getWhenPresentOr(
+            ifPresentHandler = { classEntity ->
+                val performanceInfoIndex = classEntity.studentPerformanceList.indexOfFirst { it.student == this.id }
+
+                if (performanceInfoIndex == -1) {
+                    classEntity.studentPerformanceList.add(SMStudentPerformanceInfo(
+                        student = this.id,
+                        note = "",
+                        results = generateSequence { -1 }.take(classEntity.numberOfExams).toMutableList().apply {
+                            this[resultIndex] = newResult
+                        }
+                    ))
+                } else {
+                    val newInfo = classEntity.studentPerformanceList[performanceInfoIndex].apply {
+                        results[resultIndex] = newResult
+                    }
+
+                    classEntity.studentPerformanceList.set(performanceInfoIndex, newInfo)
+                }
+
+                classRepository.save(classEntity)
+
+                fire(SMClassRefreshEvent(classEntity.toDto()))
+
+                SMCRUDUtils.SMCRUDResult(true)
+            },
+            otherwise = {
+                SMCRUDUtils.SMCRUDResult(false, "Không tìm thấy lớp")
             }
         )
 }
