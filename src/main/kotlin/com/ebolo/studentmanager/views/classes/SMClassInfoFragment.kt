@@ -2,15 +2,11 @@ package com.ebolo.studentmanager.views.classes
 
 import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.models.SMStudentModel
-import com.ebolo.studentmanager.models.SMSubjectModel
-import com.ebolo.studentmanager.models.SMTeacherModel
 import com.ebolo.studentmanager.services.SMClassListRefreshRequest
-import com.ebolo.studentmanager.services.SMClassRefreshEvent
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.jfoenix.controls.*
 import javafx.beans.binding.Bindings
-import javafx.collections.FXCollections
 import javafx.geometry.Orientation
 import javafx.scene.control.ButtonType
 import javafx.scene.control.TabPane
@@ -23,12 +19,9 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
     private val mode: SMCRUDUtils.CRUDMode by param()
     private val classModel: SMClassModel by param(SMClassModel())
 
-    private val subjectList by lazy { FXCollections.observableList(serviceCentral.subjectService.getSubjects()) }
-    private val teacherList by lazy { FXCollections.observableList(serviceCentral.teacherService.getTeacherList()) }
-    private val studentList by lazy { FXCollections.observableList(serviceCentral.studentService.getStudentList()) }
-
-    private var teacherComboBox by singleAssign<JFXComboBox<SMTeacherModel.SMTeacherDto>>()
-    private var subjectComboBox by singleAssign<JFXComboBox<SMSubjectModel.SMSubjectDto>>()
+    private val subjectList by lazy { serviceCentral.subjectService.getSubjects().observable() }
+    private val teacherList by lazy { serviceCentral.teacherService.getTeacherList().observable() }
+    private val studentList by lazy { serviceCentral.studentService.getStudentList().observable() }
 
     override val root = stackpane {
 
@@ -56,40 +49,39 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                 }
 
                                 field("Môn học") {
-                                    subjectComboBox = JFXComboBox(subjectList).apply {
+                                    this += JFXComboBox(subjectList).apply {
                                         bind(classModel.subject)
 
-                                        if (mode != SMCRUDUtils.CRUDMode.NEW) {
-                                            value = subjectList.first { it.id == classModel.item.subject.id }
+                                        classModel.subject.value = subjectList.firstOrNull { it.id == classModel.item.subject.id }
+
+                                        cellFormat { subject ->
+                                            if (subject != null)
+                                                text = subject.name
                                         }
 
-                                        cellFormat { subject -> text = subject.name }
                                         vgrow = Priority.ALWAYS
                                         useMaxWidth = true
 
                                         required()
                                     }
-
-                                    this += subjectComboBox
                                 }
 
                                 field("Giáo viên") {
-                                    teacherComboBox = JFXComboBox(teacherList).apply {
+                                    this += JFXComboBox(teacherList).apply {
                                         bind(classModel.teacher)
 
-                                        if (mode != SMCRUDUtils.CRUDMode.NEW) {
-                                            value = teacherList.first { it.id == classModel.item.teacher.id }
-                                        }
+                                        classModel.teacher.value = teacherList.firstOrNull { it.id == classModel.item.teacher.id }
+
                                         cellFormat { teacher ->
-                                            text = "${teacher.lastName} ${teacher.firstName}"
+                                            if (teacher != null)
+                                                text = "${teacher.lastName} ${teacher.firstName}"
                                         }
+
                                         vgrow = Priority.ALWAYS
                                         useMaxWidth = true
 
                                         required()
                                     }
-
-                                    this += teacherComboBox
                                 }
 
                                 field("Ngày bắt đầu") {
@@ -249,17 +241,6 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                             }
                         }
                     }
-                }
-            }
-
-            // Re-bind the value for the teacher and subject combo boxes
-            subscribe<SMClassRefreshEvent> { event ->
-                teacherComboBox.value = teacherList.first {
-                    event.classDto.teacher.id == it.id
-                }
-
-                subjectComboBox.value = subjectList.first {
-                    event.classDto.subject.id == it.id
                 }
             }
         }

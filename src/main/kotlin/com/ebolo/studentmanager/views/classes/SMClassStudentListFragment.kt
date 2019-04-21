@@ -1,6 +1,5 @@
 package com.ebolo.studentmanager.views.classes
 
-import com.ebolo.common.utils.loggerFor
 import com.ebolo.studentmanager.entities.SMStudentPerformanceInfo
 import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.models.SMStudentModel
@@ -14,11 +13,10 @@ import javafx.util.StringConverter
 import tornadofx.*
 
 class SMClassStudentListFragment : Fragment() {
-    private val logger = loggerFor(SMClassStudentListFragment::class.java)
     private val serviceCentral: SMServiceCentral by di()
     private val classModel: SMClassModel by param()
 
-    override val root = tableview(classModel.studentList.value) {
+    override val root = tableview(classModel.studentList) {
         isEditable = true
 
         makeIndexColumn("STT").apply {
@@ -107,7 +105,8 @@ class SMClassStudentListFragment : Fragment() {
         // Subscribe to events
         subscribe<SMClassRefreshEvent> { event ->
             if (event.classDto.id == classModel.item.id) {
-                classModel.item = event.classDto
+                classModel.studentPerformanceList.value.setAll(event.classDto.studentPerformanceList)
+                classModel.studentList.value.setAll(event.classDto.studentList)
 
                 asyncItems { classModel.studentList.value }.ui {
                     smartResize()

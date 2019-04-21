@@ -146,9 +146,14 @@ class SMClassService(
                             this.studentList.removeIf {
                                 it.id == this@deregisterFromClass.id
                             }
+
+                            this.studentPerformanceList.removeIf {
+                                it.student == this@deregisterFromClass.id
+                            }
                         })
 
                         fire(SMClassRefreshEvent(classEntity.toDto()))
+                        fire(SMClassListRefreshRequest)
                         SMCRUDUtils.SMCRUDResult(true)
                     },
                     otherwise = {
