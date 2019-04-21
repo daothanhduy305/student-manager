@@ -59,8 +59,6 @@ dependencies {
     implementation 'no.tornado:tornadofx:1.7.18'
     implementation group: 'org.mapdb', name: 'mapdb', version: '3.0.7'
     implementation 'com.jfoenix:jfoenix:8.0.8'
-    implementation 'org.kordamp.ikonli:ikonli-javafx:11.3.0'
-    implementation 'org.kordamp.ikonli:ikonli-fontawesome5-pack:11.3.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

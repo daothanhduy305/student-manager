@@ -4,8 +4,17 @@ import com.ebolo.studentmanager.views.classes.SMClassTableView
 import com.ebolo.studentmanager.views.students.SMStudentTableView
 import com.ebolo.studentmanager.views.subjects.SMSubjectTableView
 import com.ebolo.studentmanager.views.teachers.SMTeacherTableView
-import javafx.application.Platform
+import com.jfoenix.controls.JFXButton
+import com.jfoenix.controls.JFXDrawer
+import com.jfoenix.controls.JFXHamburger
+import com.jfoenix.controls.JFXToolbar
+import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition
+import javafx.geometry.Pos
+import javafx.scene.Node
+import javafx.scene.layout.BorderPane
+import javafx.scene.layout.VBox
 import tornadofx.*
+
 
 class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
     private val subjectTableView: SMSubjectTableView by inject()
@@ -13,55 +22,135 @@ class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
     private val classTableView: SMClassTableView by inject()
     private val teacherTableView: SMTeacherTableView by inject()
 
+    private var drawer: JFXDrawer by singleAssign()
+    private var backTransition: HamburgerBackArrowBasicTransition by singleAssign()
+    private var mainViewPanel: BorderPane by singleAssign()
+
+    private val defaultView = "Lớp học"
+
     override val root = borderpane {
         top {
-            menubar {
-                menu("File") {
-                    menu("Connect") {
-                        item("Facebook")
-                        item("Twitter")
-                    }
-                    item("Save")
-                    item("Quit") {
-                        action {
-                            Platform.exit()
-                            System.exit(0)
+            vbox {
+                /*menubar {
+                    menu("File") {
+                        menu("Connect") {
+                            item("Facebook")
+                            item("Twitter")
+                        }
+                        item("Save")
+                        item("Quit") {
+                            action {
+                                Platform.exit()
+                                System.exit(0)
+                            }
                         }
                     }
-                }
-                menu("Edit") {
-                    item("Copy")
-                    item("Paste")
+                    menu("Edit") {
+                        item("Copy")
+                        item("Paste")
+                    }
+                }*/
+
+                this += JFXToolbar().apply {
+                    paddingAll = 20
+
+                    style {
+                        backgroundColor += c("#3f51b5")
+                    }
+
+                    leftItems += JFXHamburger().apply {
+                        backTransition = HamburgerBackArrowBasicTransition(this).apply {
+                            rate = -1.0
+                        }
+
+                        setOnMouseClicked {
+                            if (drawer.isOpened) {
+                                drawer.close()
+                            } else {
+                                drawer.open()
+                            }
+                        }
+                    }
                 }
             }
         }
 
         center {
-            drawer {
-                item("Môn học") {
-                    borderpane {
-                        center = subjectTableView.root
+            drawer = JFXDrawer().apply {
+                this.defaultDrawerSize = 300.0
+                this.isOverLayVisible = true
+                this.isResizableOnDrag = false
+
+                mainViewPanel = BorderPane().apply {
+                    center = when (defaultView) {
+                        "Môn học" -> subjectTableView.root
+                        "Lớp học" -> classTableView.root
+                        "Học sinh" -> studentTableView.root
+                        "Giáo viên" -> teacherTableView.root
+                        else -> null
                     }
                 }
 
-                item("Lớp học", expanded = true) {
-                    borderpane {
-                        center = classTableView.root
+                this.setContent(mainViewPanel)
+
+                this.setSidePane(VBox().apply {
+                    val menuButtons: MutableList<Pair<String, JFXButton>> = mutableListOf()
+
+                    fun addMenuButton(title: String, representingRoot: Node) {
+                        val button = JFXButton(title).apply {
+                            prefWidth = 300.0
+                            prefHeight = 60.0
+
+                            style {
+                                alignment = Pos.CENTER_LEFT
+                                fontSize = Dimension(13.0, Dimension.LinearUnits.pt)
+
+                                if (title == defaultView) {
+                                    backgroundColor += c("#ddd")
+                                }
+                            }
+
+                            action {
+                                mainViewPanel.center = representingRoot
+
+                                menuButtons.filter { it.first != title }.forEach {
+                                    it.second.style {
+                                        alignment = Pos.CENTER_LEFT
+                                        fontSize = Dimension(14.0, Dimension.LinearUnits.pt)
+                                    }
+                                }
+
+                                style {
+                                    alignment = Pos.CENTER_LEFT
+                                    fontSize = Dimension(14.0, Dimension.LinearUnits.pt)
+                                    backgroundColor += c("#ddd")
+                                }
+                                drawer.close()
+                            }
+                        }
+
+                        menuButtons.add(title to button)
+                        this += button
                     }
+
+                    addMenuButton("Môn học", subjectTableView.root)
+                    addMenuButton("Lớp học", classTableView.root)
+                    addMenuButton("Học sinh", studentTableView.root)
+                    addMenuButton("Giáo viên", teacherTableView.root)
+                })
+
+                setOnDrawerClosing {
+                    backTransition.rate = -1.0
+                    backTransition.play()
                 }
 
-                item("Học sinh") {
-                    borderpane {
-                        center = studentTableView.root
-                    }
-                }
-
-                item("Giáo viên") {
-                    borderpane {
-                        center = teacherTableView.root
-                    }
+                setOnDrawerOpening {
+                    backTransition.rate = 1.0
+                    backTransition.play()
                 }
             }
+
+            this += drawer
         }
     }
 }
