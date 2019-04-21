@@ -64,6 +64,8 @@ class SMClassStudentListFragment : Fragment() {
                                 newResult = event.newValue
                             )
                         }
+                    }.ui {
+                        smartResize()
                     }
                 }
 
