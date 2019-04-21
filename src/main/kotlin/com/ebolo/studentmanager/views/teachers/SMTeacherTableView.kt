@@ -24,82 +24,86 @@ class SMTeacherTableView : View() {
     private var searchBox by singleAssign<JFXTextField>()
 
     override val root = borderpane {
-        top = hbox {
-            paddingAll = 20
-
-            // Action buttons
+        top {
             hbox {
-                alignment = Pos.CENTER_LEFT
-                hgrow = Priority.ALWAYS
+                paddingAll = 20
 
-                this += JFXButton("Thêm giáo viên").apply {
-                    buttonType = JFXButton.ButtonType.RAISED
+                // Action buttons
+                hbox {
+                    alignment = Pos.CENTER_LEFT
+                    hgrow = Priority.ALWAYS
 
-                    action {
-                        find<SMTeacherInfoFragment>(
-                            "mode" to SMCRUDUtils.CRUDMode.NEW
-                        ).openModal(modality = Modality.WINDOW_MODAL, block = true)
-                    }
+                    this += JFXButton("Thêm giáo viên").apply {
+                        buttonType = JFXButton.ButtonType.RAISED
 
-                    style {
-                        backgroundColor += c("#ffffff")
-                    }
-                }
-            }
+                        action {
+                            find<SMTeacherInfoFragment>(
+                                "mode" to SMCRUDUtils.CRUDMode.NEW
+                            ).openModal(modality = Modality.WINDOW_MODAL, block = true)
+                        }
 
-            // Search box and misc
-            hbox {
-                alignment = Pos.CENTER_RIGHT
-                hgrow = Priority.ALWAYS
-
-                searchBox = JFXTextField().apply {
-                    promptText = "Tìm kiếm"
-
-                    textProperty().addListener { _, _, _ ->
-                        filteredTeacherList.setPredicate { studentDto ->
-                            studentDto.firstName.toLowerCase().contains(this.text.toLowerCase())
-                                || studentDto.lastName.toLowerCase().contains(this.text.toLowerCase())
+                        style {
+                            backgroundColor += c("#ffffff")
                         }
                     }
                 }
 
-                this += searchBox
+                // Search box and misc
+                hbox {
+                    alignment = Pos.CENTER_RIGHT
+                    hgrow = Priority.ALWAYS
+
+                    searchBox = JFXTextField().apply {
+                        promptText = "Tìm kiếm"
+
+                        textProperty().addListener { _, _, _ ->
+                            filteredTeacherList.setPredicate { studentDto ->
+                                studentDto.firstName.toLowerCase().contains(this.text.toLowerCase())
+                                    || studentDto.lastName.toLowerCase().contains(this.text.toLowerCase())
+                            }
+                        }
+                    }
+
+                    this += searchBox
+                }
             }
         }
 
-        center = tableview<SMTeacherModel.SMTeacherDto>(filteredTeacherList) {
-            makeIndexColumn("STT").apply {
-                style {
-                    alignment = Pos.TOP_CENTER
-                }
-            }
-
-            readonlyColumn("Họ", SMTeacherModel.SMTeacherDto::lastName)
-            readonlyColumn("Tên", SMTeacherModel.SMTeacherDto::firstName)
-            readonlyColumn("Ngày sinh", SMTeacherModel.SMTeacherDto::birthday)
-
-            smartResize()
-
-            // set up the context menu
-            contextmenu {
-                item("Sửa...").action {
-                    find<SMTeacherInfoFragment>(
-                        "mode" to SMCRUDUtils.CRUDMode.EDIT,
-                        "teacherModel" to SMTeacherModel(selectedItem)
-                    ).openModal(modality = Modality.WINDOW_MODAL, block = true)
-                }
-
-                item("Xóa").action {
-                    if (selectedItem != null) runAsync {
-                        serviceCentral.teacherService.deleteTeacher(selectedItem!!.id)
-                        fire(SMTeacherRefreshRequest)
+        center {
+            tableview<SMTeacherModel.SMTeacherDto>(filteredTeacherList) {
+                makeIndexColumn("STT").apply {
+                    style {
+                        alignment = Pos.TOP_CENTER
                     }
                 }
-            }
 
-            // subscribe to the refresh event to reset the list
-            subscribe<SMTeacherRefreshEvent> { event ->
-                runAsync { teacherList.setAll(event.teachers) }
+                readonlyColumn("Họ", SMTeacherModel.SMTeacherDto::lastName)
+                readonlyColumn("Tên", SMTeacherModel.SMTeacherDto::firstName)
+                readonlyColumn("Ngày sinh", SMTeacherModel.SMTeacherDto::birthday)
+
+                smartResize()
+
+                // set up the context menu
+                contextmenu {
+                    item("Sửa...").action {
+                        find<SMTeacherInfoFragment>(
+                            "mode" to SMCRUDUtils.CRUDMode.EDIT,
+                            "teacherModel" to SMTeacherModel(selectedItem)
+                        ).openModal(modality = Modality.WINDOW_MODAL, block = true)
+                    }
+
+                    item("Xóa").action {
+                        if (selectedItem != null) runAsync {
+                            serviceCentral.teacherService.deleteTeacher(selectedItem!!.id)
+                            fire(SMTeacherRefreshRequest)
+                        }
+                    }
+                }
+
+                // subscribe to the refresh event to reset the list
+                subscribe<SMTeacherRefreshEvent> { event ->
+                    runAsync { teacherList.setAll(event.teachers) }
+                }
             }
         }
     }

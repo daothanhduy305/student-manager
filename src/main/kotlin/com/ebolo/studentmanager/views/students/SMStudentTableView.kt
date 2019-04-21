@@ -24,88 +24,92 @@ class SMStudentTableView : View() {
     private var searchBox by singleAssign<JFXTextField>()
 
     override val root = borderpane {
-        top = hbox {
-            paddingAll = 20
-
-            // Action buttons
+        top {
             hbox {
-                alignment = Pos.CENTER_LEFT
-                hgrow = Priority.ALWAYS
+                paddingAll = 20
 
-                this += JFXButton("Thêm học sinh").apply {
-                    buttonType = JFXButton.ButtonType.RAISED
+                // Action buttons
+                hbox {
+                    alignment = Pos.CENTER_LEFT
+                    hgrow = Priority.ALWAYS
 
-                    action {
-                        find<SMStudentInfoFragment>(
-                            "mode" to SMCRUDUtils.CRUDMode.NEW
-                        ).openModal(modality = Modality.WINDOW_MODAL, block = true)
-                    }
+                    this += JFXButton("Thêm học sinh").apply {
+                        buttonType = JFXButton.ButtonType.RAISED
 
-                    style {
-                        backgroundColor += c("#ffffff")
-                    }
-                }
-            }
+                        action {
+                            find<SMStudentInfoFragment>(
+                                "mode" to SMCRUDUtils.CRUDMode.NEW
+                            ).openModal(modality = Modality.WINDOW_MODAL, block = true)
+                        }
 
-            // Search box and misc
-            hbox {
-                alignment = Pos.CENTER_RIGHT
-                hgrow = Priority.ALWAYS
-
-                searchBox = JFXTextField().apply {
-                    promptText = "Tìm kiếm"
-
-                    textProperty().addListener { _, _, _ ->
-                        filteredStudentList.setPredicate { studentDto ->
-                            studentDto.firstName.toLowerCase().contains(this.text.toLowerCase())
-                                || studentDto.lastName.toLowerCase().contains(this.text.toLowerCase())
-                                || studentDto.nickname.toLowerCase().contains(this.text.toLowerCase())
+                        style {
+                            backgroundColor += c("#ffffff")
                         }
                     }
                 }
 
-                this += searchBox
+                // Search box and misc
+                hbox {
+                    alignment = Pos.CENTER_RIGHT
+                    hgrow = Priority.ALWAYS
+
+                    searchBox = JFXTextField().apply {
+                        promptText = "Tìm kiếm"
+
+                        textProperty().addListener { _, _, _ ->
+                            filteredStudentList.setPredicate { studentDto ->
+                                studentDto.firstName.toLowerCase().contains(this.text.toLowerCase())
+                                    || studentDto.lastName.toLowerCase().contains(this.text.toLowerCase())
+                                    || studentDto.nickname.toLowerCase().contains(this.text.toLowerCase())
+                            }
+                        }
+                    }
+
+                    this += searchBox
+                }
             }
         }
 
-        center = tableview<SMStudentModel.SMStudentDto>(filteredStudentList) {
-            makeIndexColumn("STT").apply {
-                style {
-                    alignment = Pos.TOP_CENTER
-                }
-            }
-
-            readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName)
-            readonlyColumn("Họ", SMStudentModel.SMStudentDto::lastName)
-            readonlyColumn("Nickname", SMStudentModel.SMStudentDto::nickname)
-            readonlyColumn("Sinh nhật", SMStudentModel.SMStudentDto::birthday)
-            readonlyColumn("Học vấn", SMStudentModel.SMStudentDto::educationLevel) {
-                cellFormat { text = it.title }
-            }
-            readonlyColumn("Số điện thoại", SMStudentModel.SMStudentDto::phone)
-
-            smartResize()
-
-            // set up the context menu
-            contextmenu {
-                item("Sửa...").action {
-                    find<SMStudentInfoFragment>(
-                        "mode" to SMCRUDUtils.CRUDMode.EDIT,
-                        "studentModel" to SMStudentModel(selectedItem))
-                        .openModal(modality = Modality.WINDOW_MODAL, block = true)
-                }
-
-                item("Xóa").action {
-                    if (selectedItem != null) runAsync {
-                        serviceCentral.studentService.deleteStudent(selectedItem!!.id)
-                        fire(SMStudentRefreshRequest)
+        center {
+            tableview<SMStudentModel.SMStudentDto>(filteredStudentList) {
+                makeIndexColumn("STT").apply {
+                    style {
+                        alignment = Pos.TOP_CENTER
                     }
                 }
-            }
 
-            // subscribe to the refresh event to reset the list
-            subscribe<SMStudentRefreshEvent> { event ->
-                runAsync { studentList.setAll(event.students) }
+                readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName)
+                readonlyColumn("Họ", SMStudentModel.SMStudentDto::lastName)
+                readonlyColumn("Nickname", SMStudentModel.SMStudentDto::nickname)
+                readonlyColumn("Sinh nhật", SMStudentModel.SMStudentDto::birthday)
+                readonlyColumn("Học vấn", SMStudentModel.SMStudentDto::educationLevel) {
+                    cellFormat { text = it.title }
+                }
+                readonlyColumn("Số điện thoại", SMStudentModel.SMStudentDto::phone)
+
+                smartResize()
+
+                // set up the context menu
+                contextmenu {
+                    item("Sửa...").action {
+                        find<SMStudentInfoFragment>(
+                            "mode" to SMCRUDUtils.CRUDMode.EDIT,
+                            "studentModel" to SMStudentModel(selectedItem))
+                            .openModal(modality = Modality.WINDOW_MODAL, block = true)
+                    }
+
+                    item("Xóa").action {
+                        if (selectedItem != null) runAsync {
+                            serviceCentral.studentService.deleteStudent(selectedItem!!.id)
+                            fire(SMStudentRefreshRequest)
+                        }
+                    }
+                }
+
+                // subscribe to the refresh event to reset the list
+                subscribe<SMStudentRefreshEvent> { event ->
+                    runAsync { studentList.setAll(event.students) }
+                }
             }
         }
     }

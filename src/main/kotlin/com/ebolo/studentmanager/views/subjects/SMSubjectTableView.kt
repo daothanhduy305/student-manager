@@ -23,72 +23,76 @@ class SMSubjectTableView : View() {
     private var searchBox by singleAssign<JFXTextField>()
 
     override val root = borderpane {
-        top = hbox {
-            paddingAll = 20
-
-            // Action buttons
+        top {
             hbox {
-                alignment = Pos.CENTER_LEFT
-                hgrow = Priority.ALWAYS
+                paddingAll = 20
 
-                this += JFXButton("Thêm môn học").apply {
-                    buttonType = JFXButton.ButtonType.RAISED
+                // Action buttons
+                hbox {
+                    alignment = Pos.CENTER_LEFT
+                    hgrow = Priority.ALWAYS
 
-                    action {
-                        find<SMSubjectInfoFragment>().openModal(modality = Modality.WINDOW_MODAL, block = true)
-                    }
+                    this += JFXButton("Thêm môn học").apply {
+                        buttonType = JFXButton.ButtonType.RAISED
 
-                    style {
-                        backgroundColor += c("#ffffff")
-                    }
-                }
-            }
+                        action {
+                            find<SMSubjectInfoFragment>().openModal(modality = Modality.WINDOW_MODAL, block = true)
+                        }
 
-            // Search box and misc
-            hbox {
-                alignment = Pos.CENTER_RIGHT
-                hgrow = Priority.ALWAYS
-
-                searchBox = JFXTextField().apply {
-                    promptText = "Tìm kiếm"
-
-                    textProperty().addListener { _, _, _ ->
-                        filteredSubjectList.setPredicate { subjectDto ->
-                            subjectDto.name.toLowerCase().contains(this.text.toLowerCase())
+                        style {
+                            backgroundColor += c("#ffffff")
                         }
                     }
                 }
 
-                this += searchBox
+                // Search box and misc
+                hbox {
+                    alignment = Pos.CENTER_RIGHT
+                    hgrow = Priority.ALWAYS
+
+                    searchBox = JFXTextField().apply {
+                        promptText = "Tìm kiếm"
+
+                        textProperty().addListener { _, _, _ ->
+                            filteredSubjectList.setPredicate { subjectDto ->
+                                subjectDto.name.toLowerCase().contains(this.text.toLowerCase())
+                            }
+                        }
+                    }
+
+                    this += searchBox
+                }
             }
         }
 
-        center = tableview<SMSubjectModel.SMSubjectDto>(filteredSubjectList) {
-            makeIndexColumn("STT").apply {
-                style {
-                    alignment = Pos.TOP_CENTER
-                }
-            }
-
-            readonlyColumn("Tên môn học", SMSubjectModel.SMSubjectDto::name)
-
-            smartResize()
-
-            contextmenu {
-                item("Sửa...").action {
-                    // TODO: implement this action
-                }
-
-                item("Xóa").action {
-                    if (selectedItem != null) runAsync {
-                        serviceCentral.subjectService.deleteSubject(selectedItem!!.id)
-                        fire(SMSubjectRefreshRequest)
+        center {
+            tableview<SMSubjectModel.SMSubjectDto>(filteredSubjectList) {
+                makeIndexColumn("STT").apply {
+                    style {
+                        alignment = Pos.TOP_CENTER
                     }
                 }
-            }
 
-            subscribe<SMSubjectRefreshEvent> { event ->
-                runAsync { subjectList.setAll(event.subjects) }
+                readonlyColumn("Tên môn học", SMSubjectModel.SMSubjectDto::name)
+
+                smartResize()
+
+                contextmenu {
+                    item("Sửa...").action {
+                        // TODO: implement this action
+                    }
+
+                    item("Xóa").action {
+                        if (selectedItem != null) runAsync {
+                            serviceCentral.subjectService.deleteSubject(selectedItem!!.id)
+                            fire(SMSubjectRefreshRequest)
+                        }
+                    }
+                }
+
+                subscribe<SMSubjectRefreshEvent> { event ->
+                    runAsync { subjectList.setAll(event.subjects) }
+                }
             }
         }
     }
