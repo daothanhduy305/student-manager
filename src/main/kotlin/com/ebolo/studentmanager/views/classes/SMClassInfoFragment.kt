@@ -53,7 +53,11 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                     this += JFXComboBox(subjectList).apply {
                                         bind(classModel.subject)
 
-                                        classModel.subject.value = subjectList.firstOrNull { it.id == classModel.item.subject.id }
+                                        value = if (mode == SMCRUDUtils.CRUDMode.NEW) {
+                                            subjectList.first()
+                                        } else {
+                                            subjectList.firstOrNull { it.id == classModel.item.subject.id }
+                                        }
 
                                         cellFormat { subject ->
                                             if (subject != null)
@@ -71,7 +75,11 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                     this += JFXComboBox(teacherList).apply {
                                         bind(classModel.teacher)
 
-                                        classModel.teacher.value = teacherList.firstOrNull { it.id == classModel.item.teacher.id }
+                                        value = if (mode == SMCRUDUtils.CRUDMode.NEW) {
+                                            teacherList.first()
+                                        } else {
+                                            teacherList.firstOrNull { it.id == classModel.item.teacher.id }
+                                        }
 
                                         cellFormat { teacher ->
                                             if (teacher != null)

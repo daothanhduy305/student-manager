@@ -55,7 +55,7 @@ class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
 
                     field("Số điện thoại") {
                         this += JFXTextField().apply {
-                            bind(teacherModel.firstName)
+                            bind(teacherModel.phone)
                             required()
                         }
                     }
