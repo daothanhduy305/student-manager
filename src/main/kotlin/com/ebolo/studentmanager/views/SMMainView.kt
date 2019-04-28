@@ -147,6 +147,11 @@ class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
                                     backgroundColor += c("#ddd")
                                 }
                                 toolbarTitle.value = title
+
+                                backTransition.rate = -1.0
+
+                                backTransition.play()
+
                                 drawer.close()
                             }
                         }
