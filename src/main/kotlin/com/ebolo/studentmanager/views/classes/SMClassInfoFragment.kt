@@ -259,7 +259,7 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                             addStudentForm()
                         }
 
-                        center = find<SMClassStudentListFragment>(
+                        center = find<SMClassStudentPerformanceListFragment>(
                             "classModel" to classModel
                         ).root
                     }
@@ -270,6 +270,10 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                         top {
                             addStudentForm()
                         }
+
+                        center = find<SMClassStudentAttendanceListFragment>(
+                            "classModel" to classModel
+                        ).root
                     }
                 }
 
@@ -278,6 +282,10 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                         top {
                             addStudentForm()
                         }
+
+                        center = find<SMClassStudentTuitionFeeListFragment>(
+                            "classModel" to classModel
+                        ).root
                     }
                 }
             }

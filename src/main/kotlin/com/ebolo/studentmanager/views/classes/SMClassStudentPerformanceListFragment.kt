@@ -5,14 +5,15 @@ import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.models.SMStudentModel
 import com.ebolo.studentmanager.services.SMClassRefreshEvent
 import com.ebolo.studentmanager.services.SMServiceCentral
-import com.ebolo.studentmanager.views.utils.SMViewUtils
+import com.ebolo.studentmanager.views.utils.converters.SMGradeConverter
+import com.ebolo.studentmanager.views.utils.ui.tableview.JFXTextFieldTableCell
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.geometry.Pos
 import javafx.stage.Modality
 import javafx.util.StringConverter
 import tornadofx.*
 
-class SMClassStudentListFragment : Fragment() {
+class SMClassStudentPerformanceListFragment : Fragment() {
     private val serviceCentral: SMServiceCentral by di()
     private val classModel: SMClassModel by param()
 
@@ -33,9 +34,8 @@ class SMClassStudentListFragment : Fragment() {
             column<SMStudentModel.SMStudentDto, Int>("Cột điểm ${i + 1}", "grade_$i") {
                 isEditable = true
 
-                cellFactory = SMViewUtils
-                    .JFXTextFieldTableCell
-                    .forTableColumn<SMStudentModel.SMStudentDto, Int>(SMViewUtils.SMGradeConverter() as StringConverter<Int>)
+                cellFactory = JFXTextFieldTableCell
+                    .forTableColumn<SMStudentModel.SMStudentDto, Int>(SMGradeConverter() as StringConverter<Int>)
 
                 setCellValueFactory { cellData ->
                     val performanceInfo = classModel.studentPerformanceList.value.firstOrNull { info ->
