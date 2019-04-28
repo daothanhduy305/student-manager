@@ -67,11 +67,11 @@ class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
                         }
 
                         setOnMouseClicked {
-                            if (drawer.isOpened) {
-                                drawer.close()
-                            } else {
-                                drawer.open()
-                            }
+                            drawer.toggle()
+
+                            backTransition.rate = if (drawer.isOpened || drawer.isOpening) 1.0 else -1.0
+
+                            backTransition.play()
                         }
                     }
 
@@ -160,16 +160,6 @@ class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
                     addMenuButton("Học sinh", studentTableView.root)
                     addMenuButton("Giáo viên", teacherTableView.root)
                 })
-
-                setOnDrawerClosing {
-                    backTransition.rate = -1.0
-                    backTransition.play()
-                }
-
-                setOnDrawerOpening {
-                    backTransition.rate = 1.0
-                    backTransition.play()
-                }
             }
 
             this += drawer
