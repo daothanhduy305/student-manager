@@ -2,6 +2,7 @@ package com.ebolo.studentmanager.services
 
 import com.ebolo.common.utils.getWhenPresentOr
 import com.ebolo.common.utils.loggerFor
+import com.ebolo.common.utils.reflect.copyProperties
 import com.ebolo.studentmanager.entities.SMAttendanceEntity
 import com.ebolo.studentmanager.entities.SMFeePaidEntity
 import com.ebolo.studentmanager.entities.SMStudentPerformanceInfo
@@ -174,37 +175,27 @@ class SMClassService(
         )
 
     /**
-     * Method to update a performance result for a student in a class
+     * Method to be used to update the performance info of a student in a class
      *
      * @author ebolo
      * @since 0.0.1-SNAPSHOT
      *
      * @receiver SMStudentModel.SMStudentDto
      * @param classId String
-     * @param resultIndex Int The index of the result to be update
-     * @param newResult Int new value for the result
+     * @param performanceInfo SMStudentPerformanceInfo
+     * @return SMCRUDUtils.SMCRUDResult
      */
-    fun SMStudentModel.SMStudentDto.updateResult(
-        classId: String, resultIndex: Int, newResult: Int
+    fun SMStudentModel.SMStudentDto.updatePerformanceInfo(
+        classId: String, performanceInfo: SMStudentPerformanceInfo
     ): SMCRUDUtils.SMCRUDResult = classRepository.findById(classId)
         .getWhenPresentOr(
             ifPresentHandler = { classEntity ->
                 val performanceInfoIndex = classEntity.studentPerformanceList.indexOfFirst { it.student == this.id }
 
                 if (performanceInfoIndex == -1) {
-                    classEntity.studentPerformanceList.add(SMStudentPerformanceInfo(
-                        student = this.id,
-                        note = "",
-                        results = generateSequence { -1 }.take(classEntity.numberOfExams).toMutableList().apply {
-                            this[resultIndex] = newResult
-                        }
-                    ))
+                    classEntity.studentPerformanceList.add(performanceInfo)
                 } else {
-                    val newInfo = classEntity.studentPerformanceList[performanceInfoIndex].apply {
-                        results[resultIndex] = newResult
-                    }
-
-                    classEntity.studentPerformanceList[performanceInfoIndex] = newInfo
+                    performanceInfo.copyProperties(classEntity.studentPerformanceList[performanceInfoIndex])
                 }
 
                 classRepository.save(classEntity)

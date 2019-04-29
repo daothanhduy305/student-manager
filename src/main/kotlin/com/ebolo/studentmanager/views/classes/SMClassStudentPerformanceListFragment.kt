@@ -12,6 +12,7 @@ import javafx.geometry.Pos
 import javafx.stage.Modality
 import javafx.util.StringConverter
 import tornadofx.*
+import java.time.ZoneOffset
 
 class SMClassStudentPerformanceListFragment : Fragment() {
     private val serviceCentral: SMServiceCentral by di()
@@ -29,8 +30,8 @@ class SMClassStudentPerformanceListFragment : Fragment() {
         readonlyColumn("Họ và tên lót", SMStudentModel.SMStudentDto::lastName)
         readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName)
 
-        // Dynamically add the grade columns
-        for (i in 0..(classModel.numberOfExams.value.toInt() - 1)) {
+        // Dynamically add the result columns
+        for (i in 0 until classModel.numberOfExams.value.toInt()) {
             column<SMStudentModel.SMStudentDto, Int>("Cột điểm ${i + 1}", "grade_$i") {
                 isEditable = true
 
@@ -55,11 +56,22 @@ class SMClassStudentPerformanceListFragment : Fragment() {
 
                 this.setOnEditCommit { event ->
                     runAsync {
+                        val performanceInfo = (classModel.studentPerformanceList.value.firstOrNull { info ->
+                            info.student == event.rowValue.id
+                        } ?: SMStudentPerformanceInfo(
+                            student = event.rowValue.id,
+                            startDate = classModel.startDate.value.atStartOfDay().toInstant(ZoneOffset.UTC),
+                            results = generateSequence { -1 }
+                                .take(classModel.numberOfExams.value.toInt())
+                                .toMutableList()
+                        )).apply {
+                            this.results[i] = event.newValue
+                        }
+
                         with(serviceCentral.classService) {
-                            event.rowValue.updateResult(
+                            event.rowValue.updatePerformanceInfo(
                                 classId = classModel.id.value,
-                                resultIndex = i,
-                                newResult = event.newValue
+                                performanceInfo = performanceInfo
                             )
                         }
                     }.ui {

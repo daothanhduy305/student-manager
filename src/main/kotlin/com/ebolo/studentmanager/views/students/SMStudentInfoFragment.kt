@@ -110,7 +110,6 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
                             paddingVertical = 20
 
                             this += JFXButton("Hủy bỏ").apply {
-                                vgrow = Priority.ALWAYS
                                 useMaxWidth = true
                                 buttonType = JFXButton.ButtonType.RAISED
                                 paddingVertical = 15
@@ -125,7 +124,6 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
                             }
 
                             this += JFXButton("Hoàn tất").apply {
-                                vgrow = Priority.ALWAYS
                                 useMaxWidth = true
                                 buttonType = JFXButton.ButtonType.RAISED
                                 paddingVertical = 15
