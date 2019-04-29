@@ -72,7 +72,8 @@ class SMClassEntity(
 class SMStudentPerformanceInfo(
     var student: String = "",
     var note: String = "",
-    var results: MutableList<Int> = mutableListOf()
+    var results: MutableList<Int> = mutableListOf(),
+    var startDate: Instant? = null
 ) {
     override fun equals(other: Any?): Boolean {
         return other is SMStudentPerformanceInfo && other.student == this.student
