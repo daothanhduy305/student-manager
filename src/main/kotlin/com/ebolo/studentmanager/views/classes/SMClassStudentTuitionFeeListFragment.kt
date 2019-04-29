@@ -42,9 +42,9 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
                     runAsync {
                         with(serviceCentral.classService) {
                             if (value) {
-                                classModel.item.deleteAbsenceInfo(studentDto.id, LocalDate.now())
+                                classModel.item.addFeePaidInfo(studentDto.id, LocalDate.now())
                             } else {
-                                classModel.item.addAbsenceInfo(studentDto.id, LocalDate.now())
+                                classModel.item.deleteFeePaidInfo(studentDto.id, LocalDate.now())
                             }
                         }
                     }
