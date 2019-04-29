@@ -8,6 +8,7 @@ import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.jfoenix.controls.*
 import javafx.beans.binding.Bindings
 import javafx.geometry.Orientation
+import javafx.geometry.Pos
 import javafx.scene.control.ButtonType
 import javafx.scene.control.TabPane
 import javafx.scene.layout.Priority
@@ -32,8 +33,12 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
                 form {
                     paddingAll = 20
 
-                    hbox {
+                    vbox {
+                        vgrow = Priority.ALWAYS
+
                         vbox {
+                            vgrow = Priority.ALWAYS
+
                             fieldset(labelPosition = Orientation.HORIZONTAL) {
                                 spacing += 20.0
 
@@ -99,14 +104,32 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
                             }
                         }
 
-                        vbox {
-                            paddingLeft = 20.0
-                            spacing = 10.0
+                        hbox {
+                            alignment = Pos.BOTTOM_RIGHT
+                            spacing = 20.0
+                            paddingVertical = 20
+
+                            this += JFXButton("Hủy bỏ").apply {
+                                vgrow = Priority.ALWAYS
+                                useMaxWidth = true
+                                buttonType = JFXButton.ButtonType.RAISED
+                                paddingVertical = 15
+                                paddingHorizontal = 30
+
+                                style {
+                                    backgroundColor += c("#ff5533")
+                                    textFill = c("#fff")
+                                }
+
+                                action { modalStage?.close() }
+                            }
 
                             this += JFXButton("Hoàn tất").apply {
                                 vgrow = Priority.ALWAYS
                                 useMaxWidth = true
                                 buttonType = JFXButton.ButtonType.RAISED
+                                paddingVertical = 15
+                                paddingHorizontal = 30
 
                                 style {
                                     backgroundColor += c("#fff")
@@ -135,18 +158,6 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
                                         error("Đã xảy ra lỗi", result.errorMessage, ButtonType.CLOSE)
                                     }
                                 }
-                            }
-
-                            this += JFXButton("Hủy bỏ").apply {
-                                vgrow = Priority.ALWAYS
-                                useMaxWidth = true
-                                buttonType = JFXButton.ButtonType.RAISED
-
-                                style {
-                                    backgroundColor += c("#fff")
-                                }
-
-                                action { modalStage?.close() }
                             }
                         }
                     }

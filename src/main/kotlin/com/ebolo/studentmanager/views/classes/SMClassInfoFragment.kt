@@ -9,6 +9,7 @@ import com.jfoenix.controls.*
 import javafx.beans.binding.Bindings
 import javafx.event.EventTarget
 import javafx.geometry.Orientation
+import javafx.geometry.Pos
 import javafx.scene.control.ButtonType
 import javafx.scene.control.TabPane
 import javafx.scene.layout.Priority
@@ -37,8 +38,12 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                 form {
                     paddingAll = 20
 
-                    hbox {
+                    vbox {
+                        vgrow = Priority.ALWAYS
+
                         vbox {
+                            vgrow = Priority.ALWAYS
+
                             fieldset(labelPosition = Orientation.HORIZONTAL) {
                                 spacing = 20.0
 
@@ -127,14 +132,31 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                             }
                         }
 
-                        vbox {
-                            paddingLeft = 20.0
-                            spacing = 10.0
+                        hbox {
+                            alignment = Pos.BOTTOM_RIGHT
+                            spacing = 20.0
+
+                            this += JFXButton("Hủy bỏ").apply {
+                                vgrow = Priority.ALWAYS
+                                useMaxWidth = true
+                                buttonType = JFXButton.ButtonType.RAISED
+                                paddingVertical = 15
+                                paddingHorizontal = 30
+
+                                action { modalStage?.close() }
+
+                                style {
+                                    backgroundColor += c("#ff5533")
+                                    textFill = c("#fff")
+                                }
+                            }
 
                             this += JFXButton("Hoàn tất").apply {
                                 vgrow = Priority.ALWAYS
                                 useMaxWidth = true
                                 buttonType = JFXButton.ButtonType.RAISED
+                                paddingVertical = 15
+                                paddingHorizontal = 30
 
                                 enableWhen(Bindings.and(classModel.dirty, classModel.valid))
 
@@ -156,18 +178,6 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                         error("Đã xảy ra lỗi", result.errorMessage, ButtonType.CLOSE)
                                     }
                                 }
-
-                                style {
-                                    backgroundColor += c("#ffffff")
-                                }
-                            }
-
-                            this += JFXButton("Hủy bỏ").apply {
-                                vgrow = Priority.ALWAYS
-                                useMaxWidth = true
-                                buttonType = JFXButton.ButtonType.RAISED
-
-                                action { modalStage?.close() }
 
                                 style {
                                     backgroundColor += c("#ffffff")

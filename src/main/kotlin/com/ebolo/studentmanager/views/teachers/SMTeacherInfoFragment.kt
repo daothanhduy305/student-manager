@@ -9,6 +9,7 @@ import com.jfoenix.controls.JFXDatePicker
 import com.jfoenix.controls.JFXTextField
 import javafx.beans.binding.Bindings
 import javafx.geometry.Orientation
+import javafx.geometry.Pos
 import javafx.scene.control.ButtonType
 import javafx.scene.layout.Priority
 import tornadofx.*
@@ -25,8 +26,12 @@ class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
             backgroundColor += c("#fff")
         }
 
-        hbox {
+        vbox {
+            vgrow = Priority.ALWAYS
+
             vbox {
+                vgrow = Priority.ALWAYS
+
                 fieldset("Thông tin chung", labelPosition = Orientation.HORIZONTAL) {
                     spacing = 20.0
 
@@ -68,14 +73,32 @@ class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
                 }
             }
 
-            vbox {
-                paddingLeft = 20.0
-                spacing = 10.0
+            hbox {
+                alignment = Pos.BOTTOM_RIGHT
+                spacing = 20.0
+                paddingVertical = 20
+
+                this += JFXButton("Hủy bỏ").apply {
+                    vgrow = Priority.ALWAYS
+                    useMaxWidth = true
+                    buttonType = JFXButton.ButtonType.RAISED
+                    paddingVertical = 15
+                    paddingHorizontal = 30
+
+                    style {
+                        backgroundColor += c("#ff5533")
+                        textFill = c("#fff")
+                    }
+
+                    action { modalStage?.close() }
+                }
 
                 this += JFXButton("Hoàn tất").apply {
                     vgrow = Priority.ALWAYS
                     useMaxWidth = true
                     buttonType = JFXButton.ButtonType.RAISED
+                    paddingVertical = 15
+                    paddingHorizontal = 30
 
                     style {
                         backgroundColor += c("#fff")
@@ -104,18 +127,6 @@ class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
                             error("Đã xảy ra lỗi", result.errorMessage, ButtonType.CLOSE)
                         }
                     }
-                }
-
-                this += JFXButton("Hủy bỏ").apply {
-                    vgrow = Priority.ALWAYS
-                    useMaxWidth = true
-                    buttonType = JFXButton.ButtonType.RAISED
-
-                    style {
-                        backgroundColor += c("#fff")
-                    }
-
-                    action { modalStage?.close() }
                 }
             }
         }
