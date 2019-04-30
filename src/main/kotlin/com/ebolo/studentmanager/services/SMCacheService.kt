@@ -42,6 +42,27 @@ class SMCacheService {
      */
     @PreDestroy
     private fun onDestroyed() {
+        db.commit()
         db.close()
+    }
+
+    /**
+     * Method to allow set the settings to certain values
+     *
+     * @author ebolo
+     * @since 0.0.1-SNAPSHOT
+     *
+     * @param settings Array<out Pair<String, Any>>
+     */
+    fun setSettings(vararg settings: Pair<String, Any>) {
+        settings.forEach { setting ->
+            cache[setting.first] = setting.second
+        }
+        db.commit()
+    }
+
+    fun removeSettings(vararg settings: String) {
+        settings.forEach { cache.remove(it) }
+        db.commit()
     }
 }

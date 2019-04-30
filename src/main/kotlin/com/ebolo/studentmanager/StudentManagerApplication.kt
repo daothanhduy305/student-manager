@@ -1,7 +1,6 @@
 package com.ebolo.studentmanager
 
-import com.ebolo.studentmanager.views.SMLoginFormView
-import javafx.application.Application
+import com.ebolo.studentmanager.views.SMSplashView
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.ConfigurableApplicationContext
@@ -13,7 +12,7 @@ import kotlin.reflect.KClass
 @SpringBootApplication
 @EnableMongoRepositories
 @EnableMongoAuditing
-class StudentManagerApplication : App(SMLoginFormView::class) {
+class StudentManagerApplication : App(SMSplashView::class) {
 
     private lateinit var context: ConfigurableApplicationContext
 
@@ -36,7 +35,7 @@ class StudentManagerApplication : App(SMLoginFormView::class) {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            Application.launch(StudentManagerApplication::class.java, *args)
+            launch(StudentManagerApplication::class.java, *args)
         }
     }
 }

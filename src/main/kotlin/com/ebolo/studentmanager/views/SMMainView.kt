@@ -206,4 +206,10 @@ class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
             }
         }
     }
+
+    override fun onDock() {
+        super.onDock()
+
+        currentStage?.isMaximized = true
+    }
 }
