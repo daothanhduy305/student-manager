@@ -82,47 +82,39 @@ class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
                                 glyphSize = 36
 
                                 setOnMouseClicked {
-                                    runAsync {
-                                        logger.info("Showing the menu")
-                                    }.ui {
-                                        val popup = JFXPopup().apply {
-                                            popupContent = vbox {
-                                                /**
-                                                 * Method to build menu buttons for this drawer
-                                                 *
-                                                 * @author ebolo
-                                                 *
-                                                 * @param title String
-                                                 */
-                                                fun addMenuButton(title: String, actionHandler: (() -> Unit)? = null) {
-                                                    val button = JFXButton(title).apply {
-                                                        prefWidth = 200.0
-                                                        prefHeight = 50.0
-                                                        paddingLeft = 20
+                                    JFXPopup().apply {
+                                        popupContent = vbox {
+                                            /**
+                                             * Method to build menu buttons for this drawer
+                                             *
+                                             * @author ebolo
+                                             *
+                                             * @param title String
+                                             */
+                                            fun addMenuButton(title: String, actionHandler: (() -> Unit)? = null) {
+                                                val button = JFXButton(title).apply {
+                                                    prefWidth = 200.0
+                                                    prefHeight = 50.0
+                                                    paddingLeft = 20
 
-                                                        style {
-                                                            alignment = Pos.CENTER_LEFT
-                                                        }
-
-                                                        isDisableVisualFocus = true
-
-                                                        action { actionHandler?.invoke() }
+                                                    style {
+                                                        alignment = Pos.CENTER_LEFT
                                                     }
-                                                    this += button
+
+                                                    isDisableVisualFocus = true
+
+                                                    action { actionHandler?.invoke() }
                                                 }
-
-                                                addMenuButton("Cài đặt") {
-
-                                                }
-
-                                                addMenuButton("Giới thiệu") {
-
-                                                }
+                                                this += button
                                             }
-                                        }
 
-                                        popup.show(this@menuIcon, PopupVPosition.TOP, PopupHPosition.RIGHT)
-                                    }
+                                            addMenuButton("Cài đặt") {
+
+                                            }
+
+                                            addMenuButton("Giới thiệu") { find<SMAboutView>().openModal() }
+                                        }
+                                    }.show(this@menuIcon, PopupVPosition.TOP, PopupHPosition.RIGHT)
                                 }
                             }
                         }
