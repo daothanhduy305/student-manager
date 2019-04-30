@@ -34,6 +34,7 @@ sourceCompatibility = '1.8'
 repositories {
     mavenCentral()
     mavenLocal()
+    jcenter()
 }
 
 configurations {
@@ -59,6 +60,8 @@ dependencies {
     implementation 'no.tornado:tornadofx:1.7.18'
     implementation group: 'org.mapdb', name: 'mapdb', version: '3.0.7'
     implementation 'com.jfoenix:jfoenix:8.0.8'
+    implementation 'de.jensd:fontawesomefx-commons:8.15'
+    implementation 'de.jensd:fontawesomefx-materialicons:2.2.0-5'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
