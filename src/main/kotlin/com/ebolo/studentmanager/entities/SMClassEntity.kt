@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 import tornadofx.*
 import java.time.Instant
+import java.time.LocalTime
 import java.time.ZoneOffset
 
 /**
@@ -41,7 +42,11 @@ class SMClassEntity(
     @CascadeSave
     var studentList: MutableList<SMStudentEntity> = mutableListOf(),
     var numberOfExams: Int = 0,
-    var tuitionFee: Int = 0
+    var tuitionFee: Int = 0,
+    var monthPeriods: Int = 1,
+    var description: String = "",
+    var fromHour: LocalTime? = null,
+    var toHour: LocalTime? = null
 ) : EboloBaseEntity(), SMIEntity<SMClassModel.SMClassDto> {
 
     override fun toDto(): SMClassModel.SMClassDto = this.copyProperties(

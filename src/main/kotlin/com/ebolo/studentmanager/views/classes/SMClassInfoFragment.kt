@@ -7,6 +7,7 @@ import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.jfoenix.controls.*
 import javafx.beans.binding.Bindings
+import javafx.beans.property.SimpleIntegerProperty
 import javafx.event.EventTarget
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
@@ -25,6 +26,9 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
     private val teacherList by lazy { serviceCentral.teacherService.getTeacherList().observable() }
     private val studentList by lazy { serviceCentral.studentService.getStudentList().observable() }
 
+    private val month = SimpleIntegerProperty()
+    private val fee = SimpleIntegerProperty()
+
     override val root = stackpane {
 
         style {
@@ -41,10 +45,11 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                     vbox {
                         vgrow = Priority.ALWAYS
 
-                        vbox {
+                        hbox {
                             vgrow = Priority.ALWAYS
+                            spacing = 40.0
 
-                            fieldset(labelPosition = Orientation.HORIZONTAL) {
+                            fieldset(labelPosition = Orientation.VERTICAL) {
                                 spacing = 20.0
 
                                 field("Tên lớp") {
@@ -98,7 +103,7 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                     }
                                 }
 
-                                field("Ngày bắt đầu") {
+                                field("Ngày khai giảng") {
                                     this += JFXDatePicker().apply {
                                         bind(classModel.startDate)
 
@@ -109,8 +114,17 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                     }
                                 }
 
+                                field("Số tháng") {
+                                    this += JFXTextField().apply {
+                                        bind(month)
+                                        bind(classModel.monthPeriods)
+                                        required()
+                                    }
+                                }
+
                                 field("Học phí") {
                                     this += JFXTextField().apply {
+                                        bind(fee)
                                         bind(classModel.tuitionFee)
 
                                         validator { text ->
@@ -123,10 +137,56 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                     }
                                 }
 
+                                field("Tổng học phí toàn khóa") {
+                                    label {
+                                        paddingTop = 5
+                                        bind(Bindings.multiply(month, fee))
+
+
+                                        style {
+                                            fontSize = Dimension(14.0, Dimension.LinearUnits.pt)
+                                        }
+                                    }
+                                }
+                            }
+
+                            fieldset(labelPosition = Orientation.VERTICAL) {
+                                spacing = 20.0
+
                                 field("Số cột điểm") {
                                     this += JFXTextField().apply {
                                         bind(classModel.numberOfExams)
                                         required()
+                                    }
+                                }
+
+                                hbox {
+                                    spacing = 40.0
+
+                                    field("Giờ học từ") {
+                                        this += JFXTimePicker().apply {
+                                            bind(classModel.fromHour)
+                                            defaultColor = c("#3f51b5")
+                                            isOverLay = false
+
+                                            required()
+                                        }
+                                    }
+
+                                    field("Đến") {
+                                        this += JFXTimePicker().apply {
+                                            bind(classModel.toHour)
+                                            defaultColor = c("#3f51b5")
+                                            isOverLay = false
+
+                                            required()
+                                        }
+                                    }
+                                }
+
+                                field("Nội dung") {
+                                    this += JFXTextArea().apply {
+                                        bind(classModel.description)
                                     }
                                 }
                             }

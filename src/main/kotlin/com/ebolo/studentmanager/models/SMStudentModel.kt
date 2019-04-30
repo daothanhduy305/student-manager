@@ -53,7 +53,7 @@ class SMStudentModel(
         entity.firstName = firstName.value
         entity.lastName = lastName.value
         entity.nickname = nickname.value
-        entity.birthday = birthday.value.atStartOfDay()?.toInstant(ZoneOffset.UTC)
+        entity.birthday = birthday.value?.atStartOfDay()?.toInstant(ZoneOffset.UTC)
         entity.phone = phone.value
         entity.parentPhone = parentPhone.value
         entity.address = address.value

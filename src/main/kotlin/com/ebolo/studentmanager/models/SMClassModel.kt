@@ -5,6 +5,7 @@ import com.ebolo.studentmanager.entities.SMStudentPerformanceInfo
 import javafx.collections.FXCollections
 import tornadofx.*
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneOffset
 
 class SMClassModel(
@@ -30,6 +31,18 @@ class SMClassModel(
         var startDate by property<LocalDate>()
         fun startDateProperty() = getProperty(SMClassDto::startDate)
 
+        var description by property<String>()
+        fun descriptionProperty() = getProperty(SMClassDto::description)
+
+        var monthPeriods by property<Number>()
+        fun monthPeriodsProperty() = getProperty(SMClassDto::monthPeriods)
+
+        var fromHour by property<LocalTime>()
+        fun fromHourProperty() = getProperty(SMClassDto::fromHour)
+
+        var toHour by property<LocalTime>()
+        fun toHourProperty() = getProperty(SMClassDto::toHour)
+
         var studentList = FXCollections.emptyObservableList<SMStudentModel.SMStudentDto>()
 
         var studentPerformanceList = FXCollections.emptyObservableList<SMStudentPerformanceInfo>()
@@ -45,6 +58,10 @@ class SMClassModel(
     val startDate = bind(SMClassDto::startDateProperty)
     val studentList = bind(SMClassDto::studentList)
     val studentPerformanceList = bind(SMClassDto::studentPerformanceList)
+    val description = bind(SMClassDto::descriptionProperty)
+    val monthPeriods = bind(SMClassDto::monthPeriodsProperty)
+    val fromHour = bind(SMClassDto::fromHourProperty)
+    val toHour = bind(SMClassDto::toHourProperty)
     // endregion
 
     override fun specificEntitySetup(entity: SMClassEntity) {
@@ -58,5 +75,9 @@ class SMClassModel(
             .map { dto -> SMStudentModel().apply { item = dto }.getEntity() }
             .toMutableList()
         entity.studentPerformanceList = this.studentPerformanceList.value.toMutableList()
+        entity.description = this.description.value
+        entity.monthPeriods = this.monthPeriods.value.toInt()
+        entity.fromHour = this.fromHour.value
+        entity.toHour = this.toHour.value
     }
 }
