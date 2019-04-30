@@ -34,6 +34,7 @@ class SMSubjectTableView : View() {
 
                     this += JFXButton("Thêm môn học").apply {
                         buttonType = JFXButton.ButtonType.RAISED
+                        isDisableVisualFocus = true
 
                         action {
                             find<SMSubjectInfoFragment>().openModal(modality = Modality.WINDOW_MODAL, block = true)

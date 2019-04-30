@@ -35,6 +35,7 @@ class SMClassTableView : View() {
 
                     this += JFXButton("Thêm lớp").apply {
                         buttonType = JFXButton.ButtonType.RAISED
+                        isDisableVisualFocus = true
 
                         action {
                             find<SMClassInfoFragment>(
