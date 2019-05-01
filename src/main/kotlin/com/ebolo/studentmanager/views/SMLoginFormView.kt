@@ -83,7 +83,7 @@ class SMLoginFormView : View("StuMan v0.0.1-SNAPSHOT") {
                                     centerOnScreen = true
                                 )
 
-                                // currentStage?.isMaximized = true
+                                primaryStage.isMaximized = true
                             }
                         }
                     }

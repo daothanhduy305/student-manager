@@ -38,4 +38,15 @@ class SMUserService(
         cacheService.setSettings(SMGlobal.CACHE_ENTRY_LOGGING_USER to user.username)
         return true
     }
+
+    fun logout(): Boolean {
+        logger.info("Logging out...")
+        cacheService.removeSettings(
+            Settings.REMEMBER_CREDENTIAL,
+            Settings.CREDENTIAL_USERNAME,
+            Settings.CREDENTIAL_PASSWORD,
+            SMGlobal.CACHE_ENTRY_LOGGING_USER
+        )
+        return true
+    }
 }

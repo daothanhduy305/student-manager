@@ -33,6 +33,8 @@ class SMSplashView : View() {
                     this.username = username
                     this.password = hashedPassword
                 })) {
+
+                primaryStage.isMaximized = true
                 mainView.root
             } else {
                 serviceCentral.cacheService.removeSettings(

@@ -1,6 +1,7 @@
 package com.ebolo.studentmanager.views
 
 import com.ebolo.common.utils.loggerFor
+import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.views.classes.SMClassTableView
 import com.ebolo.studentmanager.views.students.SMStudentTableView
 import com.ebolo.studentmanager.views.subjects.SMSubjectTableView
@@ -11,6 +12,7 @@ import com.jfoenix.controls.JFXPopup.PopupVPosition
 import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition
 import de.jensd.fx.glyphs.materialicons.MaterialIcon
 import de.jensd.fx.glyphs.materialicons.MaterialIconView
+import javafx.application.Platform
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Pos
 import javafx.scene.Node
@@ -22,6 +24,7 @@ import tornadofx.*
 
 class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
     private val logger = loggerFor(SMMainView::class.java)
+    private val serviceCentral: SMServiceCentral by di()
 
     private val subjectTableView: SMSubjectTableView by inject()
     private val studentTableView: SMStudentTableView by inject()
@@ -82,7 +85,7 @@ class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
                                 glyphSize = 36
 
                                 setOnMouseClicked {
-                                    JFXPopup().apply {
+                                    JFXPopup().apply contextualMenu@{
                                         popupContent = vbox {
                                             /**
                                              * Method to build menu buttons for this drawer
@@ -113,6 +116,23 @@ class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
                                             }
 
                                             addMenuButton("Giới thiệu") { find<SMAboutView>().openModal() }
+
+                                            addMenuButton("Đăng xuất") {
+                                                if (serviceCentral.userService.logout()) {
+                                                    this@contextualMenu.hide()
+                                                    currentStage?.isMaximized = false
+
+                                                    replaceWith<SMLoginFormView>(
+                                                        sizeToScene = true,
+                                                        centerOnScreen = true
+                                                    )
+                                                }
+                                            }
+
+                                            addMenuButton("Thoát") {
+                                                Platform.exit()
+                                                System.exit(0)
+                                            }
                                         }
                                     }.show(this@menuIcon, PopupVPosition.TOP, PopupHPosition.RIGHT)
                                 }
@@ -205,11 +225,5 @@ class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
                 this += drawer
             }
         }
-    }
-
-    override fun onDock() {
-        super.onDock()
-
-        currentStage?.isMaximized = true
     }
 }
