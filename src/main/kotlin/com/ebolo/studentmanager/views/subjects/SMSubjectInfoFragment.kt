@@ -19,23 +19,26 @@ class SMSubjectInfoFragment : Fragment() {
         }
 
         fieldset("Thêm môn học mới", labelPosition = Orientation.HORIZONTAL) {
-            field("Tên môn") {
-                this += JFXTextField().apply {
-                    bind(subjectModel.name)
-                    required()
+            vbox(spacing = 20, alignment = Pos.CENTER_RIGHT) {
+                field("Tên môn") {
+                    this += JFXTextField().apply {
+                        bind(subjectModel.name)
+                        required()
+                    }
                 }
-            }
 
-            vbox(spacing = 10, alignment = Pos.CENTER_RIGHT) {
-                hbox(spacing = 10) {
-                    paddingTop = 10
+                hbox(spacing = 20) {
                     alignment = Pos.CENTER_RIGHT
 
                     this += JFXButton("Hủy bỏ").apply {
+                        useMaxWidth = true
                         buttonType = JFXButton.ButtonType.RAISED
+                        paddingVertical = 15
+                        paddingHorizontal = 30
 
                         style {
-                            backgroundColor += c("#fff")
+                            backgroundColor += c("#ff5533")
+                            textFill = c("#fff")
                         }
 
                         action {
@@ -44,7 +47,10 @@ class SMSubjectInfoFragment : Fragment() {
                     }
 
                     this += JFXButton("Hoàn tất").apply {
+                        useMaxWidth = true
                         buttonType = JFXButton.ButtonType.RAISED
+                        paddingVertical = 15
+                        paddingHorizontal = 30
 
                         style {
                             backgroundColor += c("#fff")
