@@ -65,9 +65,9 @@ class SMClassStudentAttendanceListFragment : Fragment() {
                             runAsync {
                                 with(serviceCentral.classService) {
                                     if (value) {
-                                        classModel.item.deleteAbsenceInfo(studentDto.id, LocalDate.now())
+                                        classModel.item.deleteAbsenceInfo(studentDto.id, choosingDate.value)
                                     } else {
-                                        classModel.item.addAbsenceInfo(studentDto.id, LocalDate.now())
+                                        classModel.item.addAbsenceInfo(studentDto.id, choosingDate.value)
                                     }
                                 }
                             }
