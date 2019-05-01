@@ -7,7 +7,7 @@ import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.jfoenix.controls.*
 import javafx.beans.binding.Bindings
-import javafx.beans.property.SimpleIntegerProperty
+import javafx.beans.property.SimpleLongProperty
 import javafx.event.EventTarget
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
@@ -26,8 +26,8 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
     private val teacherList by lazy { serviceCentral.teacherService.getTeacherList().observable() }
     private val studentList by lazy { serviceCentral.studentService.getStudentList().observable() }
 
-    private val month = SimpleIntegerProperty()
-    private val fee = SimpleIntegerProperty()
+    private val month = SimpleLongProperty()
+    private val fee = SimpleLongProperty()
 
     override val root = stackpane {
 
@@ -127,24 +127,35 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                         bind(fee)
                                         bind(classModel.tuitionFee)
 
-                                        validator { text ->
+                                        /*validator { text ->
                                             when {
                                                 text.isNullOrBlank() -> error("This field is required")
                                                 !text.isInt() -> error("Number is required")
                                                 else -> null
                                             }
-                                        }
+                                        }*/
+
+                                        required()
                                     }
                                 }
 
                                 field("Tổng học phí toàn khóa") {
-                                    label {
+                                    hbox(spacing = 5) {
                                         paddingTop = 5
-                                        bind(Bindings.multiply(month, fee))
+
+                                        label {
+                                            bind(Bindings.multiply(month, fee))
 
 
-                                        style {
-                                            fontSize = Dimension(14.0, Dimension.LinearUnits.pt)
+                                            style {
+                                                fontSize = Dimension(14.0, Dimension.LinearUnits.pt)
+                                            }
+                                        }
+
+                                        label("(VND)") {
+                                            style {
+                                                fontSize = Dimension(14.0, Dimension.LinearUnits.pt)
+                                            }
                                         }
                                     }
                                 }
