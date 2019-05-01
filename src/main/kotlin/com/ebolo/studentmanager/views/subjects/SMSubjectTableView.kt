@@ -80,7 +80,9 @@ class SMSubjectTableView : View() {
 
                 contextmenu {
                     item("Sửa...").action {
-                        // TODO: implement this action
+                        find<SMSubjectInfoFragment>(
+                            "subjectModel" to SMSubjectModel(selectedItem)
+                        ).openModal()
                     }
 
                     item("Xóa").action {

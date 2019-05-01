@@ -5,6 +5,7 @@ import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXTextField
+import javafx.beans.binding.Bindings
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import tornadofx.*
@@ -56,7 +57,7 @@ class SMSubjectInfoFragment : Fragment() {
                             backgroundColor += c("#fff")
                         }
 
-                        enableWhen(subjectModel.valid)
+                        enableWhen(Bindings.and(subjectModel.valid, subjectModel.dirty))
 
                         action {
                             var result: SMCRUDUtils.SMCRUDResult = SMCRUDUtils.SMCRUDResult(false)
