@@ -163,8 +163,12 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
             }
 
             if (mode != SMCRUDUtils.CRUDMode.NEW) {
-                tab("Thông tin học phí") {
-
+                tab("Lớp đã đăng ký") {
+                    borderpane {
+                        center = find<SMRegisteredClassesFragment>(
+                            "studentModel" to studentModel
+                        ).root
+                    }
                 }
             }
         }

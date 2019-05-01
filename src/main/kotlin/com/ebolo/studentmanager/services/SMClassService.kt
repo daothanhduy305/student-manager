@@ -29,9 +29,14 @@ class SMClassService(
 
     @PostConstruct
     private fun setupSubscriptions() {
-        // register the student list refresh request and event
+        // register the class list refresh request and event
         subscribe<SMClassListRefreshRequest> {
             fire(SMClassListRefreshEvent(getClassList()))
+        }
+
+        // register to the class list refresh request for a specific student
+        subscribe<SMClassListForStudentRefreshRequest> { request ->
+            fire(SMClassListForStudentRefreshEvent(getClassListOfStudent(request.studentId)))
         }
     }
 
@@ -44,6 +49,19 @@ class SMClassService(
      * @return List<SMClassDto>
      */
     fun getClassList() = classRepository.findAll().map { it.toDto() }
+
+    /**
+     * Method to return a list of all classes that this student has been registered to
+     *
+     * @author ebolo
+     * @since 0.0.1-SNAPSHOT
+     *
+     * @param studentId String
+     * @return List<SMClassDto>
+     */
+    fun getClassListOfStudent(studentId: String) = classRepository
+        .findAllByStudentListContains(studentId)
+        .map { it.toDto() }
 
     /**
      * Method to create a new class object
@@ -348,3 +366,19 @@ class SMClassListRefreshEvent(val classes: List<SMClassModel.SMClassDto>) : FXEv
  * @since 0.0.1-SNAPSHOT
  */
 class SMClassRefreshEvent(val classDto: SMClassModel.SMClassDto) : FXEvent()
+
+/**
+ * Request to refresh the class list for a specific student when fired
+ *
+ * @author ebolo (daothanhduy305@gmail.com)
+ * @since 0.0.1-SNAPSHOT
+ */
+class SMClassListForStudentRefreshRequest(val studentId: String) : FXEvent(EventBus.RunOn.BackgroundThread)
+
+/**
+ * Event to refresh the class list for a specific student when received
+ *
+ * @author ebolo (daothanhduy305@gmail.com)
+ * @since 0.0.1-SNAPSHOT
+ */
+class SMClassListForStudentRefreshEvent(val classes: List<SMClassModel.SMClassDto>) : FXEvent()
