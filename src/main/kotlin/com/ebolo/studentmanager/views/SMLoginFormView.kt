@@ -65,14 +65,17 @@ class SMLoginFormView : View("StuMan v0.0.1-SNAPSHOT") {
                         enableWhen(user.valid)
                         action {
                             if (serviceCentral.userService.login(user.getEntity())) {
-                                serviceCentral.cacheService.setSettings(Settings.REMEMBER_CREDENTIAL to rememberMe.value)
-
                                 if (rememberMe.value) {
-                                    serviceCentral.cacheService.setSettings(Settings.CREDENTIAL_USERNAME to user.username.value)
-                                    serviceCentral.cacheService.setSettings(Settings.CREDENTIAL_PASSWORD to user.password.value)
+                                    serviceCentral.cacheService.setSettings(
+                                        Settings.CREDENTIAL_USERNAME to user.username.value,
+                                        Settings.CREDENTIAL_PASSWORD to user.password.value,
+                                        Settings.REMEMBER_CREDENTIAL to rememberMe.value
+                                    )
                                 } else {
-                                    serviceCentral.cacheService.removeSettings(Settings.CREDENTIAL_USERNAME)
-                                    serviceCentral.cacheService.removeSettings(Settings.CREDENTIAL_PASSWORD)
+                                    serviceCentral.cacheService.removeSettings(
+                                        Settings.CREDENTIAL_USERNAME,
+                                        Settings.CREDENTIAL_PASSWORD
+                                    )
                                 }
 
                                 replaceWith<SMMainView>(

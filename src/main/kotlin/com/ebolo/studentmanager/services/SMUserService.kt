@@ -35,7 +35,7 @@ class SMUserService(
      */
     fun login(user: SMUserEntity): Boolean {
         logger.info("Logging user: ${user.username} into the system")
-        cacheService.cache[SMGlobal.CACHE_ENTRY_LOGGING_USER] = user.username
+        cacheService.setSettings(SMGlobal.CACHE_ENTRY_LOGGING_USER to user.username)
         return true
     }
 }

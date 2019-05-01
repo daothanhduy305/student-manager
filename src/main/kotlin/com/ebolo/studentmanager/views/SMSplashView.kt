@@ -35,9 +35,11 @@ class SMSplashView : View() {
                 })) {
                 mainView.root
             } else {
-                serviceCentral.cacheService.removeSettings(Settings.CREDENTIAL_USERNAME)
-                serviceCentral.cacheService.removeSettings(Settings.CREDENTIAL_PASSWORD)
-                serviceCentral.cacheService.removeSettings(Settings.REMEMBER_CREDENTIAL)
+                serviceCentral.cacheService.removeSettings(
+                    Settings.CREDENTIAL_USERNAME,
+                    Settings.CREDENTIAL_PASSWORD,
+                    Settings.REMEMBER_CREDENTIAL
+                )
 
                 loginView.root
             }
