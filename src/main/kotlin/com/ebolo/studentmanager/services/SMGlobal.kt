@@ -1,5 +1,7 @@
 package com.ebolo.studentmanager.services
 
+import java.text.DecimalFormat
+
 object SMGlobal {
     // region cache
     const val CACHE_FILE = "SM.db"
@@ -10,6 +12,7 @@ object SMGlobal {
 
     // region system
     const val SYSTEM_USER = "System"
+    val decimalFormatter = DecimalFormat("#,###")
     // endregion
 }
 

@@ -1,10 +1,13 @@
 package com.ebolo.studentmanager.views.classes
 
+import com.ebolo.common.utils.loggerFor
 import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.models.SMStudentModel
 import com.ebolo.studentmanager.services.SMClassListRefreshRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.utils.SMCRUDUtils
+import com.ebolo.studentmanager.utils.formatDecimal
+import com.ebolo.studentmanager.utils.isFormattedLong
 import com.jfoenix.controls.*
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleLongProperty
@@ -13,11 +16,15 @@ import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.control.ButtonType
 import javafx.scene.control.TabPane
+import javafx.scene.control.TextFormatter
 import javafx.scene.layout.Priority
+import javafx.util.StringConverter
 import tornadofx.*
 
 
 class SMClassInfoFragment : Fragment("Thông tin lớp học") {
+    private val logger = loggerFor(SMClassInfoFragment::class.java)
+
     private val serviceCentral: SMServiceCentral by di()
     private val mode: SMCRUDUtils.CRUDMode by param()
     private val classModel: SMClassModel by param(SMClassModel())
@@ -51,6 +58,7 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
 
                             fieldset(labelPosition = Orientation.VERTICAL) {
                                 spacing = 20.0
+                                prefWidth = 300.0
 
                                 field("Tên lớp") {
                                     this += JFXTextField().apply {
@@ -124,16 +132,33 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
 
                                 field("Học phí") {
                                     this += JFXTextField().apply {
+                                        textFormatter = TextFormatter(object : StringConverter<Number?>() {
+                                            override fun fromString(string: String?): Number? {
+                                                return if (string != null && string.isFormattedLong())
+                                                    string.trim().replace("[^\\d]".toRegex(), "").toLong()
+                                                else null
+                                            }
+
+                                            override fun toString(number: Number?): String {
+                                                return if (number != null) return number.toLong().toString().formatDecimal()
+                                                else ""
+                                            }
+                                        })
+
                                         bind(fee)
                                         bind(classModel.tuitionFee)
 
-                                        /*validator { text ->
+                                        textProperty().onChange {
+                                            runLater { commitValue() }
+                                        }
+
+                                        validator { text ->
                                             when {
                                                 text.isNullOrBlank() -> error("This field is required")
-                                                !text.isInt() -> error("Number is required")
+                                                !text.isFormattedLong() -> error("Number is required")
                                                 else -> null
                                             }
-                                        }*/
+                                        }
 
                                         required()
                                     }
@@ -144,8 +169,12 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                         paddingTop = 5
 
                                         label {
-                                            bind(Bindings.multiply(month, fee))
+                                            val courseFee = Bindings.multiply(month, fee)
+                                            text = courseFee.value.toString().formatDecimal()
 
+                                            courseFee.onChange { newNumber ->
+                                                if (newNumber != null) text = newNumber.toString().formatDecimal()
+                                            }
 
                                             style {
                                                 fontSize = Dimension(14.0, Dimension.LinearUnits.pt)
