@@ -2,10 +2,10 @@ package com.ebolo.studentmanager.views.subjects
 
 import com.ebolo.studentmanager.models.SMSubjectModel
 import com.ebolo.studentmanager.services.SMServiceCentral
-import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXTextField
 import javafx.beans.binding.Bindings
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import tornadofx.*
@@ -13,6 +13,7 @@ import tornadofx.*
 class SMSubjectInfoFragment : Fragment() {
     private val subjectModel: SMSubjectModel by param(SMSubjectModel())
     private val serviceCentral: SMServiceCentral by di()
+    private val isNotInProgress = SimpleBooleanProperty(true)
 
     override val root = form {
         style {
@@ -24,6 +25,9 @@ class SMSubjectInfoFragment : Fragment() {
                 field("Tên môn") {
                     this += JFXTextField().apply {
                         bind(subjectModel.name)
+
+                        enableWhen(isNotInProgress)
+
                         required()
                     }
                 }
@@ -42,6 +46,8 @@ class SMSubjectInfoFragment : Fragment() {
                             textFill = c("#fff")
                         }
 
+                        enableWhen(isNotInProgress)
+
                         action {
                             close()
                         }
@@ -57,15 +63,18 @@ class SMSubjectInfoFragment : Fragment() {
                             backgroundColor += c("#fff")
                         }
 
-                        enableWhen(Bindings.and(subjectModel.valid, subjectModel.dirty))
+                        enableWhen(Bindings.and(Bindings.and(subjectModel.valid, subjectModel.dirty), isNotInProgress))
 
                         action {
-                            var result: SMCRUDUtils.SMCRUDResult = SMCRUDUtils.SMCRUDResult(false)
+                            isNotInProgress.value = false
+
                             runAsync {
-                                result = serviceCentral.subjectService.createNewSubject(subjectModel)
-                            }.ui {
-                                if (result.success) {
+                                serviceCentral.subjectService.createNewSubject(subjectModel)
+                            } ui {
+                                if (it.success) {
                                     close()
+                                } else {
+                                    isNotInProgress.value = true
                                 }
                             }
                         }
