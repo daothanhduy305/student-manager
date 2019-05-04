@@ -52,8 +52,8 @@ class SMSubjectService(
      * @param subjectModel SMSubjectModel model contains info of the subject
      * @return SMCRUDUtils
      */
-    fun createNewSubject(subjectModel: SMSubjectModel): SMCRUDUtils.SMCRUDResult {
-        val added = subjectRepository.getByName(subjectModel.name.value).isPresent
+    fun createNewOrUpdateSubject(subjectModel: SMSubjectModel): SMCRUDUtils.SMCRUDResult {
+        val added = subjectRepository.findByNameIgnoreCase(subjectModel.name.value).isPresent
 
         if (!added) {
             subjectRepository.save(subjectModel.getEntity())

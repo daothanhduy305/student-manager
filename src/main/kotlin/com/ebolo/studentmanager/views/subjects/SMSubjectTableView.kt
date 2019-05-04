@@ -4,6 +4,7 @@ import com.ebolo.studentmanager.models.SMSubjectModel
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.SMSubjectRefreshEvent
 import com.ebolo.studentmanager.services.SMSubjectRefreshRequest
+import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXTextField
 import javafx.collections.FXCollections
@@ -80,7 +81,8 @@ class SMSubjectTableView : View() {
                 contextmenu {
                     item("Sửa...").action {
                         find<SMSubjectInfoFragment>(
-                            "subjectModel" to SMSubjectModel(selectedItem)
+                            "subjectModel" to SMSubjectModel(selectedItem),
+                            "mode" to SMCRUDUtils.CRUDMode.EDIT
                         ).openModal()
                     }
 

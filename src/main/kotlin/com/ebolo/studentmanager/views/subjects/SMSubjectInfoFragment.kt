@@ -2,6 +2,7 @@ package com.ebolo.studentmanager.views.subjects
 
 import com.ebolo.studentmanager.models.SMSubjectModel
 import com.ebolo.studentmanager.services.SMServiceCentral
+import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXTextField
 import javafx.beans.binding.Bindings
@@ -13,6 +14,7 @@ import tornadofx.*
 class SMSubjectInfoFragment : Fragment() {
     private val subjectModel: SMSubjectModel by param(SMSubjectModel())
     private val serviceCentral: SMServiceCentral by di()
+    private val mode: SMCRUDUtils.CRUDMode by param(SMCRUDUtils.CRUDMode.NEW)
 
     private val isNotInProgress = SimpleBooleanProperty(true)
     private var hasError = false
@@ -25,7 +27,10 @@ class SMSubjectInfoFragment : Fragment() {
             backgroundColor += c("#fff")
         }
 
-        fieldset("Thêm môn học mới", labelPosition = Orientation.HORIZONTAL) {
+        fieldset(when (mode) {
+            SMCRUDUtils.CRUDMode.NEW -> "Thêm môn học mới"
+            else -> "Thông tin môn"
+        }, labelPosition = Orientation.HORIZONTAL) {
             vbox(spacing = 20, alignment = Pos.CENTER_RIGHT) {
                 field("Tên môn") {
                     subjectNameBox = JFXTextField().apply {
@@ -84,7 +89,7 @@ class SMSubjectInfoFragment : Fragment() {
                             isNotInProgress.value = false
 
                             runAsync {
-                                serviceCentral.subjectService.createNewSubject(subjectModel)
+                                serviceCentral.subjectService.createNewOrUpdateSubject(subjectModel)
                             } ui {
                                 if (it.success) {
                                     close()

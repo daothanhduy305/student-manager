@@ -20,5 +20,5 @@ public interface SMSubjectRepository extends EboloBaseMongoRepository<SMSubjectE
      * @author ebolo
      * @since 0.0.1-SNAPSHOT
      */
-    Optional<SMSubjectEntity> getByName(final String subjectName);
+    Optional<SMSubjectEntity> findByNameIgnoreCase(final String subjectName);
 }
