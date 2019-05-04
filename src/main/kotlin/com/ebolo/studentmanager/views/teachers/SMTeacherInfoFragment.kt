@@ -11,8 +11,10 @@ import javafx.beans.binding.Bindings
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.control.ButtonType
+import javafx.scene.control.DateCell
 import javafx.scene.layout.Priority
 import tornadofx.*
+import java.time.LocalDate
 
 class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
     private val serviceCentral: SMServiceCentral by di()
@@ -52,6 +54,15 @@ class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
                     field("Ngày sinh") {
                         this += JFXDatePicker().apply {
                             bind(teacherModel.birthday)
+
+                            setDayCellFactory {
+                                object : DateCell() {
+                                    override fun updateItem(item: LocalDate?, empty: Boolean) {
+                                        super.updateItem(item, empty)
+                                        isDisable = empty || item!!.isAfter(LocalDate.now())
+                                    }
+                                }
+                            }
 
                             defaultColor = c("#3f51b5")
                             isOverLay = false
