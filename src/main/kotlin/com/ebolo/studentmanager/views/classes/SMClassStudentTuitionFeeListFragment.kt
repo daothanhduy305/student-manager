@@ -1,7 +1,6 @@
 package com.ebolo.studentmanager.views.classes
 
 import com.ebolo.common.utils.loggerFor
-import com.ebolo.studentmanager.entities.SMStudentPerformanceInfo
 import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.models.SMStudentModel
 import com.ebolo.studentmanager.services.SMClassRefreshEvent
@@ -12,7 +11,6 @@ import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
-import javafx.stage.Modality
 import tornadofx.*
 import java.time.LocalDate
 
@@ -94,33 +92,6 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
                 }
 
                 smartResize()
-
-                // set up the context menu
-                contextmenu {
-                    item("Sửa...").action {
-                        if (selectedItem != null) {
-                            val performanceInfo = classModel.item.studentPerformanceList.firstOrNull { performanceInfo ->
-                                performanceInfo.student == selectedItem!!.id
-                            } ?: SMStudentPerformanceInfo(
-                                student = selectedItem!!.id,
-                                results = generateSequence { -1 }.take(classModel.numberOfExams.value.toInt()).toMutableList())
-
-                            find<SMClassPerformanceFragment>(
-                                "studentInfo" to selectedItem,
-                                "performanceInfo" to performanceInfo,
-                                "classId" to classModel.id.value)
-                                .openModal(modality = Modality.WINDOW_MODAL, block = true)
-                        }
-                    }
-
-                    item("Xóa").action {
-                        if (selectedItem != null) runAsync {
-                            with(serviceCentral.classService) {
-                                selectedItem!! deregisterFromClass classModel
-                            }
-                        }
-                    }
-                }
 
                 // Subscribe to events
                 subscribe<SMClassRefreshEvent> { event ->

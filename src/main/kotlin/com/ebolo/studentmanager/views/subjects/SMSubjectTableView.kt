@@ -11,7 +11,6 @@ import javafx.collections.ObservableList
 import javafx.collections.transformation.FilteredList
 import javafx.geometry.Pos
 import javafx.scene.layout.Priority
-import javafx.stage.Modality
 import tornadofx.*
 
 class SMSubjectTableView : View() {
@@ -37,7 +36,7 @@ class SMSubjectTableView : View() {
                         isDisableVisualFocus = true
 
                         action {
-                            find<SMSubjectInfoFragment>().openModal(modality = Modality.WINDOW_MODAL, block = true)
+                            find<SMSubjectInfoFragment>().openModal()
                         }
 
                         style {

@@ -8,7 +8,6 @@ import com.ebolo.studentmanager.services.SMClassListForStudentRefreshRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.views.classes.SMClassPerformanceFragment
 import javafx.beans.property.SimpleObjectProperty
-import javafx.stage.Modality
 import tornadofx.*
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -58,7 +57,7 @@ class SMRegisteredClassesFragment : Fragment() {
                                 "studentInfo" to studentModel.item,
                                 "performanceInfo" to performanceInfo,
                                 "classId" to selectedItem!!.id)
-                                .openModal(modality = Modality.WINDOW_MODAL, block = true)
+                                .openModal()
                         }
                     }
 

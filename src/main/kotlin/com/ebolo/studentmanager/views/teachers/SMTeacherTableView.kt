@@ -12,7 +12,6 @@ import javafx.collections.ObservableList
 import javafx.collections.transformation.FilteredList
 import javafx.geometry.Pos
 import javafx.scene.layout.Priority
-import javafx.stage.Modality
 import tornadofx.*
 
 class SMTeacherTableView : View() {
@@ -40,7 +39,7 @@ class SMTeacherTableView : View() {
                         action {
                             find<SMTeacherInfoFragment>(
                                 "mode" to SMCRUDUtils.CRUDMode.NEW
-                            ).openModal(modality = Modality.WINDOW_MODAL, block = true)
+                            ).openModal()
                         }
 
                         style {
@@ -90,7 +89,7 @@ class SMTeacherTableView : View() {
                         find<SMTeacherInfoFragment>(
                             "mode" to SMCRUDUtils.CRUDMode.EDIT,
                             "teacherModel" to SMTeacherModel(selectedItem)
-                        ).openModal(modality = Modality.WINDOW_MODAL, block = true)
+                        ).openModal()
                     }
 
                     item("Xóa").action {

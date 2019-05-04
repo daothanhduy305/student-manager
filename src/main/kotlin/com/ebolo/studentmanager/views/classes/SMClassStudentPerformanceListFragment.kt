@@ -9,7 +9,6 @@ import com.ebolo.studentmanager.views.utils.converters.SMGradeConverter
 import com.ebolo.studentmanager.views.utils.ui.tableview.JFXTextFieldTableCell
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.geometry.Pos
-import javafx.stage.Modality
 import javafx.util.StringConverter
 import tornadofx.*
 import java.time.ZoneOffset
@@ -101,7 +100,7 @@ class SMClassStudentPerformanceListFragment : Fragment() {
                         "studentInfo" to selectedItem,
                         "performanceInfo" to performanceInfo,
                         "classId" to classModel.id.value)
-                        .openModal(modality = Modality.WINDOW_MODAL, block = true)
+                        .openModal()
                 }
             }
 
