@@ -13,7 +13,12 @@ import tornadofx.*
 class SMSubjectInfoFragment : Fragment() {
     private val subjectModel: SMSubjectModel by param(SMSubjectModel())
     private val serviceCentral: SMServiceCentral by di()
+
     private val isNotInProgress = SimpleBooleanProperty(true)
+    private var hasError = false
+    private var errorMessage = ""
+
+    private var subjectNameBox by singleAssign<JFXTextField>()
 
     override val root = form {
         style {
@@ -23,13 +28,23 @@ class SMSubjectInfoFragment : Fragment() {
         fieldset("Thêm môn học mới", labelPosition = Orientation.HORIZONTAL) {
             vbox(spacing = 20, alignment = Pos.CENTER_RIGHT) {
                 field("Tên môn") {
-                    this += JFXTextField().apply {
+                    subjectNameBox = JFXTextField().apply {
                         bind(subjectModel.name)
 
                         enableWhen(isNotInProgress)
 
                         required()
+
+                        // Add custom validation for any error message that we might have encountered
+                        validator {
+                            if (hasError) {
+                                hasError = false // reset the state
+                                error(errorMessage)
+                            } else null
+                        }
                     }
+
+                    this += subjectNameBox
                 }
 
                 hbox(spacing = 20) {
@@ -75,6 +90,9 @@ class SMSubjectInfoFragment : Fragment() {
                                     close()
                                 } else {
                                     isNotInProgress.value = true
+                                    hasError = true
+                                    errorMessage = it.errorMessage
+                                    subjectModel.validate()
                                 }
                             }
                         }
