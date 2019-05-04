@@ -18,7 +18,9 @@ import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.layout.BorderPane
+import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
+import javafx.util.Duration
 import tornadofx.*
 
 
@@ -225,5 +227,41 @@ class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
                 this += drawer
             }
         }
+    }
+
+    /**
+     * Method to show a notification under the form of snackbar over the main view
+     *
+     * @author ebolo
+     * @since 0.0.1-SNAPSHOT
+     *
+     * @param message String
+     */
+    fun showNotification(message: String) {
+        JFXSnackbar(root).enqueue(JFXSnackbar.SnackbarEvent(StackPane().apply {
+            paddingAll = 10
+            prefWidth = 500.0
+            alignment = Pos.CENTER
+
+            label(message) {
+                textFill = c("#fff")
+
+                style {
+                    fontSize = Dimension(13.0, Dimension.LinearUnits.pt)
+                }
+            }
+
+            style {
+                backgroundColor += c("#000", 0.8)
+                backgroundRadius = MultiValue(arrayOf(
+                    CssBox(
+                        top = Dimension(8.0, Dimension.LinearUnits.px),
+                        right = Dimension(8.0, Dimension.LinearUnits.px),
+                        bottom = Dimension(8.0, Dimension.LinearUnits.px),
+                        left = Dimension(8.0, Dimension.LinearUnits.px)
+                    )
+                ))
+            }
+        }, Duration.seconds(3.0), null))
     }
 }
