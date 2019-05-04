@@ -127,6 +127,12 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                         bind(month)
                                         bind(classModel.monthPeriods)
                                         required()
+                                        validator { text ->
+                                            when {
+                                                text != null && text.isInt() && text.toInt() == 0 -> error("Khóa học tối thiểu 1 tháng")
+                                                else -> null
+                                            }
+                                        }
                                     }
                                 }
 
@@ -167,13 +173,15 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                 field("Tổng học phí toàn khóa") {
                                     hbox(spacing = 5) {
                                         paddingTop = 5
+                                        val courseFee = Bindings.multiply(month, fee)
 
                                         label {
-                                            val courseFee = Bindings.multiply(month, fee)
-                                            text = courseFee.value.toString().formatDecimal()
+                                            text = "Miễn phí"
 
                                             courseFee.onChange { newNumber ->
-                                                if (newNumber != null) text = newNumber.toString().formatDecimal()
+                                                if (newNumber != null) text =
+                                                    if (newNumber == 0L) "Miễn phí"
+                                                    else newNumber.toString().formatDecimal()
                                             }
 
                                             style {
@@ -185,6 +193,8 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                             style {
                                                 fontSize = Dimension(14.0, Dimension.LinearUnits.pt)
                                             }
+
+                                            visibleWhen(Bindings.greaterThan(courseFee, 0))
                                         }
                                     }
                                 }
