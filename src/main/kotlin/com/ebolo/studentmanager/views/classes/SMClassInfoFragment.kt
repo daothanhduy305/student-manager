@@ -207,6 +207,14 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                     this += JFXTextField().apply {
                                         bind(classModel.numberOfExams)
                                         required()
+                                        validator { text ->
+                                            if (text != null)
+                                                if (text.isInt()) {
+                                                    if (text.toInt() <= 0) error("Phải có ít nhất 1 cột điểm")
+                                                    else null
+                                                } else error("Number is required")
+                                            else null
+                                        }
                                     }
                                 }
 
