@@ -17,6 +17,11 @@
  * under the License.
  */
 
+.jfx-hamburger-icon {
+    -fx-spacing: 5;
+    -fx-cursor: hand;
+}
+
 .jfx-hamburger StackPane {
     -fx-background-color: #fff;
 }

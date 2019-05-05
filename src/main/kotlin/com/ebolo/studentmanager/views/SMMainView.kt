@@ -222,6 +222,14 @@ class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
                         addMenuButton("Học sinh", studentTableView.root)
                         addMenuButton("Giáo viên", teacherTableView.root)
                     })
+
+                    // This is for when the user click outside the drawer
+                    setOnDrawerClosing {
+                        if (backTransition.rate != -1.0) {
+                            backTransition.rate = -1.0
+                            backTransition.play()
+                        }
+                    }
                 }
 
                 this += drawer
