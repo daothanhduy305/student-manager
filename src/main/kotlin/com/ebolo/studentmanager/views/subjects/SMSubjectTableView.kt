@@ -95,8 +95,8 @@ class SMSubjectTableView : View() {
                 }
 
                 subscribe<SMSubjectRefreshEvent> { event ->
-                    runAsync { subjectList.setAll(event.subjects) }.ui {
-                        smartResize()
+                    runAsync { subjectList.setAll(event.subjects) } ui {
+                        requestResize()
                     }
                 }
             }

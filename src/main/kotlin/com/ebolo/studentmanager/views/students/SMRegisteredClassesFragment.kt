@@ -76,7 +76,7 @@ class SMRegisteredClassesFragment : Fragment() {
 
                 // subscribe to events
                 subscribe<SMClassListForStudentRefreshEvent> { event ->
-                    asyncItems { event.classes }
+                    asyncItems { event.classes } ui { requestResize() }
                 }
             }
         }

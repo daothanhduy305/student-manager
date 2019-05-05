@@ -109,8 +109,8 @@ class SMClassTableView : View() {
                 // subscribe to the refresh event to reset the list
                 subscribe<SMClassListRefreshEvent> { event ->
                     searchBox.text = ""
-                    runAsync { classList.setAll(event.classes) }.ui {
-                        smartResize()
+                    runAsync { classList.setAll(event.classes) } ui {
+                        requestResize()
                     }
                 }
             }

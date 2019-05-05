@@ -119,8 +119,10 @@ class SMClassStudentPerformanceListFragment : Fragment() {
                 classModel.studentPerformanceList.value.setAll(event.classDto.studentPerformanceList)
                 classModel.studentList.value.setAll(event.classDto.studentList)
 
-                asyncItems { classModel.studentList.value }.ui {
-                    smartResize()
+                asyncItems {
+                    classModel.studentList.value
+                } ui {
+                    requestResize()
                 }
             }
 
