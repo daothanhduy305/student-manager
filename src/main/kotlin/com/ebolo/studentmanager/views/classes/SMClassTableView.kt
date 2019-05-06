@@ -73,6 +73,8 @@ class SMClassTableView : View() {
 
         center {
             tableview<SMClassModel.SMClassDto>(filteredClassList) {
+                multiSelect()
+
                 makeIndexColumn("STT").apply {
                     style {
                         alignment = Pos.TOP_CENTER
@@ -99,10 +101,8 @@ class SMClassTableView : View() {
                     }
 
                     item("Xóa").action {
-                        if (selectedItem != null) runAsync {
-                            serviceCentral.classService.deleteClass(selectedItem!!.id)
-                            fire(SMClassListRefreshRequest)
-                        }
+                        serviceCentral.classService.deleteClasses(selectionModel.selectedItems.map { it.id }.toList())
+                        fire(SMClassListRefreshRequest)
                     }
                 }
 

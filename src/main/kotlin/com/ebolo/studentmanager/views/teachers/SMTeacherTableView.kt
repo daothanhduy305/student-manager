@@ -93,10 +93,8 @@ class SMTeacherTableView : View() {
                     }
 
                     item("Xóa").action {
-                        if (selectedItem != null) runAsync {
-                            serviceCentral.teacherService.deleteTeacher(selectedItem!!.id)
-                            fire(SMTeacherRefreshRequest)
-                        }
+                        serviceCentral.teacherService.deleteTeachers(selectionModel.selectedItems.map { it.id }.toList())
+                        fire(SMTeacherRefreshRequest)
                     }
                 }
 

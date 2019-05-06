@@ -87,10 +87,8 @@ class SMSubjectTableView : View() {
                     }
 
                     item("Xóa").action {
-                        if (selectedItem != null) runAsync {
-                            serviceCentral.subjectService.deleteSubject(selectedItem!!.id)
-                            fire(SMSubjectRefreshRequest)
-                        }
+                        serviceCentral.subjectService.deleteSubjects(selectionModel.selectedItems.map { it.id }.toList())
+                        fire(SMSubjectRefreshRequest)
                     }
                 }
 

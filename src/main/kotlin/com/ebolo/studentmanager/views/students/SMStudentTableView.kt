@@ -99,10 +99,8 @@ class SMStudentTableView : View() {
                     }
 
                     item("Xóa").action {
-                        if (selectedItem != null) runAsync {
-                            serviceCentral.studentService.deleteStudent(selectedItem!!.id)
-                            fire(SMStudentRefreshRequest)
-                        }
+                        serviceCentral.studentService.deleteStudents(selectionModel.selectedItems.map { it.id }.toList())
+                        fire(SMStudentRefreshRequest)
                     }
                 }
 

@@ -3,6 +3,7 @@ package com.ebolo.studentmanager.repositories;
 import com.ebolo.common.database.repositories.mongo.EboloBaseMongoRepository;
 import com.ebolo.studentmanager.entities.SMSubjectEntity;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -21,4 +22,13 @@ public interface SMSubjectRepository extends EboloBaseMongoRepository<SMSubjectE
      * @since 0.0.1-SNAPSHOT
      */
     Optional<SMSubjectEntity> findByNameIgnoreCase(final String subjectName);
+
+    /**
+     * Method to delete a list of subjects that have the Id being contained
+     *
+     * @param subjectIdList list of subjects' id being deleted
+     * @author ebolo
+     * @since 0.0.1-SNAPSHOT
+     */
+    void deleteAllByIdIn(final List<String> subjectIdList);
 }

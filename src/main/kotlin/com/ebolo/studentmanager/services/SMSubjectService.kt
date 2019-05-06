@@ -1,6 +1,5 @@
 package com.ebolo.studentmanager.services
 
-import com.ebolo.common.utils.getWhenPresentOr
 import com.ebolo.common.utils.loggerFor
 import com.ebolo.studentmanager.models.SMSubjectModel
 import com.ebolo.studentmanager.repositories.SMSubjectRepository
@@ -73,24 +72,17 @@ class SMSubjectService(
      * @author ebolo (daothanhduy305@gmail.com)
      * @since 0.0.1-SNAPSHOT
      *
-     * @param subjectId String
+     * @param idList List<String>
+     * @return SMCRUDUtils.SMCRUDResult
      */
-    fun deleteSubject(subjectId: String): SMCRUDUtils.SMCRUDResult = subjectRepository.findById(subjectId).getWhenPresentOr(
-        ifPresentHandler = {
-            logger.info("Deleting subject with id = $subjectId, name = ${it.name}")
-            subjectRepository.deleteById(subjectId)
-            SMCRUDUtils.SMCRUDResult(
-                success = true
-            )
-        },
-        otherwise = {
-            logger.error("Could not found subject with id = $subjectId")
-            SMCRUDUtils.SMCRUDResult(
-                success = false,
-                errorMessage = "Could not found subject with id = $subjectId"
-            )
-        }
-    )
+    fun deleteSubjects(idList: List<String>): SMCRUDUtils.SMCRUDResult = try {
+        logger.info("Deleting Subjects(s) '${idList.joinToString()}'")
+
+        subjectRepository.deleteAllByIdIn(idList)
+        SMCRUDUtils.SMCRUDResult(true)
+    } catch (e: Exception) {
+        SMCRUDUtils.SMCRUDResult(false, errorMessage = e.message ?: "Something went wrong")
+    }
 }
 
 /**

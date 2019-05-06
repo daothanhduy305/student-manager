@@ -79,22 +79,23 @@ class SMClassService(
     }
 
     /**
-     * Method to delete a class by its id
+     * Method to delete classes by ids
      *
      * @author saika
      * @since 0.0.1-SNAPSHOT
      *
-     * @param classId String
+     * @param classIds List<String>
      * @return SMCRUDUtils.SMCRUDResult
      */
-    fun deleteClass(classId: String): SMCRUDUtils.SMCRUDResult = try {
-        logger.info("Deleting Class '$classId'")
-        classRepository.deleteById(classId)
+    fun deleteClasses(classIds: List<String>): SMCRUDUtils.SMCRUDResult = try {
+        logger.info("Deleting Class(es) '${classIds.joinToString()}'")
+        classRepository.deleteAllByIdIn(classIds)
 
         SMCRUDUtils.SMCRUDResult(true)
     } catch (e: Exception) {
         logger.error(e.message, e)
-        SMCRUDUtils.SMCRUDResult(false, e.message ?: "Something went wrong while deleting Class '$classId'")
+        SMCRUDUtils.SMCRUDResult(
+            false, e.message ?: "Something went wrong while deleting Class(es) '${classIds.joinToString()}'")
     }
 
     /**

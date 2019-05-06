@@ -22,4 +22,13 @@ public interface SMStudentRepository extends EboloBaseUserMongoRepository<SMStud
      * @since 0.0.1-SNAPSHOT
      */
     List<SMStudentEntity> findAllByIdIn(Set<String> studentIdList);
+
+    /**
+     * Method to delete a list of students that have the Id being contained
+     *
+     * @param studentIdList list of students' id being deleted
+     * @author ebolo
+     * @since 0.0.1-SNAPSHOT
+     */
+    void deleteAllByIdIn(final List<String> studentIdList);
 }

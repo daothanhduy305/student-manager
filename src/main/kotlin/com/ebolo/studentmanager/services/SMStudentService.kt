@@ -79,16 +79,17 @@ class SMStudentService(
         }
 
     /**
-     * Method to delete a student by id
+     * Method to delete a list of students by ids
      *
      * @author ebolo (daothanhduy305@gmail.com)
      * @since 0.0.1-SNAPSHOT
      *
-     * @param id String
+     * @param idList List<String>
      * @return SMCRUDUtils
      */
-    fun deleteStudent(id: String): SMCRUDUtils.SMCRUDResult = try {
-        studentRepository.deleteById(id)
+    fun deleteStudents(idList: List<String>): SMCRUDUtils.SMCRUDResult = try {
+        logger.info("Deleting Student(s) '${idList.joinToString()}'")
+        studentRepository.deleteAllByIdIn(idList)
         SMCRUDUtils.SMCRUDResult(true)
     } catch (e: Exception) {
         SMCRUDUtils.SMCRUDResult(false, errorMessage = e.message ?: "Something went wrong")

@@ -12,5 +12,23 @@ import java.util.List;
  * @since 0.0.1-SNAPSHOT
  */
 public interface SMClassRepository extends EboloBaseMongoRepository<SMClassEntity> {
+    /**
+     * Method to retrieve list of students by Id
+     *
+     * @param studentId list of student's Id
+     * @return list of SMStudentEntity
+     * @author ebolo
+     * @since 0.0.1-SNAPSHOT
+     */
     List<SMClassEntity> findAllByStudentListContains(final String studentId);
+
+    /**
+     * Delete a list of students by ids
+     *
+     * @author ebolo
+     * @since 0.0.1-SNAPSHOT
+     *
+     * @param classIds list of student's id to be deleted
+     */
+    void deleteAllByIdIn(final List<String> classIds);
 }

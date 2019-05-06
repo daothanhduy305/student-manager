@@ -1,6 +1,7 @@
 package com.ebolo.studentmanager.services
 
 import com.ebolo.common.utils.getWhenPresentOr
+import com.ebolo.common.utils.loggerFor
 import com.ebolo.studentmanager.models.SMTeacherModel
 import com.ebolo.studentmanager.repositories.SMTeacherRepository
 import com.ebolo.studentmanager.utils.SMCRUDUtils
@@ -21,6 +22,8 @@ import javax.annotation.PostConstruct
 class SMTeacherService(
     private val teacherRepository: SMTeacherRepository
 ) : Controller() {
+    private val logger = loggerFor(SMTeacherService::class.java)
+
     @PostConstruct
     fun setupSubscriptions() {
         // register the student list refresh request and event
@@ -78,16 +81,17 @@ class SMTeacherService(
         )
 
     /**
-     * Method to delete the teacher from the system
+     * Method to delete a list of teachers from the system
      *
      * @author ebolo (daothanhduy305@gmail.com)
      * @since 0.0.1-SNAPSHOT
      *
-     * @param id String
+     * @param idList List<String>
      * @return SMCRUDUtils.SMCRUDResult
      */
-    fun deleteTeacher(id: String): SMCRUDUtils.SMCRUDResult = try {
-        teacherRepository.deleteById(id)
+    fun deleteTeachers(idList: List<String>): SMCRUDUtils.SMCRUDResult = try {
+        logger.info("Deleting Teachers(s) '${idList.joinToString()}'")
+        teacherRepository.deleteAllByIdIn(idList)
 
         SMCRUDUtils.SMCRUDResult(true)
     } catch (e: Exception) {
