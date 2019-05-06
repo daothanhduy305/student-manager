@@ -19,6 +19,7 @@ import javafx.scene.control.TabPane
 import javafx.scene.control.TextFormatter
 import javafx.scene.layout.Priority
 import javafx.util.StringConverter
+import org.apache.commons.lang3.StringUtils
 import tornadofx.*
 
 
@@ -354,13 +355,13 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                     // Filter out the students in the return list
                                     textProperty().addListener { _, _, _ ->
                                         autoCompletePopup.filter { chosenStudent ->
-                                            val currentValue = this.text.toLowerCase()
+                                            val currentValue = StringUtils.stripAccents(this.text).toLowerCase()
                                             !classModel.item.studentList.any { student ->
                                                 student.id == chosenStudent.id
                                             } // This student has not already been in the class
-                                                && (chosenStudent.firstName.toLowerCase().contains(currentValue)
-                                                || chosenStudent.lastName.toLowerCase().contains(currentValue)
-                                                || chosenStudent.nickname.toLowerCase().contains(currentValue))
+                                                && (StringUtils.stripAccents(chosenStudent.firstName).toLowerCase().contains(currentValue)
+                                                || StringUtils.stripAccents(chosenStudent.lastName).toLowerCase().contains(currentValue)
+                                                || StringUtils.stripAccents(chosenStudent.nickname).toLowerCase().contains(currentValue))
                                         }
 
                                         if (autoCompletePopup.filteredSuggestions.isEmpty() || this.text.isEmpty()) {

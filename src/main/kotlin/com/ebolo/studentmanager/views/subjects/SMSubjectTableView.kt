@@ -12,6 +12,7 @@ import javafx.collections.ObservableList
 import javafx.collections.transformation.FilteredList
 import javafx.geometry.Pos
 import javafx.scene.layout.Priority
+import org.apache.commons.lang3.StringUtils
 import tornadofx.*
 
 class SMSubjectTableView : View() {
@@ -55,8 +56,9 @@ class SMSubjectTableView : View() {
                         promptText = "Tìm kiếm"
 
                         textProperty().addListener { _, _, _ ->
+                            val currentText = StringUtils.stripAccents(this.text).toLowerCase()
                             filteredSubjectList.setPredicate { subjectDto ->
-                                subjectDto.name.toLowerCase().contains(this.text.toLowerCase())
+                                StringUtils.stripAccents(subjectDto.name).toLowerCase().contains(currentText)
                             }
                         }
                     }
