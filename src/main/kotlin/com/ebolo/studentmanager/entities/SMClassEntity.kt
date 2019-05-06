@@ -44,7 +44,7 @@ class SMClassEntity(
     var numberOfExams: Int = 0,
     var tuitionFee: Int = 0,
     var monthPeriods: Int = 1,
-    var description: String = "",
+    var description: String? = null,
     var fromHour: LocalTime? = null,
     var toHour: LocalTime? = null
 ) : EboloBaseEntity(), SMIEntity<SMClassModel.SMClassDto> {
