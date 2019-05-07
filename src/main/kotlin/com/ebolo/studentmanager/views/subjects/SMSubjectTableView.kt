@@ -76,6 +76,8 @@ class SMSubjectTableView : View() {
 
         center {
             tableview<SMSubjectModel.SMSubjectDto>(filteredSubjectList) {
+                multiSelect()
+
                 makeIndexColumn("STT").apply {
                     style {
                         alignment = Pos.TOP_CENTER

@@ -79,6 +79,8 @@ class SMTeacherTableView : View() {
 
         center {
             tableview<SMTeacherModel.SMTeacherDto>(filteredTeacherList) {
+                multiSelect()
+
                 makeIndexColumn("STT").apply {
                     style {
                         alignment = Pos.TOP_CENTER
