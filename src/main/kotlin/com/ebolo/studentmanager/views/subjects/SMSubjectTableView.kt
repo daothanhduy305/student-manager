@@ -36,6 +36,8 @@ class SMSubjectTableView : View() {
                     this += JFXButton("Thêm môn học").apply {
                         buttonType = JFXButton.ButtonType.RAISED
                         isDisableVisualFocus = true
+                        paddingVertical = 15
+                        paddingHorizontal = 30
 
                         action {
                             find<SMSubjectInfoFragment>().openModal()

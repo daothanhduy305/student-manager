@@ -36,6 +36,8 @@ class SMTeacherTableView : View() {
                     this += JFXButton("Thêm giáo viên").apply {
                         buttonType = JFXButton.ButtonType.RAISED
                         isDisableVisualFocus = true
+                        paddingVertical = 15
+                        paddingHorizontal = 30
 
                         action {
                             find<SMTeacherInfoFragment>(
