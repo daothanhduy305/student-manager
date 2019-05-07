@@ -58,13 +58,18 @@ class SMClassTableView : View() {
                         promptText = "Tìm kiếm"
 
                         textProperty().addListener { _, _, _ ->
-                            val textToSearch = StringUtils.stripAccents(this.text).toLowerCase()
+                            val tokens = this.text
+                                .split(' ')
+                                .filter { it.isNotBlank() }
+                                .map { StringUtils.stripAccents(it).toLowerCase() }
 
                             filteredClassList.setPredicate { classDto ->
-                                StringUtils.stripAccents(classDto.name).toLowerCase().contains(textToSearch)
-                                    || StringUtils.stripAccents(classDto.subject.name).toLowerCase().contains(textToSearch)
-                                    || StringUtils.stripAccents(classDto.teacher.firstName).toLowerCase().contains(textToSearch)
-                                    || StringUtils.stripAccents(classDto.teacher.lastName).toLowerCase().contains(textToSearch)
+                                tokens.isEmpty() || tokens.any {
+                                    StringUtils.stripAccents(classDto.name).toLowerCase().contains(it)
+                                        || StringUtils.stripAccents(classDto.subject.name).toLowerCase().contains(it)
+                                        || StringUtils.stripAccents(classDto.teacher.firstName).toLowerCase().contains(it)
+                                        || StringUtils.stripAccents(classDto.teacher.lastName).toLowerCase().contains(it)
+                                }
                             }
                         }
                     }

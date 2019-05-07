@@ -355,13 +355,19 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                     // Filter out the students in the return list
                                     textProperty().addListener { _, _, _ ->
                                         autoCompletePopup.filter { chosenStudent ->
-                                            val currentValue = StringUtils.stripAccents(this.text).toLowerCase()
+                                            val tokens = this.text
+                                                .split(' ')
+                                                .filter { it.isNotBlank() }
+                                                .map { StringUtils.stripAccents(it).toLowerCase() }
+
                                             !classModel.item.studentList.any { student ->
                                                 student.id == chosenStudent.id
                                             } // This student has not already been in the class
-                                                && (StringUtils.stripAccents(chosenStudent.firstName).toLowerCase().contains(currentValue)
-                                                || StringUtils.stripAccents(chosenStudent.lastName).toLowerCase().contains(currentValue)
-                                                || StringUtils.stripAccents(chosenStudent.nickname).toLowerCase().contains(currentValue))
+                                                && (tokens.isEmpty() || tokens.any {
+                                                StringUtils.stripAccents(chosenStudent.firstName).toLowerCase().contains(it)
+                                                    || StringUtils.stripAccents(chosenStudent.lastName).toLowerCase().contains(it)
+                                                    || StringUtils.stripAccents(chosenStudent.nickname).toLowerCase().contains(it)
+                                            })
                                         }
 
                                         if (autoCompletePopup.filteredSuggestions.isEmpty() || this.text.isEmpty()) {

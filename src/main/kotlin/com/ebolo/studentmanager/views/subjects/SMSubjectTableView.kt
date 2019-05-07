@@ -56,9 +56,15 @@ class SMSubjectTableView : View() {
                         promptText = "Tìm kiếm"
 
                         textProperty().addListener { _, _, _ ->
-                            val currentText = StringUtils.stripAccents(this.text).toLowerCase()
+                            val tokens = this.text
+                                .split(' ')
+                                .filter { it.isNotBlank() }
+                                .map { StringUtils.stripAccents(it).toLowerCase() }
+
                             filteredSubjectList.setPredicate { subjectDto ->
-                                StringUtils.stripAccents(subjectDto.name).toLowerCase().contains(currentText)
+                                tokens.isEmpty() || tokens.any {
+                                    StringUtils.stripAccents(subjectDto.name).toLowerCase().contains(it)
+                                }
                             }
                         }
                     }
