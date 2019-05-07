@@ -44,7 +44,7 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
                             fieldset(labelPosition = Orientation.HORIZONTAL) {
                                 spacing += 20.0
 
-                                field("Tên") {
+                                field("Tên *") {
                                     this += JFXTextField().apply {
                                         bind(studentModel.firstName)
 
@@ -52,7 +52,7 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
                                     }
                                 }
 
-                                field("Họ và tên lót") {
+                                field("Họ và tên lót *") {
                                     this += JFXTextField().apply {
                                         bind(studentModel.lastName)
 
@@ -60,11 +60,9 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
                                     }
                                 }
 
-                                field("Nickname") {
+                                field("Nickname *") {
                                     this += JFXTextField().apply {
                                         bind(studentModel.nickname)
-
-                                        required()
                                     }
                                 }
 
@@ -86,7 +84,7 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
                                     }
                                 }
 
-                                field("Số điện thoại") {
+                                field("Số điện thoại *") {
                                     this += JFXTextField().apply {
                                         bind(studentModel.phone)
 
@@ -106,10 +104,12 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
                                     }
                                 }
 
-                                field("Học vấn") {
+                                field("Học vấn *") {
                                     this += JFXComboBox(EducationLevel.values().toList().observable()).apply {
                                         bind(studentModel.educationLevel)
                                         cellFormat { text = it.title }
+
+                                        required()
                                     }
                                 }
                             }

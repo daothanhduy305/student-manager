@@ -32,7 +32,7 @@ class SMSubjectInfoFragment : Fragment() {
             else -> "Thông tin môn"
         }, labelPosition = Orientation.HORIZONTAL) {
             vbox(spacing = 20, alignment = Pos.CENTER_RIGHT) {
-                field("Tên môn") {
+                field("Tên môn *") {
                     subjectNameBox = JFXTextField().apply {
                         bind(subjectModel.name)
 

@@ -37,14 +37,14 @@ class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
                 fieldset("Thông tin chung", labelPosition = Orientation.HORIZONTAL) {
                     spacing = 20.0
 
-                    field("Tên") {
+                    field("Tên *") {
                         this += JFXTextField().apply {
                             bind(teacherModel.firstName)
                             required()
                         }
                     }
 
-                    field("Họ và tên lót") {
+                    field("Họ và tên lót *") {
                         this += JFXTextField().apply {
                             bind(teacherModel.lastName)
                             required()
@@ -69,7 +69,7 @@ class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
                         }
                     }
 
-                    field("Số điện thoại") {
+                    field("Số điện thoại *") {
                         this += JFXTextField().apply {
                             bind(teacherModel.phone)
                             required()

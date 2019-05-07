@@ -61,14 +61,14 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                 spacing = 20.0
                                 prefWidth = 300.0
 
-                                field("Tên lớp") {
+                                field("Tên lớp *") {
                                     this += JFXTextField().apply {
                                         bind(classModel.name)
                                         required()
                                     }
                                 }
 
-                                field("Môn học") {
+                                field("Môn học *") {
                                     this += JFXComboBox(subjectList).apply {
                                         bind(classModel.subject)
 
@@ -90,7 +90,7 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                     }
                                 }
 
-                                field("Giáo viên") {
+                                field("Giáo viên *") {
                                     this += JFXComboBox(teacherList).apply {
                                         bind(classModel.teacher)
 
@@ -112,7 +112,7 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                     }
                                 }
 
-                                field("Ngày khai giảng") {
+                                field("Ngày khai giảng *") {
                                     this += JFXDatePicker().apply {
                                         bind(classModel.startDate)
 
@@ -123,7 +123,7 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                     }
                                 }
 
-                                field("Số tháng") {
+                                field("Số tháng *") {
                                     this += JFXTextField().apply {
                                         bind(month)
                                         bind(classModel.monthPeriods)
@@ -137,7 +137,7 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                     }
                                 }
 
-                                field("Học phí") {
+                                field("Học phí *") {
                                     this += JFXTextField().apply {
                                         textFormatter = TextFormatter(object : StringConverter<Number?>() {
                                             override fun fromString(string: String?): Number? {
@@ -204,7 +204,7 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                             fieldset(labelPosition = Orientation.VERTICAL) {
                                 spacing = 20.0
 
-                                field("Số cột điểm") {
+                                field("Số cột điểm *") {
                                     this += JFXTextField().apply {
                                         bind(classModel.numberOfExams)
                                         required()
@@ -222,7 +222,7 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                 hbox {
                                     spacing = 40.0
 
-                                    field("Giờ học từ") {
+                                    field("Giờ học từ *") {
                                         this += JFXTimePicker().apply {
                                             bind(classModel.fromHour)
                                             defaultColor = c("#3f51b5")
@@ -232,7 +232,7 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                         }
                                     }
 
-                                    field("Đến") {
+                                    field("Đến *") {
                                         this += JFXTimePicker().apply {
                                             bind(classModel.toHour)
                                             defaultColor = c("#3f51b5")
