@@ -118,9 +118,7 @@ class SMStudentTableView : View() {
 
                 // subscribe to the refresh event to reset the list
                 subscribe<SMStudentRefreshEvent> { event ->
-                    runAsync { studentList.setAll(event.students) } ui {
-                        requestResize()
-                    }
+                    runAsync { studentList.setAll(event.students) } ui { requestResize() }
                 }
             }
         }

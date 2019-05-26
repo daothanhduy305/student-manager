@@ -283,8 +283,12 @@ class SMClassService(
      * @param forDate LocalDate
      * @return List<SMAttendanceEntity>
      */
-    fun SMClassModel.SMClassDto.getAttendanceInfoList(forDate: LocalDate): List<SMAttendanceEntity> = attendanceRepository
-        .findAllByClassIdAndYearAndMonthAndDay(this.id, forDate.year, forDate.month, forDate.dayOfMonth)
+    fun SMClassModel.SMClassDto.getAttendanceInfoList(forDate: LocalDate? = null): List<SMAttendanceEntity> =
+        if (forDate == null)
+            attendanceRepository.findAllByClassId(this.id)
+        else
+            attendanceRepository.findAllByClassIdAndYearAndMonthAndDay(
+                this.id, forDate.year, forDate.month, forDate.dayOfMonth)
 
     /**
      * Method to add an entry into db to mark a fee payment made by a student to a class
@@ -383,3 +387,11 @@ class SMClassListForStudentRefreshRequest(val studentId: String) : FXEvent(Event
  * @since 0.0.1-SNAPSHOT
  */
 class SMClassListForStudentRefreshEvent(val classes: List<SMClassModel.SMClassDto>) : FXEvent()
+
+/**
+ * Request to refresh the attendance list for a specific class when fired
+ *
+ * @author ebolo (daothanhduy305@gmail.com)
+ * @since 0.0.1-SNAPSHOT
+ */
+class SMAttendanceListRefreshRequest(val classId: String) : FXEvent(EventBus.RunOn.BackgroundThread)

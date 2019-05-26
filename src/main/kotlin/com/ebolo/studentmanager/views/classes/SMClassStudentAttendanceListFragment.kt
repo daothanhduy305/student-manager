@@ -3,11 +3,13 @@ package com.ebolo.studentmanager.views.classes
 import com.ebolo.common.utils.loggerFor
 import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.models.SMStudentModel
+import com.ebolo.studentmanager.services.SMAttendanceListRefreshRequest
 import com.ebolo.studentmanager.services.SMClassRefreshEvent
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.views.utils.ui.tableview.JFXCheckboxTableCell
 import com.jfoenix.controls.JFXDatePicker
 import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
@@ -22,9 +24,9 @@ class SMClassStudentAttendanceListFragment : Fragment() {
 
     private val attendanceInfoList by lazy {
         with(serviceCentral.classService) {
-            val date = LocalDate.now()
+            // val date = LocalDate.now()
             val classDto = classModel.item
-            classDto.getAttendanceInfoList(date)
+            classDto.getAttendanceInfoList()
         }.observable()
     }
 
@@ -62,11 +64,13 @@ class SMClassStudentAttendanceListFragment : Fragment() {
                         if (studentDto != null) {
                             runAsync {
                                 with(serviceCentral.classService) {
-                                    if (value) {
+                                    val result = if (value) {
                                         classModel.item.deleteAbsenceInfo(studentDto.id, choosingDate.value)
                                     } else {
                                         classModel.item.addAbsenceInfo(studentDto.id, choosingDate.value)
                                     }
+
+                                    if (result.success) fire(SMAttendanceListRefreshRequest(classModel.id.value))
                                 }
                             }
                         }
@@ -74,7 +78,11 @@ class SMClassStudentAttendanceListFragment : Fragment() {
 
                     setCellValueFactory { cellData ->
                         val attendanceInfo = attendanceInfoList.firstOrNull { info ->
+                            val date = choosingDate.get()
                             info.studentId == cellData.value.id
+                                && info.day == date.dayOfMonth
+                                && info.month == date.month
+                                && info.year == date.year
                         }
 
                         SimpleBooleanProperty(attendanceInfo == null)
@@ -83,6 +91,24 @@ class SMClassStudentAttendanceListFragment : Fragment() {
                                 setter = SimpleBooleanProperty::set,
                                 propertyName = "value",
                                 propertyType = Boolean::class
+                            )
+                    }
+
+                    style {
+                        alignment = Pos.TOP_CENTER
+                    }
+                }
+
+                column<SMStudentModel.SMStudentDto, Int>("Số ngày nghỉ", "absence") {
+                    setCellValueFactory { cellData ->
+                        val absenceCount = attendanceInfoList.count { it.studentId == cellData.value.id }
+
+                        SimpleIntegerProperty(absenceCount)
+                            .observable(
+                                getter = SimpleIntegerProperty::get,
+                                setter = SimpleIntegerProperty::set,
+                                propertyName = "value",
+                                propertyType = Int::class
                             )
                     }
 
@@ -102,25 +128,39 @@ class SMClassStudentAttendanceListFragment : Fragment() {
                         classModel.studentList.value.setAll(event.classDto.studentList)
 
                         asyncItems { classModel.studentList.value }.ui {
-                            smartResize()
+                            refresh()
                         }
                     }
 
                 }
 
                 choosingDate.addListener { _, oldValue, newValue ->
-                    runAsync {
-                        logger.info("Changing the date from $oldValue to $newValue. Refreshing data...")
+                    logger.info("Changing the date from $oldValue to $newValue. Refreshing data...")
 
-                        attendanceInfoList.setAll(
-                            with(serviceCentral.classService) {
-                                val classDto = classModel.item
-                                classDto.getAttendanceInfoList(newValue)
-                            }.observable()
-                        )
-                    }.ui { refresh() }
+                    fire(SMAttendanceListRefreshRequest(classModel.id.value))
+                }
+
+                subscribe<SMAttendanceListRefreshRequest> { request ->
+                    if (request.classId == classModel.id.value) refreshAttendanceList().ui { refresh() }
                 }
             }
         }
+    }
+
+    /**
+     * Private method to be called to refresh the attendance list
+     *
+     * @author ebolo
+     * @since 0.0.1-SNAPSHOT
+     *
+     * @return Task<Boolean>
+     */
+    private fun refreshAttendanceList() = runAsync {
+        attendanceInfoList.setAll(
+            with(serviceCentral.classService) {
+                val classDto = classModel.item
+                classDto.getAttendanceInfoList()
+            }.observable()
+        )
     }
 }

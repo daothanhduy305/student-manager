@@ -112,9 +112,7 @@ class SMTeacherTableView : View() {
 
                 // subscribe to the refresh event to reset the list
                 subscribe<SMTeacherRefreshEvent> { event ->
-                    runAsync { teacherList.setAll(event.teachers) } ui {
-                        requestResize()
-                    }
+                    runAsync { teacherList.setAll(event.teachers) } ui { requestResize() }
                 }
             }
         }

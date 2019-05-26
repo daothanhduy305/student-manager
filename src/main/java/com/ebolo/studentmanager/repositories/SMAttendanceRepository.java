@@ -51,4 +51,12 @@ public interface SMAttendanceRepository extends EboloBaseMongoRepository<SMAtten
             final Month month,
             final int day
     );
+
+    /**
+     * Method to get a list of absence info in for a class
+     *
+     * @param classId id of the class to get the info
+     * @return list of absence info for this class
+     */
+    List<SMAttendanceEntity> findAllByClassId(final String classId);
 }
