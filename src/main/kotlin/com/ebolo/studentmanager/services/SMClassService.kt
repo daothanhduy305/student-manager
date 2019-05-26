@@ -16,6 +16,7 @@ import com.ebolo.studentmanager.utils.SMCRUDUtils
 import org.springframework.stereotype.Service
 import tornadofx.*
 import java.time.LocalDate
+import java.time.ZoneOffset
 import javax.annotation.PostConstruct
 
 @Service
@@ -327,6 +328,36 @@ class SMClassService(
         .getWhenPresentOr(
             ifPresentHandler = {
                 feePaidRepository.delete(it)
+                SMCRUDUtils.SMCRUDResult(true)
+            },
+            otherwise = {
+                SMCRUDUtils.SMCRUDResult(false)
+            }
+        )
+
+    /**
+     * Method to add an entry into db to mark a fee payment made by a student to a class
+     *
+     * @author ebolo
+     * @since 0.0.1-SNAPSHOT
+     *
+     * @receiver SMClassModel.SMClassDto
+     * @param studentId String
+     * @param forDate LocalDate
+     * @param paidDate LocalDate?
+     * @return SMCRUDUtils.SMCRUDResult
+     */
+    fun SMClassModel.SMClassDto.updateFeePaidDate(
+        studentId: String,
+        forDate: LocalDate,
+        paidDate: LocalDate? = null
+    ): SMCRUDUtils.SMCRUDResult = feePaidRepository
+        .findByClassIdAndStudentIdAndYearAndMonth(this.id, studentId, forDate.year, forDate.month)
+        .getWhenPresentOr(
+            ifPresentHandler = { feePaidEntity ->
+                feePaidRepository.save(feePaidEntity.apply {
+                    this.paidDate = paidDate?.atStartOfDay()?.toInstant(ZoneOffset.UTC)
+                })
                 SMCRUDUtils.SMCRUDResult(true)
             },
             otherwise = {

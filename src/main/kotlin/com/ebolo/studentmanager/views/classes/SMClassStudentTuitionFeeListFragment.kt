@@ -6,6 +6,8 @@ import com.ebolo.studentmanager.models.SMStudentModel
 import com.ebolo.studentmanager.services.SMClassRefreshEvent
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.views.utils.ui.tableview.JFXCheckboxTableCell
+import com.ebolo.studentmanager.views.utils.ui.tableview.JFXDatePickerTableCell
+import com.ebolo.studentmanager.views.utils.ui.tableview.eboloObservable
 import com.jfoenix.controls.JFXDatePicker
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
@@ -13,6 +15,7 @@ import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import tornadofx.*
 import java.time.LocalDate
+import java.time.ZoneOffset
 
 class SMClassStudentTuitionFeeListFragment : Fragment() {
     private val logger = loggerFor(SMClassStudentTuitionFeeListFragment::class.java)
@@ -83,6 +86,43 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
                                 setter = SimpleBooleanProperty::set,
                                 propertyName = "value",
                                 propertyType = Boolean::class
+                            )
+                    }
+
+                    style {
+                        alignment = Pos.TOP_CENTER
+                    }
+                }
+
+                column<SMStudentModel.SMStudentDto, LocalDate?>("Ngày đóng học phí", "paymentDate") {
+                    cellFactory = JFXDatePickerTableCell.forTableColumn(
+                        onValueChanged = { studentDto, value ->
+                            if (studentDto != null) {
+                                runAsync {
+                                    with(serviceCentral.classService) {
+                                        classModel.item.updateFeePaidDate(studentDto.id, choosingDate.value, value)
+                                    }
+                                }
+                            }
+                        },
+                        setup = {
+                            it.defaultColor = c("#3f51b5")
+                            it.isOverLay = false
+
+
+                        }
+                    )
+
+                    setCellValueFactory { cellData ->
+                        val paymentInfo = paymentInfoList.firstOrNull { info ->
+                            info.studentId == cellData.value.id
+                        }
+
+                        SimpleObjectProperty(paymentInfo?.paidDate?.atOffset(ZoneOffset.UTC)?.toLocalDate())
+                            .eboloObservable(
+                                getter = SimpleObjectProperty<LocalDate?>::get,
+                                setter = SimpleObjectProperty<LocalDate?>::set,
+                                propertyName = "value"
                             )
                     }
 
