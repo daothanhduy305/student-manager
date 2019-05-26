@@ -28,6 +28,7 @@ open class JFXTextFieldTableCell<S, T>
     private var textField: JFXTextField? = null
 
     // --- converter
+    @Suppress("LeakingThis")
     private val converter = SimpleObjectProperty<StringConverter<T>>(this, "converter")
 
     init {
@@ -106,11 +107,7 @@ open class JFXTextFieldTableCell<S, T>
         fun <S, T> forTableColumn(
             converter: StringConverter<T>
         ): Callback<TableColumn<S, T>, TableCell<S, T>> {
-            return object : Callback<TableColumn<S, T>, TableCell<S, T>> {
-                override fun call(param: TableColumn<S, T>?): TableCell<S, T> {
-                    return object : JFXTextFieldTableCell<S, T>(converter) {}
-                }
-            }
+            return Callback { object : JFXTextFieldTableCell<S, T>(converter) {} }
         }
     }
 }

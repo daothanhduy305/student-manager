@@ -1,12 +1,17 @@
 package com.ebolo.studentmanager.views.utils.ui.tableview
 
 import com.jfoenix.controls.JFXTextField
+import javafx.beans.property.ObjectProperty
+import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder
 import javafx.scene.Node
 import javafx.scene.control.Cell
 import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.HBox
 import javafx.util.StringConverter
+import kotlin.reflect.KFunction
+import kotlin.reflect.KFunction2
+import kotlin.reflect.jvm.javaMethod
 
 internal object CellUtils {
     private val defaultStringConverter = object : StringConverter<Any>() {
@@ -132,4 +137,31 @@ internal object CellUtils {
     }
 
     // endregion
+}
+
+/**
+ * Convert a pojo bean instance into a writable observable. Support nullable POJO.
+ *
+ * Example: val observableName = myPojo.observable(MyPojo::getName, MyPojo::setName)
+ *            or
+ *          val observableName = myPojo.observable(MyPojo::getName)
+ *            or
+ *          val observableName = myPojo.observable("name")
+ */
+@Suppress("UNCHECKED_CAST")
+fun <S : Any, T : Any?> S.eboloObservable(
+    getter: KFunction<T>? = null,
+    setter: KFunction2<S, T, Unit>? = null,
+    propertyName: String? = null
+): ObjectProperty<T> {
+    if (getter == null && propertyName == null) throw AssertionError("Either getter or propertyName must be provided")
+    val propName = propertyName
+        ?: getter?.name?.substring(3)?.decapitalize()
+
+    return JavaBeanObjectPropertyBuilder.create().apply {
+        bean(this@eboloObservable)
+        this.name(propName)
+        if (getter != null) this.getter(getter.javaMethod)
+        if (setter != null) this.setter(setter.javaMethod)
+    }.build() as ObjectProperty<T>
 }
