@@ -113,9 +113,7 @@ class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
                                                 this += button
                                             }
 
-                                            addMenuButton("Cài đặt") {
-
-                                            }
+                                            addMenuButton("Cài đặt") { find<SMSettingsView>().openModal() }
 
                                             addMenuButton("Giới thiệu") { find<SMAboutView>().openModal() }
 
