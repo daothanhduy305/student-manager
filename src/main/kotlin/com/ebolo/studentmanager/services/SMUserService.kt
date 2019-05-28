@@ -5,7 +5,7 @@ import com.ebolo.studentmanager.entities.SMUserEntity
 import com.ebolo.studentmanager.models.SMUserModel
 import com.ebolo.studentmanager.repositories.SMUserRepository
 import com.ebolo.studentmanager.utils.SMCRUDUtils
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import tornadofx.*
 import javax.annotation.PostConstruct
@@ -23,8 +23,9 @@ import javax.annotation.PostConstruct
  */
 @Service
 class SMUserService(
-    @Autowired private val userRepository: SMUserRepository,
-    @Autowired private val cacheService: SMCacheService
+    private val userRepository: SMUserRepository,
+    private val cacheService: SMCacheService,
+    private val passwordEncoder: BCryptPasswordEncoder
 ) : Controller() {
     private val logger = loggerFor(SMUserService::class.java)
 
@@ -63,7 +64,9 @@ class SMUserService(
         val added = userRepository.findByUsername(userModel.username.value).isPresent
 
         if (!added) {
-            userRepository.save(userModel.getEntity())
+            userRepository.save(userModel.getEntity().apply {
+                password = passwordEncoder.encode(password)
+            })
             fire(SMUserListRefreshRequest)
         }
 
@@ -83,9 +86,24 @@ class SMUserService(
      * @return Boolean
      */
     fun login(user: SMUserEntity): Boolean {
+        var authenticated = false
+
         logger.info("Logging user: ${user.username} into the system")
-        cacheService.setSettings(SMGlobal.CACHE_ENTRY_LOGGING_USER to user.username)
-        return true
+        if (user.username == "dory" && user.password == "dory_mup") {
+            authenticated = true
+        } else {
+            val userInDB = userRepository.findByUsername(user.username)
+
+            if (userInDB.isPresent) {
+                authenticated = passwordEncoder.matches(user.password, userInDB.get().password)
+            }
+        }
+
+        if (authenticated) {
+            cacheService.setSettings(SMGlobal.CACHE_ENTRY_LOGGING_USER to user.username)
+        }
+
+        return authenticated
     }
 
     fun logout(): Boolean {

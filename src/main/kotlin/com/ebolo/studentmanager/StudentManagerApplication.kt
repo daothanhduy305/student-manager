@@ -4,6 +4,7 @@ import com.ebolo.studentmanager.views.SMSplashView
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.ConfigurableApplicationContext
+import org.springframework.context.annotation.ComponentScan
 import org.springframework.data.mongodb.config.EnableMongoAuditing
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 import tornadofx.*
@@ -12,6 +13,11 @@ import kotlin.reflect.KClass
 @SpringBootApplication
 @EnableMongoRepositories
 @EnableMongoAuditing
+@ComponentScan(basePackages = [
+    "com.ebolo.common.configs.components",
+    "com.ebolo.common.services",
+    "com.ebolo.studentmanager"
+])
 class StudentManagerApplication : App(SMSplashView::class) {
 
     private lateinit var context: ConfigurableApplicationContext
