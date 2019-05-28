@@ -1,12 +1,13 @@
 package com.ebolo.studentmanager.entities
 
+import com.ebolo.common.database.entities.EboloBaseUserEntity
 import com.ebolo.common.utils.reflect.copyProperties
 import com.ebolo.studentmanager.models.SMTeacherModel
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.ZoneOffset
 
 @Document("Teachers")
-class SMTeacherEntity : SMUserEntity(), SMIEntity<SMTeacherModel.SMTeacherDto> {
+class SMTeacherEntity : EboloBaseUserEntity(), SMIEntity<SMTeacherModel.SMTeacherDto> {
 
     override fun toDto(): SMTeacherModel.SMTeacherDto = this.copyProperties(
         destination = SMTeacherModel.SMTeacherDto(),

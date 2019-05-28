@@ -3,6 +3,7 @@ package com.ebolo.studentmanager.views
 import com.ebolo.common.utils.loggerFor
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.views.classes.SMClassTableView
+import com.ebolo.studentmanager.views.settings.SMSettingsFragment
 import com.ebolo.studentmanager.views.students.SMStudentTableView
 import com.ebolo.studentmanager.views.subjects.SMSubjectTableView
 import com.ebolo.studentmanager.views.teachers.SMTeacherTableView
@@ -113,7 +114,7 @@ class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
                                                 this += button
                                             }
 
-                                            addMenuButton("Cài đặt") { find<SMSettingsView>().openModal() }
+                                            addMenuButton("Cài đặt") { find<SMSettingsFragment>().openModal() }
 
                                             addMenuButton("Giới thiệu") { find<SMAboutView>().openModal() }
 
