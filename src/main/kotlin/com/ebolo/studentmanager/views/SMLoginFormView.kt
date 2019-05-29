@@ -14,7 +14,7 @@ import javafx.geometry.Pos
 import javafx.scene.layout.Priority
 import tornadofx.*
 
-class SMLoginFormView : View("StuMan v0.0.1-SNAPSHOT") {
+class SMLoginFormView : View("Student Manager") {
     private val serviceCentral: SMServiceCentral by di()
 
     private val user = SMUserModel()

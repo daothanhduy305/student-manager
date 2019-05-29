@@ -25,7 +25,7 @@ import javafx.util.Duration
 import tornadofx.*
 
 
-class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
+class SMMainView : View("Student Manager") {
     private val logger = loggerFor(SMMainView::class.java)
     private val serviceCentral: SMServiceCentral by di()
 
@@ -131,6 +131,7 @@ class SMMainView : View("StuMan v0.0.1-SNAPSHOT") {
                                             }
 
                                             addMenuButton("Thoát") {
+                                                primaryStage.hide()
                                                 Platform.exit()
                                                 System.exit(0)
                                             }

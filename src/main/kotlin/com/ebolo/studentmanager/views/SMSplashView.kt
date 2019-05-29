@@ -13,7 +13,7 @@ import tornadofx.*
  *
  * @property root BorderPane
  */
-class SMSplashView : View() {
+class SMSplashView : View("Student Manager") {
     private val serviceCentral: SMServiceCentral by di()
 
     private val loginView: SMLoginFormView by inject()

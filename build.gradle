@@ -18,6 +18,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.3.20'
     id 'org.jetbrains.kotlin.plugin.spring' version '1.3.20'
     id 'org.jetbrains.kotlin.plugin.jpa' version '1.3.20'
+    id "edu.sc.seis.macAppBundle" version "2.3.0"
 }
 
 apply plugin: 'kotlin'
@@ -79,4 +80,16 @@ compileTestKotlin {
         freeCompilerArgs = ['-Xjsr305=strict']
         jvmTarget = '1.8'
     }
+}
+
+macAppBundle {
+    mainClassName = "org.springframework.boot.loader.JarLauncher"
+    icon = "student-manager.icns"
+    bundleJRE = false
+    javaProperties.put("apple.laf.useScreenMenuBar", "true")
+    //backgroundImage = "doc/macbackground.png"
+    jarTask = 'bootJar'
+    appName = 'Student Manager'
+    dmgName = 'Student Manager'
+    volumeName = 'Student Manager ' + version
 }
