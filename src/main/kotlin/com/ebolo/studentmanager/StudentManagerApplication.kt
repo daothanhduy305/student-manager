@@ -1,6 +1,7 @@
 package com.ebolo.studentmanager
 
-import com.ebolo.studentmanager.views.SMSplashView
+import com.ebolo.common.utils.loggerFor
+import com.ebolo.studentmanager.views.SMInitView
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.ConfigurableApplicationContext
@@ -18,7 +19,8 @@ import kotlin.reflect.KClass
     "com.ebolo.common.services",
     "com.ebolo.studentmanager"
 ])
-class StudentManagerApplication : App(SMSplashView::class) {
+class StudentManagerApplication : App(SMInitView::class) {
+    private val logger = loggerFor(this.javaClass)
 
     private lateinit var context: ConfigurableApplicationContext
 
@@ -26,16 +28,25 @@ class StudentManagerApplication : App(SMSplashView::class) {
         importStylesheet("/css/jfx-table-view.css")
         importStylesheet("/css/jfx-tab-pane.css")
         importStylesheet("/css/jfx-hamburger.css")
-        this.context = SpringApplication.run(this.javaClass)
-        context.autowireCapableBeanFactory.autowireBean(this)
-        FX.dicontainer = object : DIContainer {
-            override fun <T : Any> getInstance(type: KClass<T>): T = context.getBean(type.java)
-        }
     }
 
     override fun stop() {
         super.stop()
         context.close()
+    }
+
+    /**
+     * Method to setup the spring eco system
+     *
+     * @author ebolo
+     * @since 0.0.1-SNAPSHOT
+     */
+    fun setupApp() {
+        this.context = SpringApplication.run(this.javaClass)
+        context.autowireCapableBeanFactory.autowireBean(this)
+        FX.dicontainer = object : DIContainer {
+            override fun <T : Any> getInstance(type: KClass<T>): T = context.getBean(type.java)
+        }
     }
 
     companion object {

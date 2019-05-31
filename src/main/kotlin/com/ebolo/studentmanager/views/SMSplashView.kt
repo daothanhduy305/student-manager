@@ -16,39 +16,49 @@ import tornadofx.*
 class SMSplashView : View("Student Manager") {
     private val serviceCentral: SMServiceCentral by di()
 
-    private val loginView: SMLoginFormView by inject()
-    private val mainView: SMMainView by inject()
+    override val root = borderpane {
+        setPrefSize(500.0, 300.0)
+    }
 
-    override val root = if (
-        serviceCentral.cacheService.cache.containsKey(Settings.REMEMBER_CREDENTIAL)
-        && serviceCentral.cacheService.cache[Settings.REMEMBER_CREDENTIAL] as Boolean) {
-        // If the remember has been ticked then check the saved credential
-        if (serviceCentral.cacheService.cache.containsKey(Settings.CREDENTIAL_USERNAME)
-            && serviceCentral.cacheService.cache.containsKey(Settings.CREDENTIAL_PASSWORD)) {
+    override fun onDock() {
+        runAsync {
+            var showLogin = true
+            if (
+                serviceCentral.cacheService.cache.containsKey(Settings.REMEMBER_CREDENTIAL)
+                && serviceCentral.cacheService.cache[Settings.REMEMBER_CREDENTIAL] as Boolean) {
+                // If the remember has been ticked then check the saved credential
+                if (serviceCentral.cacheService.cache.containsKey(Settings.CREDENTIAL_USERNAME)
+                    && serviceCentral.cacheService.cache.containsKey(Settings.CREDENTIAL_PASSWORD)) {
 
-            val username = serviceCentral.cacheService.cache[Settings.CREDENTIAL_USERNAME] as String
-            val hashedPassword = serviceCentral.cacheService.cache[Settings.CREDENTIAL_PASSWORD] as String
+                    val username = serviceCentral.cacheService.cache[Settings.CREDENTIAL_USERNAME] as String
+                    val hashedPassword = serviceCentral.cacheService.cache[Settings.CREDENTIAL_PASSWORD] as String
 
-            if (serviceCentral.userService.login(SMUserEntity().apply {
-                    this.username = username
-                    this.password = hashedPassword
-                })) {
+                    if (serviceCentral.userService.login(SMUserEntity().apply {
+                            this.username = username
+                            this.password = hashedPassword
+                        })) {
 
-                primaryStage.isMaximized = true
-                mainView.root
-            } else {
-                serviceCentral.cacheService.removeSettings(
-                    Settings.CREDENTIAL_USERNAME,
-                    Settings.CREDENTIAL_PASSWORD,
-                    Settings.REMEMBER_CREDENTIAL
-                )
-
-                loginView.root
+                        showLogin = false
+                    } else {
+                        serviceCentral.cacheService.removeSettings(
+                            Settings.CREDENTIAL_USERNAME,
+                            Settings.CREDENTIAL_PASSWORD,
+                            Settings.REMEMBER_CREDENTIAL
+                        )
+                    }
+                } else {
+                    serviceCentral.cacheService.removeSettings(Settings.REMEMBER_CREDENTIAL)
+                }
             }
-        } else {
-            serviceCentral.cacheService.removeSettings(Settings.REMEMBER_CREDENTIAL)
 
-            loginView.root
+            showLogin
+        } ui { isShowingLogin ->
+            if (isShowingLogin) {
+                replaceWith<SMLoginFormView>(sizeToScene = true, centerOnScreen = true)
+            } else {
+                primaryStage.isMaximized = true
+                replaceWith<SMMainView>(sizeToScene = true, centerOnScreen = true)
+            }
         }
-    } else loginView.root
+    }
 }

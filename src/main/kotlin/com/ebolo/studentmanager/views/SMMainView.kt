@@ -21,6 +21,7 @@ import javafx.scene.control.Label
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
+import javafx.stage.Screen
 import javafx.util.Duration
 import tornadofx.*
 
@@ -42,6 +43,9 @@ class SMMainView : View("Student Manager") {
     private val toolbarTitle = SimpleStringProperty(defaultView)
 
     override val root = stackpane {
+        val bound = Screen.getPrimary().visualBounds
+        setPrefSize(bound.width, bound.height)
+
         borderpane {
             top {
                 vbox {
