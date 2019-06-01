@@ -1,6 +1,7 @@
 package com.ebolo.studentmanager.views.teachers
 
 import com.ebolo.studentmanager.models.SMTeacherModel
+import com.ebolo.studentmanager.services.SMDataProcessRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.SMTeacherRefreshRequest
 import com.ebolo.studentmanager.utils.SMCRUDUtils
@@ -130,7 +131,9 @@ class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
 
                         // refresh if success
                         if (result.success) {
-                            fire(SMTeacherRefreshRequest)
+                            fire(SMDataProcessRequest {
+                                fire(SMTeacherRefreshRequest)
+                            })
                             modalStage?.close()
                         } else {
                             error("Đã xảy ra lỗi", result.errorMessage, ButtonType.CLOSE)

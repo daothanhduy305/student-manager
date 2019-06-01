@@ -1,6 +1,7 @@
 package com.ebolo.studentmanager.views.subjects
 
 import com.ebolo.studentmanager.models.SMSubjectModel
+import com.ebolo.studentmanager.services.SMDataProcessRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.SMSubjectRefreshEvent
 import com.ebolo.studentmanager.services.SMSubjectRefreshRequest
@@ -100,7 +101,9 @@ class SMSubjectTableView : View() {
 
                     item("Xóa").action {
                         serviceCentral.subjectService.deleteSubjects(selectionModel.selectedItems.map { it.id }.toList())
-                        fire(SMSubjectRefreshRequest)
+                        fire(SMDataProcessRequest {
+                            fire(SMSubjectRefreshRequest)
+                        })
                     }
                 }
 
@@ -113,6 +116,8 @@ class SMSubjectTableView : View() {
 
     override fun onDock() {
         super.onDock()
-        fire(SMSubjectRefreshRequest)
+        fire(SMDataProcessRequest {
+            fire(SMSubjectRefreshRequest)
+        })
     }
 }

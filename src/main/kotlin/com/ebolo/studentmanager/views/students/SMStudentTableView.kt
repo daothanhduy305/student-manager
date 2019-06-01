@@ -1,6 +1,7 @@
 package com.ebolo.studentmanager.views.students
 
 import com.ebolo.studentmanager.models.SMStudentModel
+import com.ebolo.studentmanager.services.SMDataProcessRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.SMStudentRefreshEvent
 import com.ebolo.studentmanager.services.SMStudentRefreshRequest
@@ -112,7 +113,9 @@ class SMStudentTableView : View() {
 
                     item("Xóa").action {
                         serviceCentral.studentService.deleteStudents(selectionModel.selectedItems.map { it.id }.toList())
-                        fire(SMStudentRefreshRequest)
+                        fire(SMDataProcessRequest {
+                            fire(SMStudentRefreshRequest)
+                        })
                     }
                 }
 
@@ -126,6 +129,8 @@ class SMStudentTableView : View() {
 
     override fun onDock() {
         super.onDock()
-        fire(SMStudentRefreshRequest)
+        fire(SMDataProcessRequest {
+            fire(SMStudentRefreshRequest)
+        })
     }
 }

@@ -1,6 +1,7 @@
 package com.ebolo.studentmanager.views.teachers
 
 import com.ebolo.studentmanager.models.SMTeacherModel
+import com.ebolo.studentmanager.services.SMDataProcessRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.SMTeacherRefreshEvent
 import com.ebolo.studentmanager.services.SMTeacherRefreshRequest
@@ -106,7 +107,9 @@ class SMTeacherTableView : View() {
 
                     item("Xóa").action {
                         serviceCentral.teacherService.deleteTeachers(selectionModel.selectedItems.map { it.id }.toList())
-                        fire(SMTeacherRefreshRequest)
+                        fire(SMDataProcessRequest {
+                            fire(SMTeacherRefreshRequest)
+                        })
                     }
                 }
 
@@ -120,6 +123,8 @@ class SMTeacherTableView : View() {
 
     override fun onDock() {
         super.onDock()
-        fire(SMTeacherRefreshRequest)
+        fire(SMDataProcessRequest {
+            fire(SMTeacherRefreshRequest)
+        })
     }
 }

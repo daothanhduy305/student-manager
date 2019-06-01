@@ -3,6 +3,7 @@ package com.ebolo.studentmanager.views.classes
 import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.services.SMClassListRefreshEvent
 import com.ebolo.studentmanager.services.SMClassListRefreshRequest
+import com.ebolo.studentmanager.services.SMDataProcessRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.jfoenix.controls.JFXButton
@@ -112,7 +113,9 @@ class SMClassTableView : View() {
 
                     item("Xóa").action {
                         serviceCentral.classService.deleteClasses(selectionModel.selectedItems.map { it.id }.toList())
-                        fire(SMClassListRefreshRequest)
+                        fire(SMDataProcessRequest {
+                            fire(SMClassListRefreshRequest)
+                        })
                     }
                 }
 
@@ -129,6 +132,8 @@ class SMClassTableView : View() {
 
     override fun onDock() {
         super.onDock()
-        fire(SMClassListRefreshRequest)
+        fire(SMDataProcessRequest {
+            fire(SMClassListRefreshRequest)
+        })
     }
 }

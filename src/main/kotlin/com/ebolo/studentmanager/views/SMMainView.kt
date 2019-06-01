@@ -1,7 +1,7 @@
 package com.ebolo.studentmanager.views
 
 import com.ebolo.common.utils.loggerFor
-import com.ebolo.studentmanager.services.SMServiceCentral
+import com.ebolo.studentmanager.services.*
 import com.ebolo.studentmanager.views.classes.SMClassTableView
 import com.ebolo.studentmanager.views.settings.SMSettingsFragment
 import com.ebolo.studentmanager.views.students.SMStudentTableView
@@ -41,6 +41,8 @@ class SMMainView : View("Student Manager") {
 
     private val defaultView = "Lớp học"
     private val toolbarTitle = SimpleStringProperty(defaultView)
+
+    private val statusString = SimpleStringProperty("Đang xử lý...")
 
     override val root = stackpane {
         val bound = Screen.getPrimary().visualBounds
@@ -237,6 +239,27 @@ class SMMainView : View("Student Manager") {
                 }
 
                 this += drawer
+            }
+
+            bottom {
+                hbox {
+                    prefHeight = 50.0
+                    maxHeight = 50.0
+                    paddingHorizontal = 8.0
+                    paddingTop = 6.0
+
+                    fitToParentWidth()
+
+                    label {
+                        bind(statusString)
+
+                        subscribe<SMDataProcessRequest> { statusString.value = "Đang xử lý..." }
+                        subscribe<SMClassListRefreshEvent> { runLater { statusString.value = "" } }
+                        subscribe<SMStudentRefreshEvent> { runLater { statusString.value = "" } }
+                        subscribe<SMTeacherRefreshEvent> { runLater { statusString.value = "" } }
+                        subscribe<SMSubjectRefreshEvent> { runLater { statusString.value = "" } }
+                    }
+                }
             }
         }
     }

@@ -58,7 +58,9 @@ class SMSubjectService(
             subjectRepository.save(subjectModel.getEntity())
         }
 
-        fire(SMSubjectRefreshRequest)
+        fire(SMDataProcessRequest {
+            fire(SMSubjectRefreshRequest)
+        })
 
         return SMCRUDUtils.SMCRUDResult(
             success = !added,

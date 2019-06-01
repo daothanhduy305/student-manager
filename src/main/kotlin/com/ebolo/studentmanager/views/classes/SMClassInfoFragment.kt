@@ -4,6 +4,7 @@ import com.ebolo.common.utils.loggerFor
 import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.models.SMStudentModel
 import com.ebolo.studentmanager.services.SMClassListRefreshRequest
+import com.ebolo.studentmanager.services.SMDataProcessRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.ebolo.studentmanager.utils.formatDecimal
@@ -289,7 +290,9 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                     }
                                     // refresh if success
                                     if (result.success) {
-                                        fire(SMClassListRefreshRequest)
+                                        fire(SMDataProcessRequest {
+                                            fire(SMClassListRefreshRequest)
+                                        })
                                         modalStage?.close()
                                     } else {
                                         error("Đã xảy ra lỗi", result.errorMessage, ButtonType.CLOSE)

@@ -2,6 +2,7 @@ package com.ebolo.studentmanager.views.students
 
 import com.ebolo.studentmanager.entities.EducationLevel
 import com.ebolo.studentmanager.models.SMStudentModel
+import com.ebolo.studentmanager.services.SMDataProcessRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.SMStudentRefreshRequest
 import com.ebolo.studentmanager.utils.SMCRUDUtils
@@ -161,7 +162,9 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
 
                                     // refresh if success
                                     if (result.success) {
-                                        fire(SMStudentRefreshRequest)
+                                        fire(SMDataProcessRequest {
+                                            fire(SMStudentRefreshRequest)
+                                        })
                                         modalStage?.close()
                                     } else {
                                         error("Đã xảy ra lỗi", result.errorMessage, ButtonType.CLOSE)
