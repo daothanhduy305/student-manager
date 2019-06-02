@@ -10,12 +10,23 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext
 import javax.annotation.PostConstruct
 
 
+/**
+ * Mongo template to be used in SM system
+ *
+ * @author ebolo
+ * @since 0.0.1-SNAPSHOT
+ *
+ * @property cacheService SMCacheService
+ * @property mongoDB String
+ * @property mongoURI String
+ * @constructor
+ */
 @Configuration
 class SMMongoConfiguration(
     private val cacheService: SMCacheService
 ) : AbstractMongoConfiguration() {
-    private var mongoDB: String = "SMProject"
-    private var mongoURI: String = "mongodb://ebolo:eboloyolo5653@localhost:27017/SMProject"
+    private var mongoDB: String = ""
+    private var mongoURI: String = ""
 
     @PostConstruct
     fun setup() {
@@ -28,6 +39,7 @@ class SMMongoConfiguration(
         if (mongoDbUri != null) {
             mongoURI = mongoDbUri
         }
+        // Uncomment the below block to allow resetting the db configurations
         /*cacheService.setSettings(
             Settings.DATABASE_NAME to mongoDB,
             Settings.DATABASE_URI to mongoURI
@@ -35,13 +47,11 @@ class SMMongoConfiguration(
     }
 
     override fun getDatabaseName(): String {
-        // TODO Auto-generated method stub
         return mongoDB
     }
 
     @Throws(ClassNotFoundException::class)
     override fun mongoMappingContext(): MongoMappingContext {
-        // TODO Auto-generated method stub
         return super.mongoMappingContext()
     }
 

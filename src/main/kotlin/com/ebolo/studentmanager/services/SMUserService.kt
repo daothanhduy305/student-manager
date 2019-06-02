@@ -89,7 +89,12 @@ class SMUserService(
         var authenticated = false
 
         logger.info("Logging user: ${user.username} into the system")
-        if (user.username == "dory" && user.password == "dory_mup") {
+
+        // Get the master account info
+        val masterUsername = cacheService.cache[Settings.MASTER_ACCOUNT_USERNAME] as String
+        val masterPassword = cacheService.cache[Settings.MASTER_ACCOUNT_PASSWORD] as String
+
+        if (user.username == masterUsername && passwordEncoder.matches(user.password, masterPassword)) {
             authenticated = true
         } else {
             val userInDB = userRepository.findByUsername(user.username)
@@ -106,6 +111,14 @@ class SMUserService(
         return authenticated
     }
 
+    /**
+     * Method to log the user out of the system
+     *
+     * @author ebolo
+     * @since 0.0.1-SNAPSHOT
+     *
+     * @return Boolean
+     */
     fun logout(): Boolean {
         logger.info("Logging out...")
         cacheService.removeSettings(

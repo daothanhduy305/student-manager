@@ -1,10 +1,10 @@
-package com.ebolo.studentmanager.views.subjects
+package com.ebolo.studentmanager.views.classes
 
-import com.ebolo.studentmanager.models.SMSubjectModel
+import com.ebolo.studentmanager.models.SMClassModel
+import com.ebolo.studentmanager.services.SMClassListRefreshEvent
+import com.ebolo.studentmanager.services.SMClassListRefreshRequest
 import com.ebolo.studentmanager.services.SMDataProcessRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
-import com.ebolo.studentmanager.services.SMSubjectRefreshEvent
-import com.ebolo.studentmanager.services.SMSubjectRefreshRequest
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXTextField
@@ -16,11 +16,11 @@ import javafx.scene.layout.Priority
 import org.apache.commons.lang3.StringUtils
 import tornadofx.*
 
-class SMSubjectTableView : View() {
+class SMClassTableFragment : Fragment() {
     private val serviceCentral: SMServiceCentral by di()
 
-    private val subjectList: ObservableList<SMSubjectModel.SMSubjectDto> = FXCollections.observableArrayList()
-    private val filteredSubjectList: FilteredList<SMSubjectModel.SMSubjectDto> = FilteredList(subjectList)
+    private val classList: ObservableList<SMClassModel.SMClassDto> = FXCollections.observableArrayList()
+    private val filteredClassList: FilteredList<SMClassModel.SMClassDto> = FilteredList(classList)
 
     private var searchBox by singleAssign<JFXTextField>()
 
@@ -34,14 +34,16 @@ class SMSubjectTableView : View() {
                     alignment = Pos.CENTER_LEFT
                     hgrow = Priority.ALWAYS
 
-                    this += JFXButton("Thêm môn học").apply {
+                    this += JFXButton("Thêm lớp").apply {
                         buttonType = JFXButton.ButtonType.RAISED
                         isDisableVisualFocus = true
                         paddingVertical = 15
                         paddingHorizontal = 30
 
                         action {
-                            find<SMSubjectInfoFragment>().openModal()
+                            find<SMClassInfoFragment>(
+                                "mode" to SMCRUDUtils.CRUDMode.NEW
+                            ).openModal()
                         }
 
                         style {
@@ -64,9 +66,12 @@ class SMSubjectTableView : View() {
                                 .filter { it.isNotBlank() }
                                 .map { StringUtils.stripAccents(it).toLowerCase() }
 
-                            filteredSubjectList.setPredicate { subjectDto ->
+                            filteredClassList.setPredicate { classDto ->
                                 tokens.isEmpty() || tokens.any {
-                                    StringUtils.stripAccents(subjectDto.name).toLowerCase().contains(it)
+                                    StringUtils.stripAccents(classDto.name).toLowerCase().contains(it)
+                                        || StringUtils.stripAccents(classDto.subject.name).toLowerCase().contains(it)
+                                        || StringUtils.stripAccents(classDto.teacher.firstName).toLowerCase().contains(it)
+                                        || StringUtils.stripAccents(classDto.teacher.lastName).toLowerCase().contains(it)
                                 }
                             }
                         }
@@ -78,7 +83,7 @@ class SMSubjectTableView : View() {
         }
 
         center {
-            tableview<SMSubjectModel.SMSubjectDto>(filteredSubjectList) {
+            tableview<SMClassModel.SMClassDto>(filteredClassList) {
                 multiSelect()
 
                 makeIndexColumn("STT").apply {
@@ -87,28 +92,39 @@ class SMSubjectTableView : View() {
                     }
                 }
 
-                readonlyColumn("Tên môn học", SMSubjectModel.SMSubjectDto::name)
+                readonlyColumn("Tên lớp", SMClassModel.SMClassDto::name)
+                readonlyColumn("Giáo viên", SMClassModel.SMClassDto::teacher) {
+                    cellFormat { teacher -> text = "${teacher.lastName} ${teacher.firstName}" }
+                }
+                readonlyColumn("Môn", SMClassModel.SMClassDto::subject) {
+                    cellFormat { subject -> text = subject.name }
+                }
 
                 smartResize()
 
+                // set up the context menu
                 contextmenu {
                     item("Sửa...").action {
-                        find<SMSubjectInfoFragment>(
-                            "subjectModel" to SMSubjectModel(selectedItem),
-                            "mode" to SMCRUDUtils.CRUDMode.EDIT
+                        find<SMClassInfoFragment>(
+                            "mode" to SMCRUDUtils.CRUDMode.EDIT,
+                            "classModel" to SMClassModel(selectedItem)
                         ).openModal()
                     }
 
                     item("Xóa").action {
-                        serviceCentral.subjectService.deleteSubjects(selectionModel.selectedItems.map { it.id }.toList())
+                        serviceCentral.classService.deleteClasses(selectionModel.selectedItems.map { it.id }.toList())
                         fire(SMDataProcessRequest {
-                            fire(SMSubjectRefreshRequest)
+                            fire(SMClassListRefreshRequest)
                         })
                     }
                 }
 
-                subscribe<SMSubjectRefreshEvent> { event ->
-                    runAsync { subjectList.setAll(event.subjects) } ui { requestResize() }
+                // subscribe to the refresh event to reset the list
+                subscribe<SMClassListRefreshEvent> { event ->
+                    searchBox.text = ""
+                    runAsync { classList.setAll(event.classes) } ui {
+                        requestResize()
+                    }
                 }
             }
         }
@@ -117,7 +133,7 @@ class SMSubjectTableView : View() {
     override fun onDock() {
         super.onDock()
         fire(SMDataProcessRequest {
-            fire(SMSubjectRefreshRequest)
+            fire(SMClassListRefreshRequest)
         })
     }
 }

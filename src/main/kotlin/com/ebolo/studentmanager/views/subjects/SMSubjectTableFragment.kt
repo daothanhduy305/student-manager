@@ -1,10 +1,10 @@
-package com.ebolo.studentmanager.views.teachers
+package com.ebolo.studentmanager.views.subjects
 
-import com.ebolo.studentmanager.models.SMTeacherModel
+import com.ebolo.studentmanager.models.SMSubjectModel
 import com.ebolo.studentmanager.services.SMDataProcessRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
-import com.ebolo.studentmanager.services.SMTeacherRefreshEvent
-import com.ebolo.studentmanager.services.SMTeacherRefreshRequest
+import com.ebolo.studentmanager.services.SMSubjectRefreshEvent
+import com.ebolo.studentmanager.services.SMSubjectRefreshRequest
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXTextField
@@ -16,11 +16,11 @@ import javafx.scene.layout.Priority
 import org.apache.commons.lang3.StringUtils
 import tornadofx.*
 
-class SMTeacherTableView : View() {
+class SMSubjectTableFragment : Fragment() {
     private val serviceCentral: SMServiceCentral by di()
 
-    private val teacherList: ObservableList<SMTeacherModel.SMTeacherDto> = FXCollections.observableArrayList()
-    private val filteredTeacherList: FilteredList<SMTeacherModel.SMTeacherDto> = FilteredList(teacherList)
+    private val subjectList: ObservableList<SMSubjectModel.SMSubjectDto> = FXCollections.observableArrayList()
+    private val filteredSubjectList: FilteredList<SMSubjectModel.SMSubjectDto> = FilteredList(subjectList)
 
     private var searchBox by singleAssign<JFXTextField>()
 
@@ -34,16 +34,14 @@ class SMTeacherTableView : View() {
                     alignment = Pos.CENTER_LEFT
                     hgrow = Priority.ALWAYS
 
-                    this += JFXButton("Thêm giáo viên").apply {
+                    this += JFXButton("Thêm môn học").apply {
                         buttonType = JFXButton.ButtonType.RAISED
                         isDisableVisualFocus = true
                         paddingVertical = 15
                         paddingHorizontal = 30
 
                         action {
-                            find<SMTeacherInfoFragment>(
-                                "mode" to SMCRUDUtils.CRUDMode.NEW
-                            ).openModal()
+                            find<SMSubjectInfoFragment>().openModal()
                         }
 
                         style {
@@ -66,10 +64,9 @@ class SMTeacherTableView : View() {
                                 .filter { it.isNotBlank() }
                                 .map { StringUtils.stripAccents(it).toLowerCase() }
 
-                            filteredTeacherList.setPredicate { studentDto ->
+                            filteredSubjectList.setPredicate { subjectDto ->
                                 tokens.isEmpty() || tokens.any {
-                                    StringUtils.stripAccents(studentDto.firstName).toLowerCase().contains(it)
-                                        || StringUtils.stripAccents(studentDto.lastName).toLowerCase().contains(it)
+                                    StringUtils.stripAccents(subjectDto.name).toLowerCase().contains(it)
                                 }
                             }
                         }
@@ -81,7 +78,7 @@ class SMTeacherTableView : View() {
         }
 
         center {
-            tableview<SMTeacherModel.SMTeacherDto>(filteredTeacherList) {
+            tableview<SMSubjectModel.SMSubjectDto>(filteredSubjectList) {
                 multiSelect()
 
                 makeIndexColumn("STT").apply {
@@ -90,32 +87,28 @@ class SMTeacherTableView : View() {
                     }
                 }
 
-                readonlyColumn("Họ", SMTeacherModel.SMTeacherDto::lastName)
-                readonlyColumn("Tên", SMTeacherModel.SMTeacherDto::firstName)
-                readonlyColumn("Ngày sinh", SMTeacherModel.SMTeacherDto::birthday)
+                readonlyColumn("Tên môn học", SMSubjectModel.SMSubjectDto::name)
 
                 smartResize()
 
-                // set up the context menu
                 contextmenu {
                     item("Sửa...").action {
-                        find<SMTeacherInfoFragment>(
-                            "mode" to SMCRUDUtils.CRUDMode.EDIT,
-                            "teacherModel" to SMTeacherModel(selectedItem)
+                        find<SMSubjectInfoFragment>(
+                            "subjectModel" to SMSubjectModel(selectedItem),
+                            "mode" to SMCRUDUtils.CRUDMode.EDIT
                         ).openModal()
                     }
 
                     item("Xóa").action {
-                        serviceCentral.teacherService.deleteTeachers(selectionModel.selectedItems.map { it.id }.toList())
+                        serviceCentral.subjectService.deleteSubjects(selectionModel.selectedItems.map { it.id }.toList())
                         fire(SMDataProcessRequest {
-                            fire(SMTeacherRefreshRequest)
+                            fire(SMSubjectRefreshRequest)
                         })
                     }
                 }
 
-                // subscribe to the refresh event to reset the list
-                subscribe<SMTeacherRefreshEvent> { event ->
-                    runAsync { teacherList.setAll(event.teachers) } ui { requestResize() }
+                subscribe<SMSubjectRefreshEvent> { event ->
+                    runAsync { subjectList.setAll(event.subjects) } ui { requestResize() }
                 }
             }
         }
@@ -124,7 +117,7 @@ class SMTeacherTableView : View() {
     override fun onDock() {
         super.onDock()
         fire(SMDataProcessRequest {
-            fire(SMTeacherRefreshRequest)
+            fire(SMSubjectRefreshRequest)
         })
     }
 }

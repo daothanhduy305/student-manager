@@ -13,7 +13,7 @@ import tornadofx.*
  *
  * @property root BorderPane
  */
-class SMSplashView : View("Student Manager") {
+class SMSplashView : Fragment("Student Manager") {
     private val serviceCentral: SMServiceCentral by di()
 
     override val root = borderpane {

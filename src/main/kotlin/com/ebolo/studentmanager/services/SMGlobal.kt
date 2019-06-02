@@ -26,7 +26,23 @@ object Settings {
      */
     const val CREDENTIAL_USERNAME = "CREDENTIAL_USERNAME"
     /**
-     * Save the password string into the cache - TODO this must save the hashed pw instead
+     * Save the password string into the cache
      */
     const val CREDENTIAL_PASSWORD = "CREDENTIAL_PASSWORD"
+    /**
+     * Save the database name into the cache
+     */
+    const val DATABASE_NAME = "DATABASE_NAME"
+    /**
+     * Save the database uri into the cache
+     */
+    const val DATABASE_URI = "DATABASE_URI"
+    /**
+     * Save a master account into the cache - God mode
+     */
+    const val MASTER_ACCOUNT_USERNAME = "MASTER_USER_NAME"
+    /**
+     * Save a master password into the cache
+     */
+    const val MASTER_ACCOUNT_PASSWORD = "MASTER_PASSWORD"
 }

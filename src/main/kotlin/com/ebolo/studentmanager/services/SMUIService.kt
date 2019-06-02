@@ -25,3 +25,11 @@ class SMUIService : Controller() {
  * @constructor
  */
 class SMDataProcessRequest(val processFunction: () -> Unit) : FXEvent()
+
+/**
+ * Request to be fired to make the application to reload the context
+ *
+ * @author ebolo
+ * @since 0.0.1-SNAPSHOT
+ */
+object SMRestartAppRequest : FXEvent()

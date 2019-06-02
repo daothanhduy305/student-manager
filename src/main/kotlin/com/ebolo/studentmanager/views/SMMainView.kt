@@ -2,11 +2,11 @@ package com.ebolo.studentmanager.views
 
 import com.ebolo.common.utils.loggerFor
 import com.ebolo.studentmanager.services.*
-import com.ebolo.studentmanager.views.classes.SMClassTableView
+import com.ebolo.studentmanager.views.classes.SMClassTableFragment
 import com.ebolo.studentmanager.views.settings.SMSettingsFragment
-import com.ebolo.studentmanager.views.students.SMStudentTableView
-import com.ebolo.studentmanager.views.subjects.SMSubjectTableView
-import com.ebolo.studentmanager.views.teachers.SMTeacherTableView
+import com.ebolo.studentmanager.views.students.SMStudentTableFragment
+import com.ebolo.studentmanager.views.subjects.SMSubjectTableFragment
+import com.ebolo.studentmanager.views.teachers.SMTeacherTableFragment
 import com.jfoenix.controls.*
 import com.jfoenix.controls.JFXPopup.PopupHPosition
 import com.jfoenix.controls.JFXPopup.PopupVPosition
@@ -26,14 +26,14 @@ import javafx.util.Duration
 import tornadofx.*
 
 
-class SMMainView : View("Student Manager") {
+class SMMainView : Fragment("Student Manager") {
     private val logger = loggerFor(SMMainView::class.java)
     private val serviceCentral: SMServiceCentral by di()
 
-    private val subjectTableView: SMSubjectTableView by inject()
-    private val studentTableView: SMStudentTableView by inject()
-    private val classTableView: SMClassTableView by inject()
-    private val teacherTableView: SMTeacherTableView by inject()
+    private val subjectTableFragment: SMSubjectTableFragment by lazy { find<SMSubjectTableFragment>() }
+    private val studentTableFragment: SMStudentTableFragment by lazy { find<SMStudentTableFragment>() }
+    private val classTableFragment: SMClassTableFragment by lazy { find<SMClassTableFragment>() }
+    private val teacherTableFragment: SMTeacherTableFragment by lazy { find<SMTeacherTableFragment>() }
 
     private var drawer: JFXDrawer by singleAssign()
     private var backTransition: HamburgerSlideCloseTransition by singleAssign()
@@ -159,10 +159,10 @@ class SMMainView : View("Student Manager") {
 
                     mainViewPanel = BorderPane().apply {
                         center = when (defaultView) {
-                            "Môn học" -> subjectTableView.root
-                            "Lớp học" -> classTableView.root
-                            "Học sinh" -> studentTableView.root
-                            "Giáo viên" -> teacherTableView.root
+                            "Môn học" -> subjectTableFragment.root
+                            "Lớp học" -> classTableFragment.root
+                            "Học sinh" -> studentTableFragment.root
+                            "Giáo viên" -> teacherTableFragment.root
                             else -> null
                         }
                     }
@@ -223,10 +223,10 @@ class SMMainView : View("Student Manager") {
                             this += button
                         }
 
-                        addMenuButton("Môn học", subjectTableView.root)
-                        addMenuButton("Lớp học", classTableView.root)
-                        addMenuButton("Học sinh", studentTableView.root)
-                        addMenuButton("Giáo viên", teacherTableView.root)
+                        addMenuButton("Môn học", subjectTableFragment.root)
+                        addMenuButton("Lớp học", classTableFragment.root)
+                        addMenuButton("Học sinh", studentTableFragment.root)
+                        addMenuButton("Giáo viên", teacherTableFragment.root)
                     })
 
                     // This is for when the user click outside the drawer
@@ -243,8 +243,8 @@ class SMMainView : View("Student Manager") {
 
             bottom {
                 hbox {
-                    prefHeight = 50.0
-                    maxHeight = 50.0
+                    prefHeight = 25.0
+                    maxHeight = 25.0
                     paddingHorizontal = 8.0
                     paddingTop = 6.0
 
@@ -262,6 +262,8 @@ class SMMainView : View("Student Manager") {
                 }
             }
         }
+
+        subscribe<SMRestartAppRequest> { replaceWith<SMSplashView>(sizeToScene = true, centerOnScreen = true) }
     }
 
     /**

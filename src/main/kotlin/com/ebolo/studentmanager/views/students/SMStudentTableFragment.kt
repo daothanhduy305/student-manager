@@ -1,10 +1,10 @@
-package com.ebolo.studentmanager.views.classes
+package com.ebolo.studentmanager.views.students
 
-import com.ebolo.studentmanager.models.SMClassModel
-import com.ebolo.studentmanager.services.SMClassListRefreshEvent
-import com.ebolo.studentmanager.services.SMClassListRefreshRequest
+import com.ebolo.studentmanager.models.SMStudentModel
 import com.ebolo.studentmanager.services.SMDataProcessRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
+import com.ebolo.studentmanager.services.SMStudentRefreshEvent
+import com.ebolo.studentmanager.services.SMStudentRefreshRequest
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXTextField
@@ -16,11 +16,11 @@ import javafx.scene.layout.Priority
 import org.apache.commons.lang3.StringUtils
 import tornadofx.*
 
-class SMClassTableView : View() {
+class SMStudentTableFragment : Fragment() {
     private val serviceCentral: SMServiceCentral by di()
 
-    private val classList: ObservableList<SMClassModel.SMClassDto> = FXCollections.observableArrayList()
-    private val filteredClassList: FilteredList<SMClassModel.SMClassDto> = FilteredList(classList)
+    private val studentList: ObservableList<SMStudentModel.SMStudentDto> = FXCollections.observableArrayList()
+    private val filteredStudentList: FilteredList<SMStudentModel.SMStudentDto> = FilteredList(studentList)
 
     private var searchBox by singleAssign<JFXTextField>()
 
@@ -34,14 +34,14 @@ class SMClassTableView : View() {
                     alignment = Pos.CENTER_LEFT
                     hgrow = Priority.ALWAYS
 
-                    this += JFXButton("Thêm lớp").apply {
+                    this += JFXButton("Thêm học sinh").apply {
                         buttonType = JFXButton.ButtonType.RAISED
                         isDisableVisualFocus = true
                         paddingVertical = 15
                         paddingHorizontal = 30
 
                         action {
-                            find<SMClassInfoFragment>(
+                            find<SMStudentInfoFragment>(
                                 "mode" to SMCRUDUtils.CRUDMode.NEW
                             ).openModal()
                         }
@@ -66,12 +66,11 @@ class SMClassTableView : View() {
                                 .filter { it.isNotBlank() }
                                 .map { StringUtils.stripAccents(it).toLowerCase() }
 
-                            filteredClassList.setPredicate { classDto ->
+                            filteredStudentList.setPredicate { studentDto ->
                                 tokens.isEmpty() || tokens.any {
-                                    StringUtils.stripAccents(classDto.name).toLowerCase().contains(it)
-                                        || StringUtils.stripAccents(classDto.subject.name).toLowerCase().contains(it)
-                                        || StringUtils.stripAccents(classDto.teacher.firstName).toLowerCase().contains(it)
-                                        || StringUtils.stripAccents(classDto.teacher.lastName).toLowerCase().contains(it)
+                                    StringUtils.stripAccents(studentDto.firstName).toLowerCase().contains(it)
+                                        || StringUtils.stripAccents(studentDto.lastName).toLowerCase().contains(it)
+                                        || StringUtils.stripAccents(studentDto.nickname).toLowerCase().contains(it)
                                 }
                             }
                         }
@@ -83,7 +82,7 @@ class SMClassTableView : View() {
         }
 
         center {
-            tableview<SMClassModel.SMClassDto>(filteredClassList) {
+            tableview<SMStudentModel.SMStudentDto>(filteredStudentList) {
                 multiSelect()
 
                 makeIndexColumn("STT").apply {
@@ -92,39 +91,37 @@ class SMClassTableView : View() {
                     }
                 }
 
-                readonlyColumn("Tên lớp", SMClassModel.SMClassDto::name)
-                readonlyColumn("Giáo viên", SMClassModel.SMClassDto::teacher) {
-                    cellFormat { teacher -> text = "${teacher.lastName} ${teacher.firstName}" }
+                readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName)
+                readonlyColumn("Họ", SMStudentModel.SMStudentDto::lastName)
+                readonlyColumn("Nickname", SMStudentModel.SMStudentDto::nickname)
+                readonlyColumn("Sinh nhật", SMStudentModel.SMStudentDto::birthday)
+                readonlyColumn("Học vấn", SMStudentModel.SMStudentDto::educationLevel) {
+                    cellFormat { text = it.title }
                 }
-                readonlyColumn("Môn", SMClassModel.SMClassDto::subject) {
-                    cellFormat { subject -> text = subject.name }
-                }
+                readonlyColumn("Số điện thoại", SMStudentModel.SMStudentDto::phone)
 
                 smartResize()
 
                 // set up the context menu
                 contextmenu {
                     item("Sửa...").action {
-                        find<SMClassInfoFragment>(
+                        find<SMStudentInfoFragment>(
                             "mode" to SMCRUDUtils.CRUDMode.EDIT,
-                            "classModel" to SMClassModel(selectedItem)
-                        ).openModal()
+                            "studentModel" to SMStudentModel(selectedItem))
+                            .openModal()
                     }
 
                     item("Xóa").action {
-                        serviceCentral.classService.deleteClasses(selectionModel.selectedItems.map { it.id }.toList())
+                        serviceCentral.studentService.deleteStudents(selectionModel.selectedItems.map { it.id }.toList())
                         fire(SMDataProcessRequest {
-                            fire(SMClassListRefreshRequest)
+                            fire(SMStudentRefreshRequest)
                         })
                     }
                 }
 
                 // subscribe to the refresh event to reset the list
-                subscribe<SMClassListRefreshEvent> { event ->
-                    searchBox.text = ""
-                    runAsync { classList.setAll(event.classes) } ui {
-                        requestResize()
-                    }
+                subscribe<SMStudentRefreshEvent> { event ->
+                    runAsync { studentList.setAll(event.students) } ui { requestResize() }
                 }
             }
         }
@@ -133,7 +130,7 @@ class SMClassTableView : View() {
     override fun onDock() {
         super.onDock()
         fire(SMDataProcessRequest {
-            fire(SMClassListRefreshRequest)
+            fire(SMStudentRefreshRequest)
         })
     }
 }

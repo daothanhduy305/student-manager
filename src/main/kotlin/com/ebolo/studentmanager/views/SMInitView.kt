@@ -1,6 +1,7 @@
 package com.ebolo.studentmanager.views
 
 import com.ebolo.studentmanager.StudentManagerApplication
+import com.ebolo.studentmanager.views.setup.SMSetupResultView
 import tornadofx.*
 
 /**
@@ -20,7 +21,11 @@ class SMInitView : View("Loading...") {
         runAsync {
             (app as StudentManagerApplication).setupApp()
         } ui {
-            replaceWith<SMSplashView>(sizeToScene = true, centerOnScreen = true)
+            if (it.success) {
+                replaceWith<SMSplashView>(sizeToScene = true, centerOnScreen = true)
+            } else {
+                replaceWith<SMSetupResultView>(sizeToScene = true, centerOnScreen = true)
+            }
         }
     }
 }

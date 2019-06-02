@@ -1,10 +1,10 @@
-package com.ebolo.studentmanager.views.students
+package com.ebolo.studentmanager.views.teachers
 
-import com.ebolo.studentmanager.models.SMStudentModel
+import com.ebolo.studentmanager.models.SMTeacherModel
 import com.ebolo.studentmanager.services.SMDataProcessRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
-import com.ebolo.studentmanager.services.SMStudentRefreshEvent
-import com.ebolo.studentmanager.services.SMStudentRefreshRequest
+import com.ebolo.studentmanager.services.SMTeacherRefreshEvent
+import com.ebolo.studentmanager.services.SMTeacherRefreshRequest
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXTextField
@@ -16,11 +16,11 @@ import javafx.scene.layout.Priority
 import org.apache.commons.lang3.StringUtils
 import tornadofx.*
 
-class SMStudentTableView : View() {
+class SMTeacherTableFragment : Fragment() {
     private val serviceCentral: SMServiceCentral by di()
 
-    private val studentList: ObservableList<SMStudentModel.SMStudentDto> = FXCollections.observableArrayList()
-    private val filteredStudentList: FilteredList<SMStudentModel.SMStudentDto> = FilteredList(studentList)
+    private val teacherList: ObservableList<SMTeacherModel.SMTeacherDto> = FXCollections.observableArrayList()
+    private val filteredTeacherList: FilteredList<SMTeacherModel.SMTeacherDto> = FilteredList(teacherList)
 
     private var searchBox by singleAssign<JFXTextField>()
 
@@ -34,14 +34,14 @@ class SMStudentTableView : View() {
                     alignment = Pos.CENTER_LEFT
                     hgrow = Priority.ALWAYS
 
-                    this += JFXButton("Thêm học sinh").apply {
+                    this += JFXButton("Thêm giáo viên").apply {
                         buttonType = JFXButton.ButtonType.RAISED
                         isDisableVisualFocus = true
                         paddingVertical = 15
                         paddingHorizontal = 30
 
                         action {
-                            find<SMStudentInfoFragment>(
+                            find<SMTeacherInfoFragment>(
                                 "mode" to SMCRUDUtils.CRUDMode.NEW
                             ).openModal()
                         }
@@ -66,11 +66,10 @@ class SMStudentTableView : View() {
                                 .filter { it.isNotBlank() }
                                 .map { StringUtils.stripAccents(it).toLowerCase() }
 
-                            filteredStudentList.setPredicate { studentDto ->
+                            filteredTeacherList.setPredicate { studentDto ->
                                 tokens.isEmpty() || tokens.any {
                                     StringUtils.stripAccents(studentDto.firstName).toLowerCase().contains(it)
                                         || StringUtils.stripAccents(studentDto.lastName).toLowerCase().contains(it)
-                                        || StringUtils.stripAccents(studentDto.nickname).toLowerCase().contains(it)
                                 }
                             }
                         }
@@ -82,7 +81,7 @@ class SMStudentTableView : View() {
         }
 
         center {
-            tableview<SMStudentModel.SMStudentDto>(filteredStudentList) {
+            tableview<SMTeacherModel.SMTeacherDto>(filteredTeacherList) {
                 multiSelect()
 
                 makeIndexColumn("STT").apply {
@@ -91,37 +90,32 @@ class SMStudentTableView : View() {
                     }
                 }
 
-                readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName)
-                readonlyColumn("Họ", SMStudentModel.SMStudentDto::lastName)
-                readonlyColumn("Nickname", SMStudentModel.SMStudentDto::nickname)
-                readonlyColumn("Sinh nhật", SMStudentModel.SMStudentDto::birthday)
-                readonlyColumn("Học vấn", SMStudentModel.SMStudentDto::educationLevel) {
-                    cellFormat { text = it.title }
-                }
-                readonlyColumn("Số điện thoại", SMStudentModel.SMStudentDto::phone)
+                readonlyColumn("Họ", SMTeacherModel.SMTeacherDto::lastName)
+                readonlyColumn("Tên", SMTeacherModel.SMTeacherDto::firstName)
+                readonlyColumn("Ngày sinh", SMTeacherModel.SMTeacherDto::birthday)
 
                 smartResize()
 
                 // set up the context menu
                 contextmenu {
                     item("Sửa...").action {
-                        find<SMStudentInfoFragment>(
+                        find<SMTeacherInfoFragment>(
                             "mode" to SMCRUDUtils.CRUDMode.EDIT,
-                            "studentModel" to SMStudentModel(selectedItem))
-                            .openModal()
+                            "teacherModel" to SMTeacherModel(selectedItem)
+                        ).openModal()
                     }
 
                     item("Xóa").action {
-                        serviceCentral.studentService.deleteStudents(selectionModel.selectedItems.map { it.id }.toList())
+                        serviceCentral.teacherService.deleteTeachers(selectionModel.selectedItems.map { it.id }.toList())
                         fire(SMDataProcessRequest {
-                            fire(SMStudentRefreshRequest)
+                            fire(SMTeacherRefreshRequest)
                         })
                     }
                 }
 
                 // subscribe to the refresh event to reset the list
-                subscribe<SMStudentRefreshEvent> { event ->
-                    runAsync { studentList.setAll(event.students) } ui { requestResize() }
+                subscribe<SMTeacherRefreshEvent> { event ->
+                    runAsync { teacherList.setAll(event.teachers) } ui { requestResize() }
                 }
             }
         }
@@ -130,7 +124,7 @@ class SMStudentTableView : View() {
     override fun onDock() {
         super.onDock()
         fire(SMDataProcessRequest {
-            fire(SMStudentRefreshRequest)
+            fire(SMTeacherRefreshRequest)
         })
     }
 }
