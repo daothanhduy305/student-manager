@@ -1,5 +1,6 @@
 package com.ebolo.studentmanager.views
 
+import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.models.SMUserModel
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.Settings
@@ -66,13 +67,13 @@ class SMLoginFormView : View("Student Manager") {
                         action {
                             if (serviceCentral.userService.login(user.getEntity())) {
                                 if (rememberMe.value) {
-                                    serviceCentral.cacheService.setSettings(
+                                    StudentManagerApplication.setSettings(
                                         Settings.CREDENTIAL_USERNAME to user.username.value,
                                         Settings.CREDENTIAL_PASSWORD to user.password.value,
                                         Settings.REMEMBER_CREDENTIAL to rememberMe.value
                                     )
                                 } else {
-                                    serviceCentral.cacheService.removeSettings(
+                                    StudentManagerApplication.removeSettings(
                                         Settings.CREDENTIAL_USERNAME,
                                         Settings.CREDENTIAL_PASSWORD
                                     )

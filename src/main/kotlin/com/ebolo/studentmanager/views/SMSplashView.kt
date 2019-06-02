@@ -1,9 +1,11 @@
 package com.ebolo.studentmanager.views
 
+import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.entities.SMUserEntity
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.Settings
-import tornadofx.*
+import tornadofx.Fragment
+import tornadofx.borderpane
 
 /**
  * This view serves as a splash screen to determine either the login view or the main view to be shown
@@ -23,15 +25,13 @@ class SMSplashView : Fragment("Student Manager") {
     override fun onDock() {
         runAsync {
             var showLogin = true
-            if (
-                serviceCentral.cacheService.cache.containsKey(Settings.REMEMBER_CREDENTIAL)
-                && serviceCentral.cacheService.cache[Settings.REMEMBER_CREDENTIAL] as Boolean) {
+            if (StudentManagerApplication.getSetting(Settings.REMEMBER_CREDENTIAL, false) as Boolean) {
                 // If the remember has been ticked then check the saved credential
-                if (serviceCentral.cacheService.cache.containsKey(Settings.CREDENTIAL_USERNAME)
-                    && serviceCentral.cacheService.cache.containsKey(Settings.CREDENTIAL_PASSWORD)) {
+                if (StudentManagerApplication.hasSetting(Settings.CREDENTIAL_USERNAME)
+                    && StudentManagerApplication.hasSetting(Settings.CREDENTIAL_PASSWORD)) {
 
-                    val username = serviceCentral.cacheService.cache[Settings.CREDENTIAL_USERNAME] as String
-                    val hashedPassword = serviceCentral.cacheService.cache[Settings.CREDENTIAL_PASSWORD] as String
+                    val username = StudentManagerApplication.getSetting(Settings.CREDENTIAL_USERNAME) as String
+                    val hashedPassword = StudentManagerApplication.getSetting(Settings.CREDENTIAL_PASSWORD) as String
 
                     if (serviceCentral.userService.login(SMUserEntity().apply {
                             this.username = username
@@ -40,14 +40,14 @@ class SMSplashView : Fragment("Student Manager") {
 
                         showLogin = false
                     } else {
-                        serviceCentral.cacheService.removeSettings(
+                        StudentManagerApplication.removeSettings(
                             Settings.CREDENTIAL_USERNAME,
                             Settings.CREDENTIAL_PASSWORD,
                             Settings.REMEMBER_CREDENTIAL
                         )
                     }
                 } else {
-                    serviceCentral.cacheService.removeSettings(Settings.REMEMBER_CREDENTIAL)
+                    StudentManagerApplication.removeSettings(Settings.REMEMBER_CREDENTIAL)
                 }
             }
 

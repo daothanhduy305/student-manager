@@ -5,6 +5,7 @@ import com.ebolo.studentmanager.services.SMGlobal
 import com.ebolo.studentmanager.services.Settings
 import com.ebolo.studentmanager.views.SMInitView
 import org.mapdb.DBMaker
+import org.mapdb.HTreeMap
 import org.mapdb.Serializer
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -12,7 +13,11 @@ import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.data.mongodb.config.EnableMongoAuditing
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
-import tornadofx.*
+import tornadofx.App
+import tornadofx.DIContainer
+import tornadofx.FX
+import tornadofx.importStylesheet
+import kotlin.collections.set
 import kotlin.reflect.KClass
 
 @SpringBootApplication
@@ -29,14 +34,33 @@ class StudentManagerApplication : App(SMInitView::class) {
     var context: ConfigurableApplicationContext? = null
     lateinit var setupResult: SetupResult
 
+    val db by lazy {
+        DBMaker.fileDB(SMGlobal.CACHE_FILE)
+            .fileMmapEnable()
+            .fileMmapEnableIfSupported()
+            .fileMmapPreclearDisable()
+            .cleanerHackEnable()
+            .closeOnJvmShutdown()
+            .transactionEnable() // to protect the db on sudden deaths
+            .make()
+    }
+
+    val cache: HTreeMap<String, Any> by lazy {
+        db.hashMap(SMGlobal.CACHE_NAME, Serializer.STRING, Serializer.JAVA)
+            .createOrOpen()
+    }
+
     override fun init() {
         importStylesheet("/css/jfx-table-view.css")
         importStylesheet("/css/jfx-tab-pane.css")
         importStylesheet("/css/jfx-hamburger.css")
+
+        currentApplication = this
     }
 
     override fun stop() {
         super.stop()
+        db.commit()
         if (context != null) {
             context!!.close()
         }
@@ -86,59 +110,76 @@ class StudentManagerApplication : App(SMInitView::class) {
      *
      * @return Boolean
      */
-    private fun checkDatabase(): Boolean {
-        var result = false
+    private fun checkDatabase() = hasSetting(Settings.DATABASE_NAME)
+        && hasSetting(Settings.DATABASE_URI)
 
-        with(DBMaker
-            .fileDB(SMGlobal.CACHE_FILE)
-            .fileMmapEnable()
-            .transactionEnable() // to protect the db on sudden deaths
-            .make()
-        ) {
-            val cache = this.hashMap(SMGlobal.CACHE_NAME, Serializer.STRING, Serializer.JAVA)
-                .createOrOpen()
-
-            if (cache.containsKey(Settings.DATABASE_NAME) && cache.containsKey(Settings.DATABASE_URI)) {
-                result = true
-            }
-
-            this.commit()
-            this.close()
-        }
-
-        return result
-    }
-
-    private fun checkMasterAccount(): Boolean {
-        var result = false
-
-        with(DBMaker
-            .fileDB(SMGlobal.CACHE_FILE)
-            .fileMmapEnable()
-            .transactionEnable() // to protect the db on sudden deaths
-            .make()
-        ) {
-            val cache = this.hashMap(SMGlobal.CACHE_NAME, Serializer.STRING, Serializer.JAVA)
-                .createOrOpen()
-
-            if (cache.containsKey(Settings.MASTER_ACCOUNT_USERNAME) && cache.containsKey(Settings.MASTER_ACCOUNT_PASSWORD)) {
-                result = true
-            }
-
-            this.commit()
-            this.close()
-        }
-
-        return result
-    }
+    private fun checkMasterAccount() = hasSetting(Settings.MASTER_ACCOUNT_USERNAME)
+        && hasSetting(Settings.MASTER_ACCOUNT_PASSWORD)
 
     // endregion
 
     companion object {
+        lateinit var currentApplication: StudentManagerApplication
+
         @JvmStatic
         fun main(args: Array<String>) {
             launch(StudentManagerApplication::class.java, *args)
         }
+
+        /**
+         * Method to allow set the settings to certain values
+         *
+         * @author ebolo
+         * @since 0.0.1-SNAPSHOT
+         *
+         * @param settings Array<out Pair<String, Any>>
+         */
+        fun setSettings(vararg settings: Pair<String, Any>) {
+            settings.forEach { setting ->
+                currentApplication.cache[setting.first] = setting.second
+            }
+            currentApplication.db.commit()
+        }
+
+        /**
+         * Method to remove settings from the app's cache
+         *
+         * @author ebolo
+         * @since 0.0.1-SNAPSHOT
+         *
+         * @param settings Array<out String>
+         */
+        fun removeSettings(vararg settings: String) {
+            settings.forEach { currentApplication.cache.remove(it) }
+            currentApplication.db.commit()
+        }
+
+        /**
+         * Method to get a setting from the app's cache
+         *
+         * @author ebolo
+         * @since 0.0.1-SNAPSHOT
+         *
+         * @param settingName String
+         * @return Optional<Any>
+         */
+        fun getSetting(settingName: String, default: Any? = null): Any? =
+            if (currentApplication.cache.containsKey(settingName)) {
+                currentApplication.cache[settingName]
+            } else {
+                default
+            }
+
+        /**
+         * Method to check if the app's cache contains a setting entry for the settingsName
+         *
+         * @author ebolo
+         * @since 0.0.1-SNAPSHOT
+         *
+         * @param settingsName String
+         * @return Boolean
+         */
+        fun hasSetting(settingsName: String) = currentApplication.cache.containsKey(settingsName)
     }
 
     class SetupResult(val success: Boolean, val errors: List<SetupError>)

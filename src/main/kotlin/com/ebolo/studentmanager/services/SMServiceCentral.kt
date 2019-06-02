@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service
 @Service
 class SMServiceCentral(
     val userService: SMUserService,
-    val cacheService: SMCacheService,
     val subjectService: SMSubjectService,
     val studentService: SMStudentService,
     val teacherService: SMTeacherService,

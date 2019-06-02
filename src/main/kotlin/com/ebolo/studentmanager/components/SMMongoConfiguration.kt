@@ -1,6 +1,6 @@
 package com.ebolo.studentmanager.components
 
-import com.ebolo.studentmanager.services.SMCacheService
+import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.services.Settings
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
@@ -22,20 +22,18 @@ import javax.annotation.PostConstruct
  * @constructor
  */
 @Configuration
-class SMMongoConfiguration(
-    private val cacheService: SMCacheService
-) : AbstractMongoConfiguration() {
+class SMMongoConfiguration : AbstractMongoConfiguration() {
     private var mongoDB: String = ""
     private var mongoURI: String = ""
 
     @PostConstruct
     fun setup() {
-        val mongoDbName = cacheService.cache[Settings.DATABASE_NAME] as String?
+        val mongoDbName = StudentManagerApplication.getSetting(Settings.DATABASE_NAME) as String?
         if (mongoDbName != null) {
             mongoDB = mongoDbName
         }
 
-        val mongoDbUri = cacheService.cache[Settings.DATABASE_URI] as String?
+        val mongoDbUri = StudentManagerApplication.getSetting(Settings.DATABASE_URI) as String?
         if (mongoDbUri != null) {
             mongoURI = mongoDbUri
         }

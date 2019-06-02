@@ -1,8 +1,7 @@
 package com.ebolo.studentmanager.components
 
-import com.ebolo.studentmanager.services.SMCacheService
+import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.services.SMGlobal
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.AuditorAware
 import org.springframework.stereotype.Component
 import java.util.*
@@ -18,9 +17,9 @@ import java.util.*
  * @constructor
  */
 @Component
-class SMAuditorAware(
-    @Autowired private val cacheService: SMCacheService
-) : AuditorAware<String> {
-    override fun getCurrentAuditor() = Optional
-        .of(cacheService.cache.getOrDefault(SMGlobal.CACHE_ENTRY_LOGGING_USER, SMGlobal.SYSTEM_USER) as String)
+class SMAuditorAware : AuditorAware<String> {
+    override fun getCurrentAuditor() = Optional.of(
+        StudentManagerApplication
+            .getSetting(SMGlobal.CACHE_ENTRY_LOGGING_USER, SMGlobal.SYSTEM_USER) as String
+    )
 }

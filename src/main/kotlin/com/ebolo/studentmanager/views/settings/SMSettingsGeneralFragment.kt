@@ -86,7 +86,7 @@ class SMSettingsGeneralFragment : Fragment() {
                         if (dbUri.isNotBlank() && dbName.isNotBlank()) {
                             // Set the new connection string and refresh the context
                             runAsync {
-                                serviceCentral.cacheService.setSettings(
+                                StudentManagerApplication.setSettings(
                                     Settings.DATABASE_NAME to dbName,
                                     Settings.DATABASE_URI to dbUri
                                 )
@@ -112,12 +112,12 @@ class SMSettingsGeneralFragment : Fragment() {
     override fun onDock() {
         super.onDock()
 
-        val mongoDbName = serviceCentral.cacheService.cache[Settings.DATABASE_NAME] as String?
+        val mongoDbName = StudentManagerApplication.getSetting(Settings.DATABASE_NAME) as String?
         if (mongoDbName != null) {
             databaseNameProperty.value = mongoDbName
         }
 
-        val mongoDbUri = serviceCentral.cacheService.cache[Settings.DATABASE_URI] as String?
+        val mongoDbUri = StudentManagerApplication.getSetting(Settings.DATABASE_URI) as String?
         if (mongoDbUri != null) {
             databaseUriProperty.value = mongoDbUri
         }

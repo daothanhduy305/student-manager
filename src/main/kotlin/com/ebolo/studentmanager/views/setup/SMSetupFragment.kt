@@ -1,6 +1,6 @@
 package com.ebolo.studentmanager.views.setup
 
-import com.ebolo.studentmanager.services.SMGlobal
+import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.services.Settings
 import com.ebolo.studentmanager.views.SMInitView
 import com.ebolo.studentmanager.views.settings.SMApplyingSettingsView
@@ -10,8 +10,6 @@ import com.jfoenix.controls.JFXTextField
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
-import org.mapdb.DBMaker
-import org.mapdb.Serializer
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import tornadofx.*
 
@@ -104,26 +102,12 @@ class SMSetupFragment : Fragment("Student Manager") {
                             val masterAccountPassword = masterAccountPasswordProperty.value
 
                             runAsync {
-
-                                with(DBMaker
-                                    .fileDB(SMGlobal.CACHE_FILE)
-                                    .fileMmapEnable()
-                                    .transactionEnable() // to protect the db on sudden deaths
-                                    .make()
-                                ) {
-                                    val cache = this.hashMap(SMGlobal.CACHE_NAME, Serializer.STRING, Serializer.JAVA)
-                                        .createOrOpen()
-
-                                    cache[Settings.DATABASE_NAME] = dbName
-                                    cache[Settings.DATABASE_URI] = dbUri
-
-                                    cache[Settings.MASTER_ACCOUNT_USERNAME] = masterAccountUsername
-                                    cache[Settings.MASTER_ACCOUNT_PASSWORD] = BCryptPasswordEncoder()
-                                        .encode(masterAccountPassword)
-
-                                    this.commit()
-                                    this.close()
-                                }
+                                StudentManagerApplication.setSettings(
+                                    Settings.DATABASE_NAME to dbName,
+                                    Settings.DATABASE_URI to dbUri,
+                                    Settings.MASTER_ACCOUNT_USERNAME to masterAccountUsername,
+                                    Settings.MASTER_ACCOUNT_PASSWORD to BCryptPasswordEncoder().encode(masterAccountPassword)
+                                )
                             } ui {
                                 messageView.close()
                                 replaceWith<SMInitView>()

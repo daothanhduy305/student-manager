@@ -1,13 +1,16 @@
 package com.ebolo.studentmanager.services
 
 import com.ebolo.common.utils.loggerFor
+import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.entities.SMUserEntity
 import com.ebolo.studentmanager.models.SMUserModel
 import com.ebolo.studentmanager.repositories.SMUserRepository
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
-import tornadofx.*
+import tornadofx.Controller
+import tornadofx.EventBus
+import tornadofx.FXEvent
 import javax.annotation.PostConstruct
 
 /**
@@ -24,7 +27,6 @@ import javax.annotation.PostConstruct
 @Service
 class SMUserService(
     private val userRepository: SMUserRepository,
-    private val cacheService: SMCacheService,
     private val passwordEncoder: BCryptPasswordEncoder
 ) : Controller() {
     private val logger = loggerFor(SMUserService::class.java)
@@ -91,8 +93,8 @@ class SMUserService(
         logger.info("Logging user: ${user.username} into the system")
 
         // Get the master account info
-        val masterUsername = cacheService.cache[Settings.MASTER_ACCOUNT_USERNAME] as String
-        val masterPassword = cacheService.cache[Settings.MASTER_ACCOUNT_PASSWORD] as String
+        val masterUsername = StudentManagerApplication.getSetting(Settings.MASTER_ACCOUNT_USERNAME) as String
+        val masterPassword = StudentManagerApplication.getSetting(Settings.MASTER_ACCOUNT_PASSWORD) as String
 
         if (user.username == masterUsername && passwordEncoder.matches(user.password, masterPassword)) {
             authenticated = true
@@ -105,7 +107,7 @@ class SMUserService(
         }
 
         if (authenticated) {
-            cacheService.setSettings(SMGlobal.CACHE_ENTRY_LOGGING_USER to user.username)
+            StudentManagerApplication.setSettings(SMGlobal.CACHE_ENTRY_LOGGING_USER to user.username)
         }
 
         return authenticated
@@ -121,7 +123,7 @@ class SMUserService(
      */
     fun logout(): Boolean {
         logger.info("Logging out...")
-        cacheService.removeSettings(
+        StudentManagerApplication.removeSettings(
             Settings.REMEMBER_CREDENTIAL,
             Settings.CREDENTIAL_USERNAME,
             Settings.CREDENTIAL_PASSWORD,
