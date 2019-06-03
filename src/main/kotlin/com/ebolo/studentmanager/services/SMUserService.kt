@@ -8,9 +8,7 @@ import com.ebolo.studentmanager.repositories.SMUserRepository
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
-import tornadofx.Controller
-import tornadofx.EventBus
-import tornadofx.FXEvent
+import tornadofx.*
 import javax.annotation.PostConstruct
 
 /**
@@ -98,6 +96,7 @@ class SMUserService(
 
         if (user.username == masterUsername && passwordEncoder.matches(user.password, masterPassword)) {
             authenticated = true
+            StudentManagerApplication.setSettings(Settings.GOD_MODE to true)
         } else {
             val userInDB = userRepository.findByUsername(user.username)
 
@@ -107,7 +106,7 @@ class SMUserService(
         }
 
         if (authenticated) {
-            StudentManagerApplication.setSettings(SMGlobal.CACHE_ENTRY_LOGGING_USER to user.username)
+            StudentManagerApplication.setSettings(Settings.LOGGING_USER to user.username)
         }
 
         return authenticated
@@ -127,9 +126,50 @@ class SMUserService(
             Settings.REMEMBER_CREDENTIAL,
             Settings.CREDENTIAL_USERNAME,
             Settings.CREDENTIAL_PASSWORD,
-            SMGlobal.CACHE_ENTRY_LOGGING_USER
+            Settings.LOGGING_USER,
+            Settings.GOD_MODE
         )
         return true
+    }
+
+    /**
+     * Method to check if there has been an authenticated user in the app's cache
+     *
+     * @author ebolo
+     * @since 0.0.1-SNAPSHOT
+     *
+     * @return Boolean
+     */
+    fun checkCurrentUserAuthentication(): Boolean {
+        var authenticated = false
+
+        if (StudentManagerApplication.getSetting(Settings.REMEMBER_CREDENTIAL, false) as Boolean) {
+            // If the remember has been ticked then check the saved credential
+            if (StudentManagerApplication.hasSetting(Settings.CREDENTIAL_USERNAME)
+                && StudentManagerApplication.hasSetting(Settings.CREDENTIAL_PASSWORD)) {
+
+                val username = StudentManagerApplication.getSetting(Settings.CREDENTIAL_USERNAME) as String
+                val hashedPassword = StudentManagerApplication.getSetting(Settings.CREDENTIAL_PASSWORD) as String
+
+                if (login(SMUserEntity().apply {
+                        this.username = username
+                        this.password = hashedPassword
+                    })) {
+
+                    authenticated = true
+                } else {
+                    StudentManagerApplication.removeSettings(
+                        Settings.CREDENTIAL_USERNAME,
+                        Settings.CREDENTIAL_PASSWORD,
+                        Settings.REMEMBER_CREDENTIAL
+                    )
+                }
+            } else {
+                StudentManagerApplication.removeSettings(Settings.REMEMBER_CREDENTIAL)
+            }
+        }
+
+        return authenticated
     }
 }
 

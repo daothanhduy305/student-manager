@@ -1,11 +1,7 @@
 package com.ebolo.studentmanager.views
 
-import com.ebolo.studentmanager.StudentManagerApplication
-import com.ebolo.studentmanager.entities.SMUserEntity
 import com.ebolo.studentmanager.services.SMServiceCentral
-import com.ebolo.studentmanager.services.Settings
-import tornadofx.Fragment
-import tornadofx.borderpane
+import tornadofx.*
 
 /**
  * This view serves as a splash screen to determine either the login view or the main view to be shown
@@ -24,36 +20,9 @@ class SMSplashView : Fragment("Student Manager") {
 
     override fun onDock() {
         runAsync {
-            var showLogin = true
-            if (StudentManagerApplication.getSetting(Settings.REMEMBER_CREDENTIAL, false) as Boolean) {
-                // If the remember has been ticked then check the saved credential
-                if (StudentManagerApplication.hasSetting(Settings.CREDENTIAL_USERNAME)
-                    && StudentManagerApplication.hasSetting(Settings.CREDENTIAL_PASSWORD)) {
-
-                    val username = StudentManagerApplication.getSetting(Settings.CREDENTIAL_USERNAME) as String
-                    val hashedPassword = StudentManagerApplication.getSetting(Settings.CREDENTIAL_PASSWORD) as String
-
-                    if (serviceCentral.userService.login(SMUserEntity().apply {
-                            this.username = username
-                            this.password = hashedPassword
-                        })) {
-
-                        showLogin = false
-                    } else {
-                        StudentManagerApplication.removeSettings(
-                            Settings.CREDENTIAL_USERNAME,
-                            Settings.CREDENTIAL_PASSWORD,
-                            Settings.REMEMBER_CREDENTIAL
-                        )
-                    }
-                } else {
-                    StudentManagerApplication.removeSettings(Settings.REMEMBER_CREDENTIAL)
-                }
-            }
-
-            showLogin
-        } ui { isShowingLogin ->
-            if (isShowingLogin) {
+            serviceCentral.userService.checkCurrentUserAuthentication()
+        } ui { authenticated ->
+            if (!authenticated) {
                 replaceWith<SMLoginFormView>(sizeToScene = true, centerOnScreen = true)
             } else {
                 primaryStage.isMaximized = true

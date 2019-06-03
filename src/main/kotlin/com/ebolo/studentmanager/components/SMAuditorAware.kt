@@ -2,6 +2,7 @@ package com.ebolo.studentmanager.components
 
 import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.services.SMGlobal
+import com.ebolo.studentmanager.services.Settings
 import org.springframework.data.domain.AuditorAware
 import org.springframework.stereotype.Component
 import java.util.*
@@ -20,6 +21,6 @@ import java.util.*
 class SMAuditorAware : AuditorAware<String> {
     override fun getCurrentAuditor() = Optional.of(
         StudentManagerApplication
-            .getSetting(SMGlobal.CACHE_ENTRY_LOGGING_USER, SMGlobal.SYSTEM_USER) as String
+            .getSetting(Settings.LOGGING_USER, SMGlobal.SYSTEM_USER) as String
     )
 }

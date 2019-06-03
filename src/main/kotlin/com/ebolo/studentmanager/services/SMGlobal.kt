@@ -6,8 +6,6 @@ object SMGlobal {
     // region cache
     const val CACHE_FILE = "SM.db"
     const val CACHE_NAME = "SM_Cache"
-
-    const val CACHE_ENTRY_LOGGING_USER = "logging_user"
     // endregion
 
     // region system
@@ -45,4 +43,12 @@ object Settings {
      * Save a master password into the cache
      */
     const val MASTER_ACCOUNT_PASSWORD = "MASTER_PASSWORD"
+    /**
+     * Current using being logged into the system
+     */
+    const val LOGGING_USER = "LOGGING_USER"
+    /**
+     * Indicates whether the app is being run in god mode
+     */
+    const val GOD_MODE = "GOD_MODE"
 }
