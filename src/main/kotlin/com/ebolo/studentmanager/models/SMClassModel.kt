@@ -25,6 +25,12 @@ class SMClassModel(
         var tuitionFee by property<Number>()
         fun tuitionFeeProperty() = getProperty(SMClassDto::tuitionFee)
 
+        var totalTuitionFee by property<Number>()
+        fun totalTuitionFeeProperty() = getProperty(SMClassDto::totalTuitionFee)
+
+        var customTotalFee by property<Boolean>()
+        fun customTotalFeeProperty() = getProperty(SMClassDto::customTotalFee)
+
         var numberOfExams by property<Number>()
         fun numberOfExamsProperty() = getProperty(SMClassDto::numberOfExams)
 
@@ -54,6 +60,8 @@ class SMClassModel(
     val teacher = bind(SMClassDto::teacherProperty)
     val subject = bind(SMClassDto::subjectProperty)
     val tuitionFee = bind(SMClassDto::tuitionFeeProperty)
+    val totalTuitionFee = bind(SMClassDto::totalTuitionFeeProperty)
+    val customTotalFee = bind(SMClassDto::customTotalFeeProperty)
     val numberOfExams = bind(SMClassDto::numberOfExamsProperty)
     val startDate = bind(SMClassDto::startDateProperty)
     val studentList = bind(SMClassDto::studentList)
@@ -68,12 +76,14 @@ class SMClassModel(
         entity.name = this.name.value
         entity.numberOfExams = this.numberOfExams.value.toInt()
         entity.tuitionFee = this.tuitionFee.value.toInt()
+        entity.totalTuitionFee = this.totalTuitionFee.value.toLong()
         entity.startDate = this.startDate.value.atStartOfDay().toInstant(ZoneOffset.UTC)
         entity.subject = SMSubjectModel().apply { item = subject.value }.getEntity()
         entity.teacher = SMTeacherModel().apply { item = teacher.value }.getEntity()
         entity.studentList = this.studentList.value
             .map { dto -> SMStudentModel().apply { item = dto }.getEntity() }
             .toMutableList()
+        entity.customTotalFee = this.customTotalFee.value
         entity.studentPerformanceList = this.studentPerformanceList.value.toMutableList()
         entity.description = this.description.value
         entity.monthPeriods = this.monthPeriods.value.toInt()

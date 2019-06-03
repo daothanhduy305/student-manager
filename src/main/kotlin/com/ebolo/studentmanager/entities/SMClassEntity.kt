@@ -43,6 +43,8 @@ class SMClassEntity(
     var studentList: MutableList<SMStudentEntity> = mutableListOf(),
     var numberOfExams: Int = 0,
     var tuitionFee: Int = 0,
+    var totalTuitionFee: Long = 0L,
+    var customTotalFee: Boolean = false,
     var monthPeriods: Int = 1,
     var description: String? = null,
     var fromHour: LocalTime? = null,

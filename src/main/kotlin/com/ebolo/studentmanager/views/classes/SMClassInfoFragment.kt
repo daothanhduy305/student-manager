@@ -113,31 +113,6 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                     }
                                 }
 
-                                field("Ngày khai giảng *") {
-                                    this += JFXDatePicker().apply {
-                                        bind(classModel.startDate)
-
-                                        defaultColor = c("#3f51b5")
-                                        isOverLay = false
-
-                                        required()
-                                    }
-                                }
-
-                                field("Số tháng *") {
-                                    this += JFXTextField().apply {
-                                        bind(month)
-                                        bind(classModel.monthPeriods)
-                                        required()
-                                        validator { text ->
-                                            when {
-                                                text != null && text.isInt() && text.toInt() == 0 -> error("Khóa học tối thiểu 1 tháng")
-                                                else -> null
-                                            }
-                                        }
-                                    }
-                                }
-
                                 field("Học phí *") {
                                     this += JFXTextField().apply {
                                         textFormatter = TextFormatter(object : StringConverter<Number?>() {
@@ -172,13 +147,22 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                     }
                                 }
 
-                                field("Tổng học phí toàn khóa") {
+                                field("Không tính học phí tự động") {
+                                    this += JFXCheckBox().apply {
+                                        bind(classModel.customTotalFee)
+                                    }
+                                }
+
+                                field("Học phí toàn khóa (dự kiến)") {
+                                    disableWhen(classModel.customTotalFee)
+
                                     hbox(spacing = 5) {
                                         paddingTop = 5
                                         val courseFee = Bindings.multiply(month, fee)
 
                                         label {
-                                            text = "Miễn phí"
+                                            text = if (courseFee.value == 0L) "Miễn phí" else courseFee
+                                                .value.toString().formatDecimal()
 
                                             courseFee.onChange { newNumber ->
                                                 if (newNumber != null) text =
@@ -197,6 +181,51 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                             }
 
                                             visibleWhen(Bindings.greaterThan(courseFee, 0))
+                                        }
+                                    }
+                                }
+
+                                field("Học phí toàn khóa") {
+                                    enableWhen(classModel.customTotalFee)
+
+                                    hbox(spacing = 10) {
+                                        alignment = Pos.BOTTOM_LEFT
+
+                                        this += JFXTextField().apply {
+                                            hgrow = Priority.ALWAYS
+
+                                            textFormatter = TextFormatter(object : StringConverter<Number?>() {
+                                                override fun fromString(string: String?): Number? {
+                                                    return if (string != null && string.isFormattedLong())
+                                                        string.trim().replace("[^\\d]".toRegex(), "").toLong()
+                                                    else null
+                                                }
+
+                                                override fun toString(number: Number?): String {
+                                                    return if (number != null) return number.toLong().toString().formatDecimal()
+                                                    else ""
+                                                }
+                                            })
+
+                                            bind(classModel.totalTuitionFee)
+
+                                            textProperty().onChange {
+                                                runLater { commitValue() }
+                                            }
+
+                                            validator { text ->
+                                                when {
+                                                    text.isNullOrBlank() -> error("This field is required")
+                                                    !text.isFormattedLong() -> error("Number is required")
+                                                    else -> null
+                                                }
+                                            }
+                                        }
+
+                                        label("(VND)") {
+                                            style {
+                                                fontSize = Dimension(12.0, Dimension.LinearUnits.pt)
+                                            }
                                         }
                                     }
                                 }
@@ -220,9 +249,7 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                     }
                                 }
 
-                                hbox {
-                                    spacing = 40.0
-
+                                hbox(spacing = 40) {
                                     field("Giờ học từ *") {
                                         this += JFXTimePicker().apply {
                                             bind(classModel.fromHour)
@@ -240,6 +267,33 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                             isOverLay = false
 
                                             required()
+                                        }
+                                    }
+                                }
+
+                                hbox(spacing = 40) {
+                                    field("Ngày khai giảng *") {
+                                        this += JFXDatePicker().apply {
+                                            bind(classModel.startDate)
+
+                                            defaultColor = c("#3f51b5")
+                                            isOverLay = false
+
+                                            required()
+                                        }
+                                    }
+
+                                    field("Số tháng *") {
+                                        this += JFXTextField().apply {
+                                            bind(month)
+                                            bind(classModel.monthPeriods)
+                                            required()
+                                            validator { text ->
+                                                when {
+                                                    text != null && text.isInt() && text.toInt() == 0 -> error("Khóa học tối thiểu 1 tháng")
+                                                    else -> null
+                                                }
+                                            }
                                         }
                                     }
                                 }

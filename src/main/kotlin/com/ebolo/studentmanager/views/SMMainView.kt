@@ -243,8 +243,8 @@ class SMMainView : Fragment("Student Manager") {
 
             bottom {
                 hbox {
-                    prefHeight = 25.0
-                    maxHeight = 25.0
+                    prefHeight = 50.0
+                    maxHeight = 50.0
                     paddingHorizontal = 8.0
                     paddingTop = 6.0
 
