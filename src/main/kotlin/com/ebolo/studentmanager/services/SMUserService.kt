@@ -1,5 +1,6 @@
 package com.ebolo.studentmanager.services
 
+import com.ebolo.common.utils.getWhenPresentOr
 import com.ebolo.common.utils.loggerFor
 import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.entities.SMUserEntity
@@ -74,6 +75,46 @@ class SMUserService(
             success = !added,
             errorMessage = if (added) "Người dùng đã có trong cơ sở dữ liệu" else ""
         )
+    }
+
+    /**
+     * Method to delete a user from the system
+     *
+     * @author ebolo
+     * @since 0.0.1-SNAPSHOT
+     *
+     * @param userModel SMUserModel
+     * @return SMCRUDUtils.SMCRUDResult
+     */
+    fun deleteUser(userModel: SMUserModel): SMCRUDUtils.SMCRUDResult = userRepository.findById(userModel.id.value)
+        .getWhenPresentOr(
+            ifPresentHandler = {
+                userRepository.deleteById(userModel.id.value)
+                SMCRUDUtils.SMCRUDResult(true)
+            },
+            otherwise = {
+                SMCRUDUtils.SMCRUDResult(false, "Người dùng không tồn tại")
+            }
+        )
+
+    /**
+     * Method to delete a list of users
+     *
+     * @author ebolo
+     * @since 0.0.1-SNAPSHOT
+     *
+     * @param idList List<String>
+     * @return SMCRUDUtils.SMCRUDResult
+     */
+    fun deleteUsers(idList: List<String>): SMCRUDUtils.SMCRUDResult = try {
+        logger.info("Deleting user(s) '${idList.joinToString()}'")
+        userRepository.deleteAllByIdIn(idList)
+
+        SMCRUDUtils.SMCRUDResult(true)
+    } catch (ex: Exception) {
+        logger.error(ex.message, ex)
+        SMCRUDUtils.SMCRUDResult(
+            false, ex.message ?: "Something went wrong while deleting Class(es) '${idList.joinToString()}'")
     }
 
     /**

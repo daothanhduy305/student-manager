@@ -102,6 +102,25 @@ class SMSettingsAccountsFragment : Fragment() {
                         requestResize()
                     }
                 }
+
+                contextmenu {
+                    /*item("Sửa...").action {
+                        find<SMClassInfoFragment>(
+                            "mode" to SMCRUDUtils.CRUDMode.EDIT,
+                            "classModel" to SMClassModel(selectedItem)
+                        ).openModal()
+                    }*/
+
+                    item("Xóa").action {
+                        runAsync {
+                            serviceCentral.userService.deleteUsers(selectionModel.selectedItems.map { it.id }.toList())
+                        } ui {
+                            if (it.success) {
+                                fire(SMUserListRefreshRequest)
+                            }
+                        }
+                    }
+                }
             }
         }
     }
