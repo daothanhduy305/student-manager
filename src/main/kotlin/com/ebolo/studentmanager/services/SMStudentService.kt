@@ -46,7 +46,7 @@ class SMStudentService(
     @PreDestroy
     fun shutdown() {
         logger.info("Shutting down student service")
-        unsubscribe<SMStudentRefreshRequest> { smStudentRefreshRequestRegistration.action }
+        smStudentRefreshRequestRegistration.unsubscribe()
     }
 
     /**

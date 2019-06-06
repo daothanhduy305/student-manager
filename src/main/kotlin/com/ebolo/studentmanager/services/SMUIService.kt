@@ -1,10 +1,7 @@
 package com.ebolo.studentmanager.services
 
 import com.ebolo.common.utils.loggerFor
-import tornadofx.Controller
-import tornadofx.FXEvent
-import tornadofx.FXEventRegistration
-import tornadofx.singleAssign
+import tornadofx.*
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 
@@ -29,7 +26,7 @@ class SMUIService : Controller() {
     @PreDestroy
     fun shutdown() {
         logger.info("Shutting down UI service")
-        unsubscribe<SMDataProcessRequest> { smDataProcessRequestRegistration.action }
+        smDataProcessRequestRegistration.unsubscribe()
     }
 }
 

@@ -41,7 +41,7 @@ class SMSubjectService(
     @PreDestroy
     fun shutdown() {
         logger.info("Shutting down subject service")
-        unsubscribe<SMSubjectRefreshRequest> { smSubjectRefreshRequestRegistration.action }
+        smSubjectRefreshRequestRegistration.unsubscribe()
     }
 
     /**

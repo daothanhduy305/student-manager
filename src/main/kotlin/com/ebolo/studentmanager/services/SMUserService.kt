@@ -47,7 +47,7 @@ class SMUserService(
     @PreDestroy
     fun shutdown() {
         logger.info("Shutting down user service")
-        unsubscribe<SMUserListRefreshRequest> { smUserListRefreshRequestRegistration.action }
+        smUserListRefreshRequestRegistration.unsubscribe()
     }
 
     /**
