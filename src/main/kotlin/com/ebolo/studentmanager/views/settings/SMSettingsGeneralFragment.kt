@@ -91,13 +91,12 @@ class SMSettingsGeneralFragment : Fragment() {
                                     Settings.DATABASE_URI to dbUri
                                 )
 
-                                with(app as StudentManagerApplication) {
-                                    if (context != null && context!!.isActive) context!!.close()
-                                    setupApp()
-                                }
+                                (app as StudentManagerApplication).setupApp()
                             } ui {
-                                messageView.close()
-                                fire(SMRestartAppRequest)
+                                if (it.success) {
+                                    messageView.close()
+                                    fire(SMRestartAppRequest)
+                                }
                             }
 
                             messageView.openModal(

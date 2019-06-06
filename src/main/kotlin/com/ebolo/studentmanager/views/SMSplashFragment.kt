@@ -1,7 +1,8 @@
 package com.ebolo.studentmanager.views
 
 import com.ebolo.studentmanager.services.SMServiceCentral
-import tornadofx.*
+import tornadofx.Fragment
+import tornadofx.borderpane
 
 /**
  * This view serves as a splash screen to determine either the login view or the main view to be shown
@@ -11,7 +12,7 @@ import tornadofx.*
  *
  * @property root BorderPane
  */
-class SMSplashView : Fragment("Student Manager") {
+class SMSplashFragment : Fragment("Student Manager") {
     private val serviceCentral: SMServiceCentral by di()
 
     override val root = borderpane {
@@ -23,10 +24,10 @@ class SMSplashView : Fragment("Student Manager") {
             serviceCentral.userService.checkCurrentUserAuthentication()
         } ui { authenticated ->
             if (!authenticated) {
-                replaceWith<SMLoginFormView>(sizeToScene = true, centerOnScreen = true)
+                replaceWith<SMLoginFormFragment>(sizeToScene = true, centerOnScreen = true)
             } else {
                 primaryStage.isMaximized = true
-                replaceWith<SMMainView>(sizeToScene = true, centerOnScreen = true)
+                replaceWith<SMMainFragment>(sizeToScene = true, centerOnScreen = true)
             }
         }
     }

@@ -2,7 +2,8 @@ package com.ebolo.studentmanager.views
 
 import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.views.setup.SMSetupResultView
-import tornadofx.*
+import tornadofx.Fragment
+import tornadofx.borderpane
 
 /**
  * Dummy view to be loaded initially while waiting for the spring eco system to be loaded
@@ -12,7 +13,7 @@ import tornadofx.*
  *
  * @property root BorderPane
  */
-class SMInitView : View("Loading...") {
+class SMInitFragment : Fragment("Loading...") {
     override val root = borderpane {
         setPrefSize(500.0, 300.0)
     }
@@ -22,7 +23,7 @@ class SMInitView : View("Loading...") {
             (app as StudentManagerApplication).setupApp()
         } ui {
             if (it.success) {
-                replaceWith<SMSplashView>(sizeToScene = true, centerOnScreen = true)
+                replaceWith<SMSplashFragment>(sizeToScene = true, centerOnScreen = true)
             } else {
                 replaceWith<SMSetupResultView>(sizeToScene = true, centerOnScreen = true)
             }

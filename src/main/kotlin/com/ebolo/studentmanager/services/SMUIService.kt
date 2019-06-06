@@ -1,18 +1,35 @@
 package com.ebolo.studentmanager.services
 
-import tornadofx.*
+import com.ebolo.common.utils.loggerFor
+import tornadofx.Controller
+import tornadofx.FXEvent
+import tornadofx.FXEventRegistration
+import tornadofx.singleAssign
 import javax.annotation.PostConstruct
+import javax.annotation.PreDestroy
 
 /**
  * Service to handle general UI functions
  */
 @org.springframework.stereotype.Controller
 class SMUIService : Controller() {
+    private val logger = loggerFor(this::class.java)
+    private var smDataProcessRequestRegistration by singleAssign<FXEventRegistration>()
+
     @PostConstruct
     fun setup() {
-        subscribe<SMDataProcessRequest> { request ->
+        smDataProcessRequestRegistration = subscribe<SMDataProcessRequest> { request ->
             request.processFunction()
         }
+    }
+
+    /**
+     * Method to shut down this service
+     */
+    @PreDestroy
+    fun shutdown() {
+        logger.info("Shutting down UI service")
+        unsubscribe<SMDataProcessRequest> { smDataProcessRequestRegistration.action }
     }
 }
 

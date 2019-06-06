@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service
 import tornadofx.*
 import java.time.ZoneOffset
 import javax.annotation.PostConstruct
+import javax.annotation.PreDestroy
 
 /**
  * Service class to provide functionality over students in system
@@ -29,12 +30,23 @@ class SMStudentService(
 ) : Controller() {
     private val logger = loggerFor(SMStudentService::class.java)
 
+    private var smStudentRefreshRequestRegistration by singleAssign<FXEventRegistration>()
+
     @PostConstruct
     fun setupSubscriptions() {
         // register the student list refresh request and event
-        subscribe<SMStudentRefreshRequest> {
+        smStudentRefreshRequestRegistration = subscribe<SMStudentRefreshRequest> {
             fire(SMStudentRefreshEvent(getStudentList()))
         }
+    }
+
+    /**
+     * Method to shut down this service
+     */
+    @PreDestroy
+    fun shutdown() {
+        logger.info("Shutting down student service")
+        unsubscribe<SMStudentRefreshRequest> { smStudentRefreshRequestRegistration.action }
     }
 
     /**

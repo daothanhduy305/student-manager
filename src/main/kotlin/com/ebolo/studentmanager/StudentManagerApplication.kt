@@ -3,7 +3,7 @@ package com.ebolo.studentmanager
 import com.ebolo.common.utils.loggerFor
 import com.ebolo.studentmanager.services.SMGlobal
 import com.ebolo.studentmanager.services.Settings
-import com.ebolo.studentmanager.views.SMInitView
+import com.ebolo.studentmanager.views.SMInitFragment
 import org.mapdb.DBMaker
 import org.mapdb.HTreeMap
 import org.mapdb.Serializer
@@ -28,7 +28,7 @@ import kotlin.reflect.KClass
     "com.ebolo.common.services",
     "com.ebolo.studentmanager"
 ])
-class StudentManagerApplication : App(SMInitView::class) {
+class StudentManagerApplication : App(SMInitFragment::class) {
     private val logger = loggerFor(this.javaClass)
 
     var context: ConfigurableApplicationContext? = null
@@ -86,6 +86,8 @@ class StudentManagerApplication : App(SMInitView::class) {
         this.setupResult = SetupResult(false, listOfErrors)
 
         if (listOfErrors.isEmpty()) {
+            if (context != null && context!!.isActive) context!!.close()
+
             this.context = SpringApplication.run(this.javaClass).apply {
                 autowireCapableBeanFactory.autowireBean(this)
             }

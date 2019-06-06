@@ -18,6 +18,7 @@ import tornadofx.*
 import java.time.LocalDate
 import java.time.ZoneOffset
 import javax.annotation.PostConstruct
+import javax.annotation.PreDestroy
 
 @Service
 class SMClassService(
@@ -26,19 +27,32 @@ class SMClassService(
     private val feePaidRepository: SMFeePaidRepository,
     private val attendanceRepository: SMAttendanceRepository
 ) : Controller() {
-    val logger = loggerFor(SMClassService::class.java)
+    private val logger = loggerFor(SMClassService::class.java)
+
+    private var smClassListRefreshRequestRegistration by singleAssign<FXEventRegistration>()
+    private var smClassListForStudentRefreshRequestRegistration by singleAssign<FXEventRegistration>()
 
     @PostConstruct
     private fun setupSubscriptions() {
         // register the class list refresh request and event
-        subscribe<SMClassListRefreshRequest> {
+        smClassListRefreshRequestRegistration = subscribe<SMClassListRefreshRequest> {
             fire(SMClassListRefreshEvent(getClassList()))
         }
 
         // register to the class list refresh request for a specific student
-        subscribe<SMClassListForStudentRefreshRequest> { request ->
+        smClassListForStudentRefreshRequestRegistration = subscribe<SMClassListForStudentRefreshRequest> { request ->
             fire(SMClassListForStudentRefreshEvent(getClassListOfStudent(request.studentId)))
         }
+    }
+
+    /**
+     * Method to shut down this service
+     */
+    @PreDestroy
+    fun shutdown() {
+        logger.info("Shutting down class service")
+        unsubscribe<SMClassListRefreshRequest> { smClassListRefreshRequestRegistration.action }
+        unsubscribe<SMClassListForStudentRefreshRequest> { smClassListForStudentRefreshRequestRegistration.action }
     }
 
     /**

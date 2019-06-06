@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import tornadofx.*
 import javax.annotation.PostConstruct
+import javax.annotation.PreDestroy
 
 /**
  * Service class to provide functionality over the user of this application
@@ -30,12 +31,23 @@ class SMUserService(
 ) : Controller() {
     private val logger = loggerFor(SMUserService::class.java)
 
+    private var smUserListRefreshRequestRegistration by singleAssign<FXEventRegistration>()
+
     @PostConstruct
     fun setupSubscriptions() {
         // register the student list refresh request and event
-        subscribe<SMUserListRefreshRequest> {
+        smUserListRefreshRequestRegistration = subscribe<SMUserListRefreshRequest> {
             fire(SMUserListRefreshEvent(getUserList()))
         }
+    }
+
+    /**
+     * Method to shut down this service
+     */
+    @PreDestroy
+    fun shutdown() {
+        logger.info("Shutting down user service")
+        unsubscribe<SMUserListRefreshRequest> { smUserListRefreshRequestRegistration.action }
     }
 
     /**

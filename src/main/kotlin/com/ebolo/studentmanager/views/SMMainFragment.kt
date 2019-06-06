@@ -26,8 +26,8 @@ import javafx.util.Duration
 import tornadofx.*
 
 
-class SMMainView : Fragment("Student Manager") {
-    private val logger = loggerFor(SMMainView::class.java)
+class SMMainFragment : Fragment("Student Manager") {
+    private val logger = loggerFor(SMMainFragment::class.java)
     private val serviceCentral: SMServiceCentral by di()
 
     private val subjectTableFragment: SMSubjectTableFragment by lazy { find<SMSubjectTableFragment>() }
@@ -129,7 +129,7 @@ class SMMainView : Fragment("Student Manager") {
                                                     this@contextualMenu.hide()
                                                     currentStage?.isMaximized = false
 
-                                                    replaceWith<SMLoginFormView>(
+                                                    replaceWith<SMLoginFormFragment>(
                                                         sizeToScene = true,
                                                         centerOnScreen = true
                                                     )
@@ -263,7 +263,7 @@ class SMMainView : Fragment("Student Manager") {
             }
         }
 
-        subscribe<SMRestartAppRequest> { replaceWith<SMSplashView>(sizeToScene = true, centerOnScreen = true) }
+        subscribe<SMRestartAppRequest> { replaceWith<SMSplashFragment>(sizeToScene = true, centerOnScreen = true) }
     }
 
     /**

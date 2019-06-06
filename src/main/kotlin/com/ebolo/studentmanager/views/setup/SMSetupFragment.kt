@@ -2,7 +2,7 @@ package com.ebolo.studentmanager.views.setup
 
 import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.services.Settings
-import com.ebolo.studentmanager.views.SMInitView
+import com.ebolo.studentmanager.views.SMInitFragment
 import com.ebolo.studentmanager.views.settings.SMApplyingSettingsView
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXPasswordField
@@ -110,7 +110,7 @@ class SMSetupFragment : Fragment("Student Manager") {
                                 )
                             } ui {
                                 messageView.close()
-                                replaceWith<SMInitView>()
+                                replaceWith<SMInitFragment>()
                             }
 
                             messageView.openModal(

@@ -7,6 +7,7 @@ import com.ebolo.studentmanager.utils.SMCRUDUtils
 import org.springframework.stereotype.Service
 import tornadofx.*
 import javax.annotation.PostConstruct
+import javax.annotation.PreDestroy
 
 /**
  * Service class to provide functionality over the subjects
@@ -24,12 +25,23 @@ class SMSubjectService(
 ) : Controller() {
     private val logger = loggerFor(SMSubjectService::class.java)
 
+    private var smSubjectRefreshRequestRegistration by singleAssign<FXEventRegistration>()
+
     @PostConstruct
     fun setupSubscriptions() {
         // register the subject list refresh request and event
-        subscribe<SMSubjectRefreshRequest> {
+        smSubjectRefreshRequestRegistration = subscribe<SMSubjectRefreshRequest> {
             fire(SMSubjectRefreshEvent(getSubjects()))
         }
+    }
+
+    /**
+     * Method to shut down this service
+     */
+    @PreDestroy
+    fun shutdown() {
+        logger.info("Shutting down subject service")
+        unsubscribe<SMSubjectRefreshRequest> { smSubjectRefreshRequestRegistration.action }
     }
 
     /**

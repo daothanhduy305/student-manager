@@ -52,9 +52,9 @@ configurations {
 }
 
 dependencies {
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter', version: '2.1.2.RELEASE'
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb'
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter', version: springBootVersion
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb', version: springBootVersion
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: springBootVersion
     // Proprietary ebolo-common
     implementation group: 'com.ebolo', name: 'ebolo-common', version: '0.0.1-SNAPSHOT'
     implementation 'org.jetbrains.kotlin:kotlin-reflect'

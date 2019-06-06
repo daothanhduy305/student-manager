@@ -15,7 +15,7 @@ import javafx.geometry.Pos
 import javafx.scene.layout.Priority
 import tornadofx.*
 
-class SMLoginFormView : View("Student Manager") {
+class SMLoginFormFragment : View("Student Manager") {
     private val serviceCentral: SMServiceCentral by di()
 
     private val user = SMUserModel()
@@ -79,7 +79,7 @@ class SMLoginFormView : View("Student Manager") {
                                     )
                                 }
 
-                                replaceWith<SMMainView>(
+                                replaceWith<SMMainFragment>(
                                     sizeToScene = true,
                                     centerOnScreen = true
                                 )

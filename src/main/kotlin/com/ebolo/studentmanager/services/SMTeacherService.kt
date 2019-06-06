@@ -8,6 +8,7 @@ import com.ebolo.studentmanager.utils.SMCRUDUtils
 import org.springframework.stereotype.Service
 import tornadofx.*
 import javax.annotation.PostConstruct
+import javax.annotation.PreDestroy
 
 /**
  * Service class contains functionality upon teacher
@@ -24,12 +25,23 @@ class SMTeacherService(
 ) : Controller() {
     private val logger = loggerFor(SMTeacherService::class.java)
 
+    private var smTeacherRefreshRequestRegistration by singleAssign<FXEventRegistration>()
+
     @PostConstruct
     fun setupSubscriptions() {
         // register the student list refresh request and event
-        subscribe<SMTeacherRefreshRequest> {
+        smTeacherRefreshRequestRegistration = subscribe<SMTeacherRefreshRequest> {
             fire(SMTeacherRefreshEvent(getTeacherList()))
         }
+    }
+
+    /**
+     * Method to shut down this service
+     */
+    @PreDestroy
+    fun shutdown() {
+        logger.info("Shutting down teacher service")
+        unsubscribe<SMTeacherRefreshRequest> { smTeacherRefreshRequestRegistration.action }
     }
 
     /**
