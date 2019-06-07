@@ -13,7 +13,7 @@ import tornadofx.*
  *
  * @property root BorderPane
  */
-class SMInitFragment : Fragment("Student  Manager") {
+class SMInitFragment : Fragment("Student Manager") {
     override val root = borderpane {
         setPrefSize(500.0, 300.0)
 
