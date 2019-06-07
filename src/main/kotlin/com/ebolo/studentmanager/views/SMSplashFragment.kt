@@ -1,8 +1,8 @@
 package com.ebolo.studentmanager.views
 
 import com.ebolo.studentmanager.services.SMServiceCentral
-import tornadofx.Fragment
-import tornadofx.borderpane
+import javafx.geometry.Pos
+import tornadofx.*
 
 /**
  * This view serves as a splash screen to determine either the login view or the main view to be shown
@@ -17,6 +17,24 @@ class SMSplashFragment : Fragment("Student Manager") {
 
     override val root = borderpane {
         setPrefSize(500.0, 300.0)
+
+        center {
+            vbox(spacing = 20) {
+                alignment = Pos.CENTER
+
+                stackpane {
+                    paddingRight = 16
+
+                    imageview("images/icon.png", true)
+                }
+
+                label("Hoàn tất") {
+                    style {
+                        fontSize = Dimension(18.0, Dimension.LinearUnits.pt)
+                    }
+                }
+            }
+        }
     }
 
     override fun onDock() {
