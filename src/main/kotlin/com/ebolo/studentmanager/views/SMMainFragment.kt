@@ -1,5 +1,6 @@
 package com.ebolo.studentmanager.views
 
+import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.services.*
 import com.ebolo.studentmanager.views.classes.SMClassTableFragment
 import com.ebolo.studentmanager.views.settings.SMSettingsFragment
@@ -168,11 +169,34 @@ class SMMainFragment : Fragment("Student Manager") {
                                 label {
                                     bind(statusString)
 
-                                    subscribe<SMDataProcessRequest> { statusString.value = "Đang xử lý..." }
-                                    subscribe<SMClassListRefreshEvent> { runLater { statusString.value = "" } }
-                                    subscribe<SMStudentRefreshEvent> { runLater { statusString.value = "" } }
-                                    subscribe<SMTeacherRefreshEvent> { runLater { statusString.value = "" } }
-                                    subscribe<SMSubjectRefreshEvent> { runLater { statusString.value = "" } }
+                                    subscribe<SMDataProcessRequest> {
+                                        StudentManagerApplication.isProcessingData.set(true)
+                                        statusString.value = "Đang xử lý..."
+                                    }
+                                    subscribe<SMClassListRefreshEvent> {
+                                        runLater {
+                                            statusString.value = ""
+                                            StudentManagerApplication.isProcessingData.set(false)
+                                        }
+                                    }
+                                    subscribe<SMStudentRefreshEvent> {
+                                        runLater {
+                                            statusString.value = ""
+                                            StudentManagerApplication.isProcessingData.set(false)
+                                        }
+                                    }
+                                    subscribe<SMTeacherRefreshEvent> {
+                                        runLater {
+                                            statusString.value = ""
+                                            StudentManagerApplication.isProcessingData.set(false)
+                                        }
+                                    }
+                                    subscribe<SMSubjectRefreshEvent> {
+                                        runLater {
+                                            statusString.value = ""
+                                            StudentManagerApplication.isProcessingData.set(false)
+                                        }
+                                    }
                                 }
                             }
                         }

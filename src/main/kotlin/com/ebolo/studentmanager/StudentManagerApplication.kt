@@ -4,6 +4,7 @@ import com.ebolo.studentmanager.ebolo.utils.loggerFor
 import com.ebolo.studentmanager.services.SMGlobal
 import com.ebolo.studentmanager.services.Settings
 import com.ebolo.studentmanager.views.SMInitFragment
+import javafx.beans.property.SimpleBooleanProperty
 import org.mapdb.DBMaker
 import org.mapdb.HTreeMap
 import org.mapdb.Serializer
@@ -115,6 +116,7 @@ class StudentManagerApplication : App(SMInitFragment::class) {
 
     companion object {
         lateinit var currentApplication: StudentManagerApplication
+        val isProcessingData = SimpleBooleanProperty(true)
 
         @JvmStatic
         fun main(args: Array<String>) {
