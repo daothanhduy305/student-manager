@@ -105,7 +105,23 @@ macAppBundle {
 
 task createProperties(dependsOn: processResources) {
     doFirst {
+        def versionFile = new File("$projectDir/src/main/resources/version.properties")
+        
+        if (versionFile.exists()) {
+            versionFile.delete()
+        }
+        
         new File("$buildDir/resources/main/version.properties").withWriter { w ->
+            Properties p = new Properties()
+            p['version'] = project.version.toString()
+            p.store w, null
+        }
+    }
+}
+
+task createPropertiesDev(dependsOn: processResources) {
+    doFirst {
+        new File("$projectDir/src/main/resources/version.properties").withWriter { w ->
             Properties p = new Properties()
             p['version'] = project.version.toString()
             p.store w, null
