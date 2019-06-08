@@ -277,6 +277,49 @@ class SMMainFragment : Fragment("Student Manager") {
             }
         }
 
+
+        val os = System.getProperty("os.name")
+        if (os != null && os.startsWith("Mac")) {
+            menubar {
+                useSystemMenuBarProperty().set(true)
+
+                menu("File") {
+                    item("Đăng xuất") {
+                        action {
+                            if (serviceCentral.userService.logout()) {
+                                currentStage?.isMaximized = false
+
+                                replaceWith<SMLoginFormFragment>(
+                                    sizeToScene = true,
+                                    centerOnScreen = true
+                                )
+                            }
+                        }
+                    }
+
+                    item("Thoát") {
+                        action {
+                            primaryStage.hide()
+                            Platform.exit()
+                            System.exit(0)
+                        }
+                    }
+                }
+
+                menu("Công cụ") {
+                    item("Cài đặt") {
+                        action { find<SMSettingsFragment>().openModal() }
+                    }
+                }
+
+                menu("Trợ giúp") {
+                    item("Giới thiệu") {
+                        action { find<SMAboutView>().openModal() }
+                    }
+                }
+            }
+        }
+
         subscribe<SMRestartAppRequest> { replaceWith<SMSplashFragment>(sizeToScene = true, centerOnScreen = true) }
     }
 
