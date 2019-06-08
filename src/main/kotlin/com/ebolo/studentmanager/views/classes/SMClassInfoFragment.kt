@@ -150,6 +150,8 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                 field("Không tính học phí tự động") {
                                     this += JFXCheckBox().apply {
                                         bind(classModel.customTotalFee)
+
+                                        classModel.customTotalFee.onChange { classModel.validate() }
                                     }
                                 }
 
@@ -215,8 +217,8 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
 
                                             validator { text ->
                                                 when {
-                                                    text.isNullOrBlank() -> error("This field is required")
-                                                    !text.isFormattedLong() -> error("Number is required")
+                                                    !isDisabled && text.isNullOrBlank() -> error("This field is required")
+                                                    !isDisabled && !text.isNullOrBlank() && !text.isFormattedLong() -> error("Number is required")
                                                     else -> null
                                                 }
                                             }
