@@ -1,5 +1,6 @@
 package com.ebolo.studentmanager.views
 
+import com.ebolo.studentmanager.services.SMGlobal
 import javafx.geometry.Pos
 import tornadofx.*
 
@@ -31,7 +32,7 @@ class SMAboutView : View("Giới thiệu") {
                     }
 
                     vbox(spacing = 10) {
-                        label("Phiên bản: v0.0.1") {
+                        label("Phiên bản: ${SMGlobal.SYSTEM_VERSION}") {
                             style {
                                 fontSize = Dimension(12.0, Dimension.LinearUnits.pt)
                             }

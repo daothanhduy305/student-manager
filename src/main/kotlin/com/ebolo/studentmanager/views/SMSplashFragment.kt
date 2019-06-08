@@ -45,7 +45,7 @@ class SMSplashFragment : Fragment("Student Manager") {
                 replaceWith<SMLoginFormFragment>(sizeToScene = true, centerOnScreen = true)
             } else {
                 primaryStage.isMaximized = true
-                replaceWith<SMMainFragment>(sizeToScene = true, centerOnScreen = true)
+                replaceWith<SMMainFragment>(centerOnScreen = true)
             }
         }
     }

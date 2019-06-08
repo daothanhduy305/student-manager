@@ -21,7 +21,6 @@ import javafx.scene.control.Label
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
-import javafx.stage.Screen
 import javafx.util.Duration
 import tornadofx.*
 
@@ -45,9 +44,6 @@ class SMMainFragment : Fragment("Student Manager") {
     private val statusString = SimpleStringProperty("Đang xử lý...")
 
     override val root = stackpane {
-        val bound = Screen.getPrimary().visualBounds
-        setPrefSize(bound.width, bound.height)
-
         borderpane {
             top {
                 vbox {
@@ -165,6 +161,23 @@ class SMMainFragment : Fragment("Student Manager") {
                             "Giáo viên" -> teacherTableFragment.root
                             else -> null
                         }
+
+                        bottom {
+                            hbox {
+                                paddingVertical = 4
+                                paddingHorizontal = 8
+
+                                label {
+                                    bind(statusString)
+
+                                    subscribe<SMDataProcessRequest> { statusString.value = "Đang xử lý..." }
+                                    subscribe<SMClassListRefreshEvent> { runLater { statusString.value = "" } }
+                                    subscribe<SMStudentRefreshEvent> { runLater { statusString.value = "" } }
+                                    subscribe<SMTeacherRefreshEvent> { runLater { statusString.value = "" } }
+                                    subscribe<SMSubjectRefreshEvent> { runLater { statusString.value = "" } }
+                                }
+                            }
+                        }
                     }
 
                     this.setContent(mainViewPanel)
@@ -239,27 +252,6 @@ class SMMainFragment : Fragment("Student Manager") {
                 }
 
                 this += drawer
-            }
-
-            bottom {
-                hbox {
-                    prefHeight = 50.0
-                    maxHeight = 50.0
-                    paddingHorizontal = 8.0
-                    paddingTop = 6.0
-
-                    fitToParentWidth()
-
-                    label {
-                        bind(statusString)
-
-                        subscribe<SMDataProcessRequest> { statusString.value = "Đang xử lý..." }
-                        subscribe<SMClassListRefreshEvent> { runLater { statusString.value = "" } }
-                        subscribe<SMStudentRefreshEvent> { runLater { statusString.value = "" } }
-                        subscribe<SMTeacherRefreshEvent> { runLater { statusString.value = "" } }
-                        subscribe<SMSubjectRefreshEvent> { runLater { statusString.value = "" } }
-                    }
-                }
             }
         }
 
