@@ -1,7 +1,7 @@
 package com.ebolo.studentmanager.entities
 
-import com.ebolo.common.database.entities.EboloBaseUserEntity
-import com.ebolo.common.utils.reflect.unsafeCastTo
+import com.ebolo.studentmanager.ebolo.database.entities.EboloBaseUserEntity
+import com.ebolo.studentmanager.ebolo.utils.unsafeCastTo
 import com.ebolo.studentmanager.models.SMStudentModel
 import org.springframework.data.mongodb.core.mapping.Document
 

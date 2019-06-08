@@ -1,8 +1,8 @@
 package com.ebolo.studentmanager.entities
 
-import com.ebolo.common.database.entities.EboloBaseEntity
-import com.ebolo.common.database.repositories.mongo.CascadeSave
-import com.ebolo.common.utils.reflect.copyProperties
+import com.ebolo.studentmanager.ebolo.database.entities.EboloBaseEntity
+import com.ebolo.studentmanager.ebolo.database.repositories.mongo.CascadeSave
+import com.ebolo.studentmanager.ebolo.utils.copyProperties
 import com.ebolo.studentmanager.models.SMClassModel
 import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document

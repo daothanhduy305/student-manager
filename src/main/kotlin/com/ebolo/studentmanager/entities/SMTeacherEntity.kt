@@ -1,7 +1,7 @@
 package com.ebolo.studentmanager.entities
 
-import com.ebolo.common.database.entities.EboloBaseUserEntity
-import com.ebolo.common.utils.reflect.copyProperties
+import com.ebolo.studentmanager.ebolo.database.entities.EboloBaseUserEntity
+import com.ebolo.studentmanager.ebolo.utils.copyProperties
 import com.ebolo.studentmanager.models.SMTeacherModel
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.ZoneOffset

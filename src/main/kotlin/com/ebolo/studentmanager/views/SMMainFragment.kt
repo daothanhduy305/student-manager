@@ -1,6 +1,5 @@
 package com.ebolo.studentmanager.views
 
-import com.ebolo.common.utils.loggerFor
 import com.ebolo.studentmanager.services.*
 import com.ebolo.studentmanager.views.classes.SMClassTableFragment
 import com.ebolo.studentmanager.views.settings.SMSettingsFragment
@@ -26,7 +25,6 @@ import tornadofx.*
 
 
 class SMMainFragment : Fragment("Student Manager") {
-    private val logger = loggerFor(SMMainFragment::class.java)
     private val serviceCentral: SMServiceCentral by di()
 
     private val subjectTableFragment: SMSubjectTableFragment by lazy { find<SMSubjectTableFragment>() }

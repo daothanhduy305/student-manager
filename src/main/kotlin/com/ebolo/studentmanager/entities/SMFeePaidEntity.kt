@@ -1,6 +1,6 @@
 package com.ebolo.studentmanager.entities
 
-import com.ebolo.common.database.entities.EboloBaseEntity
+import com.ebolo.studentmanager.ebolo.database.entities.EboloBaseEntity
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.Instant
 import java.time.Month

@@ -1,6 +1,6 @@
 package com.ebolo.studentmanager.views.classes
 
-import com.ebolo.common.utils.loggerFor
+import com.ebolo.studentmanager.ebolo.utils.loggerFor
 import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.models.SMStudentModel
 import com.ebolo.studentmanager.services.SMAttendanceListRefreshRequest

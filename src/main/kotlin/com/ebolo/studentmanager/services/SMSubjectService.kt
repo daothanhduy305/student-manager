@@ -1,6 +1,6 @@
 package com.ebolo.studentmanager.services
 
-import com.ebolo.common.utils.loggerFor
+import com.ebolo.studentmanager.ebolo.utils.loggerFor
 import com.ebolo.studentmanager.models.SMSubjectModel
 import com.ebolo.studentmanager.repositories.SMSubjectRepository
 import com.ebolo.studentmanager.utils.SMCRUDUtils

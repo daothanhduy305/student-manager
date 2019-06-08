@@ -1,6 +1,6 @@
 package com.ebolo.studentmanager.services
 
-import com.ebolo.common.utils.loggerFor
+import com.ebolo.studentmanager.ebolo.utils.loggerFor
 import tornadofx.*
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy

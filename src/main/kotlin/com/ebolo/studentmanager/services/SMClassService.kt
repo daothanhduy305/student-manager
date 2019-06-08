@@ -1,8 +1,8 @@
 package com.ebolo.studentmanager.services
 
-import com.ebolo.common.utils.getWhenPresentOr
-import com.ebolo.common.utils.loggerFor
-import com.ebolo.common.utils.reflect.copyProperties
+import com.ebolo.studentmanager.ebolo.utils.copyProperties
+import com.ebolo.studentmanager.ebolo.utils.getWhenPresentOr
+import com.ebolo.studentmanager.ebolo.utils.loggerFor
 import com.ebolo.studentmanager.entities.SMAttendanceEntity
 import com.ebolo.studentmanager.entities.SMFeePaidEntity
 import com.ebolo.studentmanager.entities.SMStudentPerformanceInfo

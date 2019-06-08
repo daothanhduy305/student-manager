@@ -1,7 +1,7 @@
 package com.ebolo.studentmanager.services
 
-import com.ebolo.common.utils.getWhenPresentOr
-import com.ebolo.common.utils.loggerFor
+import com.ebolo.studentmanager.ebolo.utils.getWhenPresentOr
+import com.ebolo.studentmanager.ebolo.utils.loggerFor
 import com.ebolo.studentmanager.models.SMTeacherModel
 import com.ebolo.studentmanager.repositories.SMTeacherRepository
 import com.ebolo.studentmanager.utils.SMCRUDUtils

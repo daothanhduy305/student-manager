@@ -1,6 +1,5 @@
 package com.ebolo.studentmanager.views.classes
 
-import com.ebolo.common.utils.loggerFor
 import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.models.SMStudentModel
 import com.ebolo.studentmanager.services.SMClassListRefreshRequest
@@ -25,8 +24,6 @@ import tornadofx.*
 
 
 class SMClassInfoFragment : Fragment("Thông tin lớp học") {
-    private val logger = loggerFor(SMClassInfoFragment::class.java)
-
     private val serviceCentral: SMServiceCentral by di()
     private val mode: SMCRUDUtils.CRUDMode by param()
     private val classModel: SMClassModel by param(SMClassModel())

@@ -1,6 +1,6 @@
 package com.ebolo.studentmanager
 
-import com.ebolo.common.utils.loggerFor
+import com.ebolo.studentmanager.ebolo.utils.loggerFor
 import com.ebolo.studentmanager.services.SMGlobal
 import com.ebolo.studentmanager.services.Settings
 import com.ebolo.studentmanager.views.SMInitFragment
@@ -22,8 +22,6 @@ import kotlin.reflect.KClass
 @EnableMongoRepositories
 @EnableMongoAuditing
 @ComponentScan(basePackages = [
-    "com.ebolo.common.configs.components",
-    "com.ebolo.common.services",
     "com.ebolo.studentmanager"
 ])
 @PropertySource("classpath:version.properties")

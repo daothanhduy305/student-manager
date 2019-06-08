@@ -1,8 +1,8 @@
 package com.ebolo.studentmanager.services
 
-import com.ebolo.common.utils.getWhenPresentOr
-import com.ebolo.common.utils.loggerFor
 import com.ebolo.studentmanager.StudentManagerApplication
+import com.ebolo.studentmanager.ebolo.utils.getWhenPresentOr
+import com.ebolo.studentmanager.ebolo.utils.loggerFor
 import com.ebolo.studentmanager.entities.SMUserEntity
 import com.ebolo.studentmanager.models.SMUserModel
 import com.ebolo.studentmanager.repositories.SMUserRepository
@@ -26,10 +26,13 @@ import javax.annotation.PreDestroy
  */
 @Service
 class SMUserService(
-    private val userRepository: SMUserRepository,
-    private val passwordEncoder: BCryptPasswordEncoder
+    private val userRepository: SMUserRepository
 ) : Controller() {
     private val logger = loggerFor(SMUserService::class.java)
+
+    private val passwordEncoder: BCryptPasswordEncoder by lazy {
+        BCryptPasswordEncoder()
+    }
 
     private var smUserListRefreshRequestRegistration by singleAssign<FXEventRegistration>()
 

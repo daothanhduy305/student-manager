@@ -1,6 +1,6 @@
 package com.ebolo.studentmanager.models
 
-import com.ebolo.common.database.entities.EboloBaseEntity
+import com.ebolo.studentmanager.ebolo.database.entities.EboloBaseEntity
 import tornadofx.*
 import java.time.Instant
 import java.util.*
