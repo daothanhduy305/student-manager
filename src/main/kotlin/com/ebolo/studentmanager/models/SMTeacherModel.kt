@@ -39,7 +39,7 @@ class SMTeacherModel(
     override fun specificEntitySetup(entity: SMTeacherEntity) {
         entity.firstName = firstName.value
         entity.lastName = lastName.value
-        entity.birthday = birthday.value.atStartOfDay()?.toInstant(ZoneOffset.UTC)
+        entity.birthday = birthday.value?.atStartOfDay()?.toInstant(ZoneOffset.UTC)
         entity.phone = phone.value
         entity.address = address.value
     }
