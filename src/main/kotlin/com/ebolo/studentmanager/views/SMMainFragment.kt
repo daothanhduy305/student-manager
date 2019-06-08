@@ -277,9 +277,7 @@ class SMMainFragment : Fragment("Student Manager") {
             }
         }
 
-
-        val os = System.getProperty("os.name")
-        if (os != null && os.startsWith("Mac")) {
+        if (System.getProperty("os.name", "UNKNOWN") == "Mac OS X") {
             menubar {
                 useSystemMenuBarProperty().set(true)
 
