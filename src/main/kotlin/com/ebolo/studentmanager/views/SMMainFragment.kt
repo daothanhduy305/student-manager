@@ -1,7 +1,9 @@
 package com.ebolo.studentmanager.views
 
 import com.ebolo.studentmanager.StudentManagerApplication
+import com.ebolo.studentmanager.ebolo.utils.loggerFor
 import com.ebolo.studentmanager.services.*
+import com.ebolo.studentmanager.services.SMGlobal.APP_NAME
 import com.ebolo.studentmanager.views.classes.SMClassTableFragment
 import com.ebolo.studentmanager.views.settings.SMSettingsFragment
 import com.ebolo.studentmanager.views.students.SMStudentTableFragment
@@ -11,6 +13,8 @@ import com.jfoenix.controls.*
 import com.jfoenix.controls.JFXPopup.PopupHPosition
 import com.jfoenix.controls.JFXPopup.PopupVPosition
 import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition
+import com.sun.javafx.scene.control.GlobalMenuAdapter
+import de.codecentric.centerdevice.glass.AdapterContext
 import de.jensd.fx.glyphs.materialicons.MaterialIcon
 import de.jensd.fx.glyphs.materialicons.MaterialIconView
 import javafx.application.Platform
@@ -18,6 +22,10 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.Label
+import javafx.scene.control.Menu
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyCodeCombination
+import javafx.scene.input.KeyCombination
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
@@ -27,6 +35,7 @@ import tornadofx.*
 
 class SMMainFragment : Fragment("Student Manager") {
     private val serviceCentral: SMServiceCentral by di()
+    private val logger = loggerFor(this::class.java)
 
     private val subjectTableFragment: SMSubjectTableFragment by lazy { find<SMSubjectTableFragment>() }
     private val studentTableFragment: SMStudentTableFragment by lazy { find<SMStudentTableFragment>() }
@@ -278,44 +287,71 @@ class SMMainFragment : Fragment("Student Manager") {
         }
 
         if (System.getProperty("os.name", "UNKNOWN") == "Mac OS X") {
-            menubar {
-                useSystemMenuBarProperty().set(true)
+            // Get the toolkit
+            val context = AdapterContext.getContext()
 
-                menu("File") {
-                    item("Đăng xuất") {
-                        action {
-                            if (serviceCentral.userService.logout()) {
-                                currentStage?.isMaximized = false
+            if (context != null) {
+                val systemMenuAdapter = context.systemMenuAdapter
+                val applicationAdapter = context.applicationAdapter
 
-                                replaceWith<SMLoginFormFragment>(
-                                    sizeToScene = true,
-                                    centerOnScreen = true
-                                )
+                try {
+                    systemMenuAdapter.setAppleMenu(GlobalMenuAdapter.adapt(Menu(
+                        SMGlobal.APP_NAME,
+                        null
+                    ).apply {
+                        item("Giới thiệu") {
+                            action { tornadofx.find<SMAboutView>().openModal() }
+                        }
+
+                        item("Cài đặt...") {
+                            action { find<SMSettingsFragment>().openModal() }
+                            accelerator = KeyCodeCombination(KeyCode.COMMA, KeyCombination.META_DOWN)
+                        }
+
+                        separator()
+
+                        item("Ẩn $APP_NAME") {
+                            action { applicationAdapter.hide() }
+                            accelerator = KeyCodeCombination(KeyCode.H, KeyCombination.META_DOWN)
+                        }
+
+                        item("Ẩn các app(s) khác") {
+                            action { applicationAdapter.hideOtherApplications() }
+                            accelerator = KeyCodeCombination(KeyCode.H, KeyCombination.META_DOWN, KeyCombination.ALT_DOWN)
+                        }
+
+                        item("Hiện lại các app(s) khác") {
+                            action { applicationAdapter.unhideAllApplications() }
+                        }
+
+                        separator()
+
+                        item("Đăng xuất") {
+                            action {
+                                if (serviceCentral.userService.logout()) {
+                                    currentStage?.isMaximized = false
+
+                                    replaceWith<SMLoginFormFragment>(
+                                        sizeToScene = true,
+                                        centerOnScreen = true
+                                    )
+                                }
                             }
                         }
-                    }
 
-                    item("Thoát") {
-                        action {
-                            primaryStage.hide()
-                            Platform.exit()
-                            System.exit(0)
+                        item("Thoát") {
+                            action { applicationAdapter.quit() }
+                            accelerator = KeyCodeCombination(KeyCode.Q, KeyCombination.META_DOWN)
                         }
-                    }
-                }
-
-                menu("Công cụ") {
-                    item("Cài đặt") {
-                        action { find<SMSettingsFragment>().openModal() }
-                    }
-                }
-
-                menu("Trợ giúp") {
-                    item("Giới thiệu") {
-                        action { find<SMAboutView>().openModal() }
-                    }
+                    }))
+                } catch (e: Throwable) {
+                    logger.warn("Cannot construct the menu for this Mac version")
                 }
             }
+
+            /*menubar {
+                useSystemMenuBarProperty().set(true)
+            }*/
         }
 
         subscribe<SMRestartAppRequest> { replaceWith<SMSplashFragment>(sizeToScene = true, centerOnScreen = true) }

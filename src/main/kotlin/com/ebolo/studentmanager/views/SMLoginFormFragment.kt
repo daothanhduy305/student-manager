@@ -2,6 +2,7 @@ package com.ebolo.studentmanager.views
 
 import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.models.SMUserModel
+import com.ebolo.studentmanager.services.SMGlobal.APP_NAME
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.Settings
 import com.jfoenix.controls.JFXButton
@@ -15,7 +16,7 @@ import javafx.geometry.Pos
 import javafx.scene.layout.Priority
 import tornadofx.*
 
-class SMLoginFormFragment : View("Student Manager") {
+class SMLoginFormFragment : View(APP_NAME) {
     private val serviceCentral: SMServiceCentral by di()
 
     private val user = SMUserModel()

@@ -1,6 +1,7 @@
 package com.ebolo.studentmanager.views.setup
 
 import com.ebolo.studentmanager.StudentManagerApplication
+import com.ebolo.studentmanager.services.SMGlobal.APP_NAME
 import com.ebolo.studentmanager.services.Settings
 import com.ebolo.studentmanager.views.SMInitFragment
 import com.ebolo.studentmanager.views.settings.SMApplyingSettingsView
@@ -26,7 +27,7 @@ import tornadofx.*
  * @property masterAccountPasswordProperty Property<(kotlin.String..kotlin.String?)>
  * @property root BorderPane
  */
-class SMSetupFragment : Fragment("Student Manager") {
+class SMSetupFragment : Fragment(APP_NAME) {
     private val model = ViewModel()
 
     private val databaseNameProperty = model.bind { SimpleStringProperty() }

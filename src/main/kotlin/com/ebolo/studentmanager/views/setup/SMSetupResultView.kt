@@ -1,6 +1,7 @@
 package com.ebolo.studentmanager.views.setup
 
 import com.ebolo.studentmanager.StudentManagerApplication
+import com.ebolo.studentmanager.services.SMGlobal.APP_NAME
 import com.jfoenix.controls.JFXButton
 import javafx.geometry.Pos
 import javafx.scene.layout.Priority
@@ -14,7 +15,7 @@ import tornadofx.*
  *
  * @property root BorderPane
  */
-class SMSetupResultView : View("Student Manager") {
+class SMSetupResultView : View(APP_NAME) {
     override val root = borderpane {
         paddingAll = 20
         prefWidth = 500.0

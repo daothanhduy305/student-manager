@@ -1,5 +1,6 @@
 package com.ebolo.studentmanager.views
 
+import com.ebolo.studentmanager.services.SMGlobal.APP_NAME
 import com.ebolo.studentmanager.services.SMServiceCentral
 import javafx.geometry.Pos
 import tornadofx.*
@@ -12,7 +13,7 @@ import tornadofx.*
  *
  * @property root BorderPane
  */
-class SMSplashFragment : Fragment("Student Manager") {
+class SMSplashFragment : Fragment(APP_NAME) {
     private val serviceCentral: SMServiceCentral by di()
 
     override val root = borderpane {

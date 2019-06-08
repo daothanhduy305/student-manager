@@ -3,6 +3,8 @@ package com.ebolo.studentmanager.services
 import java.text.DecimalFormat
 
 object SMGlobal {
+    const val APP_NAME = "Student Manager"
+
     // region cache
     const val CACHE_FILE = "SM.db"
     const val CACHE_NAME = "SM_Cache"

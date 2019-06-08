@@ -1,5 +1,6 @@
 package com.ebolo.studentmanager.views
 
+import com.ebolo.studentmanager.services.SMGlobal.APP_NAME
 import com.ebolo.studentmanager.services.SMServiceCentral
 import javafx.geometry.Pos
 import tornadofx.*
@@ -27,7 +28,7 @@ class SMAboutView : View("Giới thiệu") {
                 vbox(spacing = 20) {
                     alignment = Pos.CENTER_LEFT
 
-                    label("Student Manager") {
+                    label(APP_NAME) {
                         style {
                             fontSize = Dimension(24.0, Dimension.LinearUnits.pt)
                         }

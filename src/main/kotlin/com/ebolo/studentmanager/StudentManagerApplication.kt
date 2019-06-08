@@ -18,6 +18,7 @@ import tornadofx.*
 import kotlin.collections.set
 import kotlin.reflect.KClass
 
+
 @SpringBootApplication
 @EnableMongoRepositories
 @EnableMongoAuditing

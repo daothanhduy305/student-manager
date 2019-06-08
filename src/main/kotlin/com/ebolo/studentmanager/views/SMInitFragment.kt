@@ -1,6 +1,7 @@
 package com.ebolo.studentmanager.views
 
 import com.ebolo.studentmanager.StudentManagerApplication
+import com.ebolo.studentmanager.services.SMGlobal.APP_NAME
 import com.ebolo.studentmanager.views.setup.SMSetupResultView
 import javafx.geometry.Pos
 import tornadofx.*
@@ -13,7 +14,7 @@ import tornadofx.*
  *
  * @property root BorderPane
  */
-class SMInitFragment : Fragment("Student Manager") {
+class SMInitFragment : Fragment(APP_NAME) {
     override val root = borderpane {
         setPrefSize(500.0, 300.0)
 
