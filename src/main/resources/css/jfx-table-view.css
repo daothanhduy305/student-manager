@@ -26,6 +26,7 @@
 .table-view {
     -fx-table-color: rgba(82, 100, 174, 0.4);
     -fx-table-rippler-color: rgba(82, 100, 174, 0.6);
+    -fx-focus-color: transparent;
 }
 
 /*:focused {
