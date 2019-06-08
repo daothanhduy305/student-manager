@@ -16,7 +16,6 @@ import javax.annotation.PostConstruct
  * @author ebolo
  * @since 0.0.1-SNAPSHOT
  *
- * @property cacheService SMCacheService
  * @property mongoDB String
  * @property mongoURI String
  * @constructor

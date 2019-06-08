@@ -14,7 +14,6 @@ import java.util.*
  * @author ebolo (daothanhduy305@gmail.com)
  * @since 0.0.1-SNAPSHOT
  *
- * @property cacheService SMCacheService
  * @constructor
  */
 @Component
