@@ -10,7 +10,6 @@ import org.mapdb.Serializer
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.ConfigurableApplicationContext
-import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.PropertySource
 import org.springframework.data.mongodb.config.EnableMongoAuditing
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
@@ -21,9 +20,6 @@ import kotlin.reflect.KClass
 @SpringBootApplication
 @EnableMongoRepositories
 @EnableMongoAuditing
-@ComponentScan(basePackages = [
-    "com.ebolo.studentmanager"
-])
 @PropertySource("classpath:version.properties")
 class StudentManagerApplication : App(SMInitFragment::class) {
     private val logger = loggerFor(this.javaClass)
