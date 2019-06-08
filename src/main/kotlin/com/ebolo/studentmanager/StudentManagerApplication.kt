@@ -11,12 +11,10 @@ import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.PropertySource
 import org.springframework.data.mongodb.config.EnableMongoAuditing
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
-import tornadofx.App
-import tornadofx.DIContainer
-import tornadofx.FX
-import tornadofx.importStylesheet
+import tornadofx.*
 import kotlin.collections.set
 import kotlin.reflect.KClass
 
@@ -28,6 +26,7 @@ import kotlin.reflect.KClass
     "com.ebolo.common.services",
     "com.ebolo.studentmanager"
 ])
+@PropertySource("classpath:version.properties")
 class StudentManagerApplication : App(SMInitFragment::class) {
     private val logger = loggerFor(this.javaClass)
 

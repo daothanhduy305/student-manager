@@ -1,5 +1,6 @@
 package com.ebolo.studentmanager.services
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 /**
@@ -18,4 +19,7 @@ class SMServiceCentral(
     val studentService: SMStudentService,
     val teacherService: SMTeacherService,
     val classService: SMClassService
-)
+) {
+    @Value("\${version}")
+    lateinit var version: String
+}

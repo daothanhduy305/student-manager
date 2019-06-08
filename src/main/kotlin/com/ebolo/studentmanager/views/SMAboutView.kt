@@ -1,10 +1,12 @@
 package com.ebolo.studentmanager.views
 
-import com.ebolo.studentmanager.services.SMGlobal
+import com.ebolo.studentmanager.services.SMServiceCentral
 import javafx.geometry.Pos
 import tornadofx.*
 
 class SMAboutView : View("Giới thiệu") {
+    private val serviceCentral: SMServiceCentral by di()
+
     override val root = borderpane {
         setPrefSize(500.0, 300.0)
 
@@ -32,7 +34,7 @@ class SMAboutView : View("Giới thiệu") {
                     }
 
                     vbox(spacing = 10) {
-                        label("Phiên bản: ${SMGlobal.SYSTEM_VERSION}") {
+                        label("Phiên bản: ${serviceCentral.version}") {
                             style {
                                 fontSize = Dimension(12.0, Dimension.LinearUnits.pt)
                             }

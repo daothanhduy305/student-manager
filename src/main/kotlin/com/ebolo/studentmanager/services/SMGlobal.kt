@@ -10,7 +10,6 @@ object SMGlobal {
 
     // region system
     const val SYSTEM_USER = "System"
-    const val SYSTEM_VERSION = "v0.0.1"
     val decimalFormatter = DecimalFormat("#,###")
     // endregion
 }
