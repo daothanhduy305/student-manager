@@ -50,7 +50,7 @@ class SMSettingsGeneralFragment : Fragment() {
                 vgrow = Priority.ALWAYS
                 hgrow = Priority.ALWAYS
 
-                vbox {
+                vbox(spacing = 20) {
                     hgrow = Priority.ALWAYS
 
                     fieldset(labelPosition = Orientation.VERTICAL, text = "Dữ liệu") {
