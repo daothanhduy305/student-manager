@@ -90,21 +90,21 @@ class SMStudentTableFragment : Fragment() {
                     style {
                         alignment = Pos.TOP_CENTER
                     }
-                }.contentWidth(padding = 30.0)
+                }.prefWidth(100.0)
 
-                readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName).weightedWidth(2, minContentWidth = true, padding = 20.0)
+                readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName).prefWidth(200.0)
 
-                readonlyColumn("Họ", SMStudentModel.SMStudentDto::lastName).weightedWidth(2, minContentWidth = true, padding = 20.0)
+                readonlyColumn("Họ", SMStudentModel.SMStudentDto::lastName).prefWidth(200.0)
 
-                readonlyColumn("Nickname", SMStudentModel.SMStudentDto::nickname).weightedWidth(1, minContentWidth = true, padding = 20.0)
+                readonlyColumn("Nickname", SMStudentModel.SMStudentDto::nickname).prefWidth(200.0)
 
                 readonlyColumn("Học vấn", SMStudentModel.SMStudentDto::educationLevel) {
                     cellFormat { text = it.title }
-                }.weightedWidth(2, minContentWidth = true, padding = 20.0)
+                }.prefWidth(300.0)
 
-                readonlyColumn("Sinh nhật", SMStudentModel.SMStudentDto::birthday).weightedWidth(1, minContentWidth = true, padding = 20.0)
+                readonlyColumn("Sinh nhật", SMStudentModel.SMStudentDto::birthday).prefWidth(200.0)
 
-                readonlyColumn("Số điện thoại", SMStudentModel.SMStudentDto::phone).remainingWidth()
+                readonlyColumn("Số điện thoại", SMStudentModel.SMStudentDto::phone).prefWidth(200.0)
 
                 // set up the context menu
                 contextmenu {
@@ -137,11 +137,9 @@ class SMStudentTableFragment : Fragment() {
                     }
                 }
 
-                smartResize()
-
                 // subscribe to the refresh event to reset the list
                 subscribe<SMStudentRefreshEvent> { event ->
-                    runAsync { studentList.setAll(event.students) } ui { }
+                    runAsync { studentList.setAll(event.students) }
                 }
             }
         }

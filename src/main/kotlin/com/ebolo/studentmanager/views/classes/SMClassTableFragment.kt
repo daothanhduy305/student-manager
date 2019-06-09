@@ -91,17 +91,17 @@ class SMClassTableFragment : Fragment() {
                     style {
                         alignment = Pos.TOP_CENTER
                     }
-                }.contentWidth(padding = 30.0)
+                }.prefWidth(100.0)
 
-                readonlyColumn("Tên lớp", SMClassModel.SMClassDto::name).weightedWidth(1, minContentWidth = true, padding = 20.0)
+                readonlyColumn("Tên lớp", SMClassModel.SMClassDto::name).prefWidth(200.0)
 
                 readonlyColumn("Giáo viên", SMClassModel.SMClassDto::teacher) {
                     cellFormat { teacher -> text = "${teacher.lastName} ${teacher.firstName}" }
-                }.weightedWidth(1, minContentWidth = true, padding = 20.0)
+                }.prefWidth(200.0)
 
                 readonlyColumn("Môn", SMClassModel.SMClassDto::subject) {
                     cellFormat { subject -> text = subject.name }
-                }.remainingWidth()
+                }.prefWidth(200.0)
 
                 // set up the context menu
                 contextmenu {
@@ -134,14 +134,10 @@ class SMClassTableFragment : Fragment() {
                     }
                 }
 
-                smartResize()
-
                 // subscribe to the refresh event to reset the list
                 subscribe<SMClassListRefreshEvent> { event ->
                     searchBox.text = ""
-                    runAsync { classList.setAll(event.classes) } ui {
-                        requestResize()
-                    }
+                    runAsync { classList.setAll(event.classes) }
                 }
             }
         }

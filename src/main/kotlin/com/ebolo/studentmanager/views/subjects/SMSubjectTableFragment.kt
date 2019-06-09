@@ -86,9 +86,9 @@ class SMSubjectTableFragment : Fragment() {
                     style {
                         alignment = Pos.TOP_CENTER
                     }
-                }.contentWidth(padding = 30.0)
+                }.prefWidth(100.0)
 
-                readonlyColumn("Tên môn học", SMSubjectModel.SMSubjectDto::name).contentWidth(padding = 20.0)
+                readonlyColumn("Tên môn học", SMSubjectModel.SMSubjectDto::name).prefWidth(200.0)
 
                 contextmenu {
                     item("Sửa...").action {
@@ -120,10 +120,8 @@ class SMSubjectTableFragment : Fragment() {
                     }
                 }
 
-                smartResize()
-
                 subscribe<SMSubjectRefreshEvent> { event ->
-                    runAsync { subjectList.setAll(event.subjects) } ui { requestResize() }
+                    runAsync { subjectList.setAll(event.subjects) }
                 }
             }
         }

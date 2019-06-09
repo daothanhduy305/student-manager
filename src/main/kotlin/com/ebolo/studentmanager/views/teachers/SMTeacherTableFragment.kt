@@ -89,13 +89,13 @@ class SMTeacherTableFragment : Fragment() {
                     style {
                         alignment = Pos.TOP_CENTER
                     }
-                }.contentWidth(padding = 30.0)
+                }.prefWidth(100.0)
 
-                readonlyColumn("Họ", SMTeacherModel.SMTeacherDto::lastName).weightedWidth(1, minContentWidth = true, padding = 20.0)
+                readonlyColumn("Họ", SMTeacherModel.SMTeacherDto::lastName).prefWidth(200.0)
 
-                readonlyColumn("Tên", SMTeacherModel.SMTeacherDto::firstName).weightedWidth(1, minContentWidth = true, padding = 20.0)
+                readonlyColumn("Tên", SMTeacherModel.SMTeacherDto::firstName).prefWidth(200.0)
 
-                readonlyColumn("Ngày sinh", SMTeacherModel.SMTeacherDto::birthday).remainingWidth()
+                readonlyColumn("Ngày sinh", SMTeacherModel.SMTeacherDto::birthday).prefWidth(200.0)
 
                 setOnMouseClicked {
                     if (it.clickCount == 2) {
@@ -128,11 +128,9 @@ class SMTeacherTableFragment : Fragment() {
                     }
                 }
 
-                smartResize()
-
                 // subscribe to the refresh event to reset the list
                 subscribe<SMTeacherRefreshEvent> { event ->
-                    runAsync { teacherList.setAll(event.teachers) } ui { requestResize() }
+                    runAsync { teacherList.setAll(event.teachers) }
                 }
             }
         }
