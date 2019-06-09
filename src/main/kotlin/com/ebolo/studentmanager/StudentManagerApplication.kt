@@ -5,6 +5,8 @@ import com.ebolo.studentmanager.services.SMGlobal
 import com.ebolo.studentmanager.services.Settings
 import com.ebolo.studentmanager.views.SMInitFragment
 import javafx.beans.property.SimpleBooleanProperty
+import javafx.scene.image.Image
+import javafx.stage.Stage
 import org.mapdb.DBMaker
 import org.mapdb.HTreeMap
 import org.mapdb.Serializer
@@ -54,6 +56,11 @@ class StudentManagerApplication : App(SMInitFragment::class) {
         importStylesheet(javaClass.getResource("/css/jfx-hamburger.css").toExternalForm())
 
         currentApplication = this
+    }
+
+    override fun start(stage: Stage) {
+        super.start(stage)
+        stage.icons.add(Image(javaClass.getResourceAsStream("/images/icon.png")))
     }
 
     override fun stop() {
