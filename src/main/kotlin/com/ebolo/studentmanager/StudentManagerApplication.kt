@@ -14,7 +14,10 @@ import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.PropertySource
 import org.springframework.data.mongodb.config.EnableMongoAuditing
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
-import tornadofx.*
+import tornadofx.App
+import tornadofx.DIContainer
+import tornadofx.FX
+import tornadofx.importStylesheet
 import kotlin.collections.set
 import kotlin.reflect.KClass
 
@@ -46,9 +49,9 @@ class StudentManagerApplication : App(SMInitFragment::class) {
     }
 
     override fun init() {
-        importStylesheet("/css/jfx-table-view.css")
-        importStylesheet("/css/jfx-tab-pane.css")
-        importStylesheet("/css/jfx-hamburger.css")
+        importStylesheet(javaClass.getResource("/css/jfx-table-view.css").toExternalForm())
+        importStylesheet(javaClass.getResource("/css/jfx-tab-pane.css").toExternalForm())
+        importStylesheet(javaClass.getResource("/css/jfx-hamburger.css").toExternalForm())
 
         currentApplication = this
     }
