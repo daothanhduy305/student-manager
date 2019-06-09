@@ -5,17 +5,37 @@ import com.ebolo.studentmanager.services.SMRestartAppRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.Settings
 import com.jfoenix.controls.JFXButton
+import com.jfoenix.controls.JFXPasswordField
 import com.jfoenix.controls.JFXTextField
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.layout.Priority
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import tornadofx.*
 
 class SMSettingsGeneralFragment : Fragment() {
     private val serviceCentral: SMServiceCentral by di()
-    private val databaseUriProperty = SimpleStringProperty("")
-    private val databaseNameProperty = SimpleStringProperty("")
+
+    private val databaseModel = ViewModel()
+    private val databaseUriProperty = databaseModel.bind {
+        SimpleStringProperty({
+            StudentManagerApplication.getSetting(Settings.DATABASE_URI) as String? ?: ""
+        }())
+    }
+    private val databaseNameProperty = databaseModel.bind {
+        SimpleStringProperty({
+            StudentManagerApplication.getSetting(Settings.DATABASE_NAME) as String? ?: ""
+        }())
+    }
+
+    private val masterAccountModel = ViewModel()
+    private val masterAccountUsernameProperty = masterAccountModel.bind {
+        SimpleStringProperty({
+            StudentManagerApplication.getSetting(Settings.MASTER_ACCOUNT_USERNAME) as String? ?: ""
+        }())
+    }
+    private val masterAccountPasswordProperty = masterAccountModel.bind { SimpleStringProperty("DummyPassword") }
 
     override val root = form {
         vbox {
@@ -41,6 +61,22 @@ class SMSettingsGeneralFragment : Fragment() {
                         field("Thông tin kết nối") {
                             this += JFXTextField().apply {
                                 bind(databaseUriProperty)
+                            }
+                        }
+                    }
+
+                    fieldset(labelPosition = Orientation.VERTICAL, text = "Tài khoản chủ") {
+                        spacing = 10.0
+
+                        field("Tên đăng nhập") {
+                            this += JFXTextField().apply {
+                                bind(masterAccountUsernameProperty)
+                            }
+                        }
+
+                        field("Mật khẩu") {
+                            this += JFXPasswordField().apply {
+                                bind(masterAccountPasswordProperty)
                             }
                         }
                     }
@@ -76,49 +112,41 @@ class SMSettingsGeneralFragment : Fragment() {
                         backgroundColor += c("#fff")
                     }
 
+                    enableWhen((databaseModel.valid.and(databaseModel.dirty)
+                        .or(masterAccountModel.valid.and(masterAccountModel.dirty)))
+                        .and(masterAccountModel.valid.and(databaseModel.valid)))
+
                     action {
                         close()
                         val messageView = find<SMApplyingSettingsView>()
 
-                        val dbUri = databaseUriProperty.value
-                        val dbName = databaseNameProperty.value
-
-                        if (dbUri.isNotBlank() && dbName.isNotBlank()) {
-                            // Set the new connection string and refresh the context
-                            runAsync {
+                        runAsync {
+                            if (masterAccountModel.isDirty) {
                                 StudentManagerApplication.setSettings(
-                                    Settings.DATABASE_NAME to dbName,
-                                    Settings.DATABASE_URI to dbUri
+                                    Settings.MASTER_ACCOUNT_USERNAME to masterAccountUsernameProperty.value,
+                                    Settings.MASTER_ACCOUNT_PASSWORD to BCryptPasswordEncoder().encode(masterAccountPasswordProperty.value)
+                                )
+                            }
+
+                            if (databaseModel.isDirty) {
+                                StudentManagerApplication.setSettings(
+                                    Settings.DATABASE_NAME to databaseNameProperty.value,
+                                    Settings.DATABASE_URI to databaseUriProperty.value
                                 )
 
                                 (app as StudentManagerApplication).setupApp()
-                            } ui {
-                                if (it.success) {
-                                    messageView.close()
-                                    fire(SMRestartAppRequest)
-                                }
                             }
+                        } ui {
+                            messageView.close()
 
-                            messageView.openModal(
-                                block = true, resizable = false, escapeClosesWindow = false)
+                            if (databaseModel.isDirty) fire(SMRestartAppRequest)
                         }
+
+                        messageView.openModal(
+                            block = true, resizable = false, escapeClosesWindow = false)
                     }
                 }
             }
-        }
-    }
-
-    override fun onDock() {
-        super.onDock()
-
-        val mongoDbName = StudentManagerApplication.getSetting(Settings.DATABASE_NAME) as String?
-        if (mongoDbName != null) {
-            databaseNameProperty.value = mongoDbName
-        }
-
-        val mongoDbUri = StudentManagerApplication.getSetting(Settings.DATABASE_URI) as String?
-        if (mongoDbUri != null) {
-            databaseUriProperty.value = mongoDbUri
         }
     }
 }
