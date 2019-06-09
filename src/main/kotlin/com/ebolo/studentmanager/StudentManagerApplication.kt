@@ -182,9 +182,9 @@ class StudentManagerApplication : App(SMInitFragment::class) {
 
     class SetupResult(val success: Boolean, val errors: List<SetupError>)
 
-    enum class SetupError {
-        NONE,
-        DATABASE_ERROR,
-        MASTER_ACCOUNT
+    enum class SetupError(val friendlyMessage: String) {
+        NONE(""),
+        DATABASE_ERROR("Kết nối cơ sở dữ liệu thất bại"),
+        MASTER_ACCOUNT("Thông tin tài khoản chủ không hợp lệ")
     }
 }
