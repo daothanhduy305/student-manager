@@ -3,6 +3,7 @@ package com.ebolo.studentmanager.views.classes
 import com.ebolo.studentmanager.entities.SMStudentPerformanceInfo
 import com.ebolo.studentmanager.models.SMStudentModel
 import com.ebolo.studentmanager.models.SMStudentPerformanceModel
+import com.ebolo.studentmanager.services.SMGlobal
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXDatePicker
@@ -12,7 +13,7 @@ import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import tornadofx.*
 
-class SMClassPerformanceFragment : Fragment() {
+class SMClassPerformanceFragment : Fragment(SMGlobal.APP_NAME) {
     private val serviceCentral: SMServiceCentral by di()
 
     private val studentInfo: SMStudentModel.SMStudentDto by param()
@@ -25,6 +26,15 @@ class SMClassPerformanceFragment : Fragment() {
 
     override val root = vbox {
         paddingAll = 20
+
+        label("Thông tin cho học viên ${studentInfo.lastName} ${studentInfo.firstName}") {
+            paddingLeft = 10
+            paddingBottom = 30
+
+            style {
+                fontSize = Dimension(18.0, Dimension.LinearUnits.pt)
+            }
+        }
 
         form {
             fieldset(labelPosition = Orientation.VERTICAL) {
