@@ -2,13 +2,15 @@ package com.ebolo.studentmanager.views.classes
 
 import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.models.SMStudentModel
-import com.ebolo.studentmanager.services.SMClassListRefreshRequest
-import com.ebolo.studentmanager.services.SMDataProcessRequest
-import com.ebolo.studentmanager.services.SMServiceCentral
+import com.ebolo.studentmanager.services.*
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.ebolo.studentmanager.utils.formatDecimal
 import com.ebolo.studentmanager.utils.isFormattedLong
+import com.ebolo.studentmanager.views.subjects.SMSubjectInfoFragment
+import com.ebolo.studentmanager.views.teachers.SMTeacherInfoFragment
 import com.jfoenix.controls.*
+import de.jensd.fx.glyphs.materialicons.MaterialIcon
+import de.jensd.fx.glyphs.materialicons.MaterialIconView
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleLongProperty
 import javafx.event.EventTarget
@@ -67,46 +69,87 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                 }
 
                                 field("Môn học *") {
-                                    this += JFXComboBox(subjectList).apply {
-                                        bind(classModel.subject)
+                                    hbox(spacing = 10) {
+                                        this += JFXComboBox(subjectList).apply {
+                                            bind(classModel.subject)
+                                            hgrow = Priority.ALWAYS
 
-                                        value = if (mode == SMCRUDUtils.CRUDMode.NEW) {
-                                            subjectList.first()
-                                        } else {
-                                            subjectList.firstOrNull { it.id == classModel.item.subject.id }
+                                            value = if (mode == SMCRUDUtils.CRUDMode.NEW) {
+                                                subjectList.firstOrNull()
+                                            } else {
+                                                subjectList.firstOrNull { it.id == classModel.item.subject.id }
+                                            }
+
+                                            cellFormat { subject ->
+                                                if (subject != null)
+                                                    text = subject.name
+                                            }
+
+                                            vgrow = Priority.ALWAYS
+                                            useMaxWidth = true
+
+                                            required()
+
+                                            subscribe<SMSubjectRefreshEvent> { event ->
+                                                subjectList.setAll(event.subjects)
+                                            }
                                         }
 
-                                        cellFormat { subject ->
-                                            if (subject != null)
-                                                text = subject.name
+                                        hbox {
+                                            alignment = Pos.BOTTOM_LEFT
+
+                                            this += MaterialIconView(MaterialIcon.ADD).apply {
+                                                fill = c("#3f51b5")
+                                                glyphSize = 24
+
+                                                setOnMouseClicked {
+                                                    find<SMSubjectInfoFragment>().openModal()
+                                                }
+                                            }
                                         }
-
-                                        vgrow = Priority.ALWAYS
-                                        useMaxWidth = true
-
-                                        required()
                                     }
                                 }
 
                                 field("Giáo viên *") {
-                                    this += JFXComboBox(teacherList).apply {
-                                        bind(classModel.teacher)
+                                    hbox(spacing = 10) {
+                                        this += JFXComboBox(teacherList).apply {
+                                            hgrow = Priority.ALWAYS
 
-                                        value = if (mode == SMCRUDUtils.CRUDMode.NEW) {
-                                            teacherList.first()
-                                        } else {
-                                            teacherList.firstOrNull { it.id == classModel.item.teacher.id }
+                                            bind(classModel.teacher)
+
+                                            value = if (mode == SMCRUDUtils.CRUDMode.NEW) {
+                                                teacherList.firstOrNull()
+                                            } else {
+                                                teacherList.firstOrNull { it.id == classModel.item.teacher.id }
+                                            }
+
+                                            cellFormat { teacher ->
+                                                if (teacher != null)
+                                                    text = "${teacher.lastName} ${teacher.firstName}"
+                                            }
+
+                                            vgrow = Priority.ALWAYS
+                                            useMaxWidth = true
+
+                                            required()
+
+                                            subscribe<SMTeacherRefreshEvent> { event ->
+                                                teacherList.setAll(event.teachers)
+                                            }
                                         }
 
-                                        cellFormat { teacher ->
-                                            if (teacher != null)
-                                                text = "${teacher.lastName} ${teacher.firstName}"
+                                        hbox {
+                                            alignment = Pos.BOTTOM_LEFT
+
+                                            this += MaterialIconView(MaterialIcon.ADD).apply {
+                                                fill = c("#3f51b5")
+                                                glyphSize = 24
+
+                                                setOnMouseClicked {
+                                                    find<SMTeacherInfoFragment>().openModal()
+                                                }
+                                            }
                                         }
-
-                                        vgrow = Priority.ALWAYS
-                                        useMaxWidth = true
-
-                                        required()
                                     }
                                 }
 
