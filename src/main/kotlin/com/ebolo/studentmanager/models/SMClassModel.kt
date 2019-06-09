@@ -76,7 +76,7 @@ class SMClassModel(
         entity.name = this.name.value
         entity.numberOfExams = this.numberOfExams.value.toInt()
         entity.tuitionFee = this.tuitionFee.value.toInt()
-        entity.totalTuitionFee = this.totalTuitionFee.value.toLong()
+        entity.totalTuitionFee = this.totalTuitionFee.value?.toLong() ?: 0L
         entity.startDate = this.startDate.value.atStartOfDay().toInstant(ZoneOffset.UTC)
         entity.subject = SMSubjectModel().apply { item = subject.value }.getEntity()
         entity.teacher = SMTeacherModel().apply { item = teacher.value }.getEntity()
