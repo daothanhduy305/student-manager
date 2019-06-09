@@ -89,18 +89,21 @@ class SMStudentTableFragment : Fragment() {
                     style {
                         alignment = Pos.TOP_CENTER
                     }
-                }
+                }.contentWidth(padding = 30.0)
 
-                readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName)
-                readonlyColumn("Họ", SMStudentModel.SMStudentDto::lastName)
-                readonlyColumn("Nickname", SMStudentModel.SMStudentDto::nickname)
-                readonlyColumn("Sinh nhật", SMStudentModel.SMStudentDto::birthday)
+                readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName).weightedWidth(2, minContentWidth = true, padding = 20.0)
+
+                readonlyColumn("Họ", SMStudentModel.SMStudentDto::lastName).weightedWidth(2, minContentWidth = true, padding = 20.0)
+
+                readonlyColumn("Nickname", SMStudentModel.SMStudentDto::nickname).weightedWidth(1, minContentWidth = true, padding = 20.0)
+
                 readonlyColumn("Học vấn", SMStudentModel.SMStudentDto::educationLevel) {
                     cellFormat { text = it.title }
-                }
-                readonlyColumn("Số điện thoại", SMStudentModel.SMStudentDto::phone)
+                }.weightedWidth(2, minContentWidth = true, padding = 20.0)
 
-                smartResize()
+                readonlyColumn("Sinh nhật", SMStudentModel.SMStudentDto::birthday).weightedWidth(1, minContentWidth = true, padding = 20.0)
+
+                readonlyColumn("Số điện thoại", SMStudentModel.SMStudentDto::phone).remainingWidth()
 
                 // set up the context menu
                 contextmenu {
@@ -128,9 +131,11 @@ class SMStudentTableFragment : Fragment() {
                     }
                 }
 
+                smartResize()
+
                 // subscribe to the refresh event to reset the list
                 subscribe<SMStudentRefreshEvent> { event ->
-                    runAsync { studentList.setAll(event.students) } ui { requestResize() }
+                    runAsync { studentList.setAll(event.students) } ui { }
                 }
             }
         }
