@@ -43,4 +43,13 @@ public interface SMFeePaidRepository extends EboloBaseMongoRepository<SMFeePaidE
             final int year,
             final Month month
     );
+
+    /**
+     * Method to delete all the fee payment info having the mentioned class id
+     *
+     * @param classIds list of id of the classes to delete the fee payment info
+     * @author ebolo
+     * @since 0.0.1-SNAPSHOT
+     */
+    void deleteAllByClassIdIn(final List<String> classIds);
 }

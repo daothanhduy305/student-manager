@@ -59,4 +59,13 @@ public interface SMAttendanceRepository extends EboloBaseMongoRepository<SMAtten
      * @return list of absence info for this class
      */
     List<SMAttendanceEntity> findAllByClassId(final String classId);
+
+    /**
+     * Method to delete all the attendance info having the mentioned class id
+     *
+     * @param classIds list of ids of the classes to delete the attendance info
+     * @author ebolo
+     * @since 0.0.1-SNAPSHOT
+     */
+    void deleteAllByClassIdIn(final List<String> classIds);
 }

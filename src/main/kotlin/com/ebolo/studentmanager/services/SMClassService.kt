@@ -104,6 +104,8 @@ class SMClassService(
      */
     fun deleteClasses(classIds: List<String>): SMCRUDUtils.SMCRUDResult = try {
         logger.info("Deleting Class(es) '${classIds.joinToString()}'")
+        attendanceRepository.deleteAllByClassIdIn(classIds)
+        feePaidRepository.deleteAllByClassIdIn(classIds)
         classRepository.deleteAllByIdIn(classIds)
 
         SMCRUDUtils.SMCRUDResult(true)
