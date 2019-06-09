@@ -72,6 +72,24 @@ class SMRegisteredClassesFragment : Fragment() {
                     }
                 }
 
+                setOnMouseClicked {
+                    if (it.clickCount == 2) {
+                        if (selectedItem != null) {
+                            val performanceInfo = selectedItem!!.studentPerformanceList.firstOrNull { performanceInfo ->
+                                performanceInfo.student == studentModel.id.value
+                            } ?: SMStudentPerformanceInfo(
+                                student = studentModel.id.value,
+                                results = generateSequence { -1 }.take(selectedItem!!.numberOfExams.toInt()).toMutableList())
+
+                            find<SMClassPerformanceFragment>(
+                                "studentInfo" to studentModel.item,
+                                "performanceInfo" to performanceInfo,
+                                "classId" to selectedItem!!.id)
+                                .openModal()
+                        }
+                    }
+                }
+
                 smartResize()
 
                 // subscribe to events

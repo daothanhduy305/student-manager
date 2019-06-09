@@ -96,6 +96,15 @@ class SMTeacherTableFragment : Fragment() {
 
                 smartResize()
 
+                setOnMouseClicked {
+                    if (it.clickCount == 2) {
+                        find<SMTeacherInfoFragment>(
+                            "mode" to SMCRUDUtils.CRUDMode.EDIT,
+                            "teacherModel" to SMTeacherModel(selectedItem)
+                        ).openModal()
+                    }
+                }
+
                 // set up the context menu
                 contextmenu {
                     item("Sửa...").action {

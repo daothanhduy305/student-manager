@@ -119,6 +119,15 @@ class SMClassTableFragment : Fragment() {
                     }
                 }
 
+                setOnMouseClicked {
+                    if (it.clickCount == 2) {
+                        find<SMClassInfoFragment>(
+                            "mode" to SMCRUDUtils.CRUDMode.EDIT,
+                            "classModel" to SMClassModel(selectedItem)
+                        ).openModal()
+                    }
+                }
+
                 // subscribe to the refresh event to reset the list
                 subscribe<SMClassListRefreshEvent> { event ->
                     searchBox.text = ""

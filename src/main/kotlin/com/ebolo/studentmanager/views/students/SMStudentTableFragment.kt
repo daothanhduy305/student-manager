@@ -119,6 +119,15 @@ class SMStudentTableFragment : Fragment() {
                     }
                 }
 
+                setOnMouseClicked {
+                    if (it.clickCount == 2) {
+                        find<SMStudentInfoFragment>(
+                            "mode" to SMCRUDUtils.CRUDMode.EDIT,
+                            "studentModel" to SMStudentModel(selectedItem))
+                            .openModal()
+                    }
+                }
+
                 // subscribe to the refresh event to reset the list
                 subscribe<SMStudentRefreshEvent> { event ->
                     runAsync { studentList.setAll(event.students) } ui { requestResize() }

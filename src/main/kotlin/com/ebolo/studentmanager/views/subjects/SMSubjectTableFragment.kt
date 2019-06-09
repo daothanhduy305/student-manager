@@ -107,6 +107,15 @@ class SMSubjectTableFragment : Fragment() {
                     }
                 }
 
+                setOnMouseClicked {
+                    if (it.clickCount == 2) {
+                        find<SMSubjectInfoFragment>(
+                            "subjectModel" to SMSubjectModel(selectedItem),
+                            "mode" to SMCRUDUtils.CRUDMode.EDIT
+                        ).openModal()
+                    }
+                }
+
                 subscribe<SMSubjectRefreshEvent> { event ->
                     runAsync { subjectList.setAll(event.subjects) } ui { requestResize() }
                 }
