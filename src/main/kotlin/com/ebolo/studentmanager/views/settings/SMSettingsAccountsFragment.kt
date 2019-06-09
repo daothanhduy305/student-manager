@@ -5,6 +5,7 @@ import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.SMUserListRefreshEvent
 import com.ebolo.studentmanager.services.SMUserListRefreshRequest
 import com.ebolo.studentmanager.utils.SMCRUDUtils
+import com.ebolo.studentmanager.views.utils.ui.SMConfirmDialog
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXTextField
 import javafx.collections.FXCollections
@@ -112,13 +113,18 @@ class SMSettingsAccountsFragment : Fragment() {
                     }*/
 
                     item("Xóa").action {
-                        runAsync {
-                            serviceCentral.userService.deleteUsers(selectionModel.selectedItems.map { it.id }.toList())
-                        } ui {
-                            if (it.success) {
-                                fire(SMUserListRefreshRequest)
+                        find<SMConfirmDialog>(
+                            "dialogContent" to "Tiếp tục xóa?",
+                            "onOKClicked" to {
+                                runAsync {
+                                    serviceCentral.userService.deleteUsers(selectionModel.selectedItems.map { it.id }.toList())
+                                } ui {
+                                    if (it.success) {
+                                        fire(SMUserListRefreshRequest)
+                                    }
+                                }
                             }
-                        }
+                        ).openModal()
                     }
                 }
             }

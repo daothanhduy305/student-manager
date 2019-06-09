@@ -6,6 +6,7 @@ import com.ebolo.studentmanager.services.SMClassListRefreshRequest
 import com.ebolo.studentmanager.services.SMDataProcessRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.utils.SMCRUDUtils
+import com.ebolo.studentmanager.views.utils.ui.SMConfirmDialog
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXTextField
 import javafx.collections.FXCollections
@@ -112,10 +113,15 @@ class SMClassTableFragment : Fragment() {
                     }
 
                     item("Xóa").action {
-                        serviceCentral.classService.deleteClasses(selectionModel.selectedItems.map { it.id }.toList())
-                        fire(SMDataProcessRequest {
-                            fire(SMClassListRefreshRequest)
-                        })
+                        find<SMConfirmDialog>(
+                            "dialogContent" to "Tiếp tục xóa?",
+                            "onOKClicked" to {
+                                serviceCentral.classService.deleteClasses(selectionModel.selectedItems.map { it.id }.toList())
+                                fire(SMDataProcessRequest {
+                                    fire(SMClassListRefreshRequest)
+                                })
+                            }
+                        ).openModal()
                     }
                 }
 

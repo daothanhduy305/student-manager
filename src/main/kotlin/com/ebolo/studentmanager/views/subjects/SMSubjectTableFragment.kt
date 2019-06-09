@@ -6,6 +6,7 @@ import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.SMSubjectRefreshEvent
 import com.ebolo.studentmanager.services.SMSubjectRefreshRequest
 import com.ebolo.studentmanager.utils.SMCRUDUtils
+import com.ebolo.studentmanager.views.utils.ui.SMConfirmDialog
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXTextField
 import javafx.collections.FXCollections
@@ -98,10 +99,15 @@ class SMSubjectTableFragment : Fragment() {
                     }
 
                     item("Xóa").action {
-                        serviceCentral.subjectService.deleteSubjects(selectionModel.selectedItems.map { it.id }.toList())
-                        fire(SMDataProcessRequest {
-                            fire(SMSubjectRefreshRequest)
-                        })
+                        find<SMConfirmDialog>(
+                            "dialogContent" to "Tiếp tục xóa?",
+                            "onOKClicked" to {
+                                serviceCentral.subjectService.deleteSubjects(selectionModel.selectedItems.map { it.id }.toList())
+                                fire(SMDataProcessRequest {
+                                    fire(SMSubjectRefreshRequest)
+                                })
+                            }
+                        ).openModal()
                     }
                 }
 
