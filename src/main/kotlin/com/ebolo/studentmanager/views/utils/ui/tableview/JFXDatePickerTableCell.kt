@@ -43,10 +43,12 @@ import java.time.LocalDate
 </T> */
 open class JFXDatePickerTableCell<S>(
     onValueChanged: ((item: S?, value: LocalDate?) -> Unit)? = null,
-    setup: ((datePicker: JFXDatePicker) -> Unit)? = null
+    setup: ((datePicker: JFXDatePicker) -> Unit)? = null,
+    enablePredicate: ((item: S?) -> Boolean)? = null
 ) : TableCell<S, LocalDate?>() {
     private val datePicker: JFXDatePicker
     private val onValueChanged: ((item: S?, value: LocalDate?) -> Unit)?
+    private val enablePredicate: ((item: S?) -> Boolean)?
 
     init {
         // we let getSelectedProperty be null here, as we can always defer to the
@@ -62,6 +64,8 @@ open class JFXDatePickerTableCell<S>(
                 onValueChanged?.invoke(tableRow?.item as S?, newValue)
             }
         }
+
+        this.enablePredicate = enablePredicate
 
         // by default the graphic is null until the cell stops being empty
         graphic = null
@@ -79,6 +83,11 @@ open class JFXDatePickerTableCell<S>(
         } else {
             graphic = datePicker.apply {
                 value = item
+            }
+
+            if (enablePredicate != null) {
+                @Suppress("UNCHECKED_CAST")
+                this.isDisable = enablePredicate.invoke(tableRow?.item as S?)
             }
         }
     }
@@ -100,9 +109,10 @@ open class JFXDatePickerTableCell<S>(
         </T> */
         fun <S> forTableColumn(
             onValueChanged: ((item: S?, value: LocalDate?) -> Unit)? = null,
-            setup: ((datePicker: JFXDatePicker) -> Unit)? = null
+            setup: ((datePicker: JFXDatePicker) -> Unit)? = null,
+            enablePredicate: ((item: S?) -> Boolean)? = null
         ): Callback<TableColumn<S, LocalDate?>, TableCell<S, LocalDate?>> {
-            return Callback { object : JFXDatePickerTableCell<S>(onValueChanged, setup) {} }
+            return Callback { object : JFXDatePickerTableCell<S>(onValueChanged, setup, enablePredicate) {} }
         }
     }
 }

@@ -13,11 +13,15 @@ import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
+import javafx.scene.AccessibleAttribute
+import javafx.scene.control.TableCell
 import tornadofx.*
 import java.time.LocalDate
 import java.time.ZoneOffset
 
 class SMClassStudentTuitionFeeListFragment : Fragment() {
+    val paymentDateColumnId = "paymentDateColumn"
+
     private val logger = loggerFor(SMClassStudentTuitionFeeListFragment::class.java)
     private val serviceCentral: SMServiceCentral by di()
     private val classModel: SMClassModel by param()
@@ -71,6 +75,18 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
                                         classModel.item.deleteFeePaidInfo(studentDto.id, choosingDate.value)
                                     }
                                 }
+                            } ui {
+                                val columnIndex = tableView.columns.indexOfFirst { it.id == paymentDateColumnId }
+                                val rowIndex = classModel.studentList.value.indexOfFirst { it.id == studentDto.id }
+
+                                @Suppress("UNCHECKED_CAST")
+                                val cell = tableView!!.queryAccessibleAttribute(
+                                    AccessibleAttribute.CELL_AT_ROW_COLUMN,
+                                    rowIndex,
+                                    columnIndex
+                                ) as TableCell<SMStudentModel.SMStudentDto, LocalDate?>
+
+                                cell.isDisable = !value
                             }
                         }
                     }
@@ -95,6 +111,8 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
                 }
 
                 column<SMStudentModel.SMStudentDto, LocalDate?>("Ngày đóng học phí", "paymentDate") {
+                    id = paymentDateColumnId
+
                     cellFactory = JFXDatePickerTableCell.forTableColumn(
                         onValueChanged = { studentDto, value ->
                             if (studentDto != null) {
@@ -108,8 +126,16 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
                         setup = {
                             it.defaultColor = c("#3f51b5")
                             it.isOverLay = false
-
-
+                        },
+                        enablePredicate = { studentDto ->
+                            logger.info("Called to this")
+                            if (studentDto != null) {
+                                paymentInfoList.firstOrNull { info ->
+                                    info.studentId == studentDto.id
+                                } == null
+                            } else {
+                                false
+                            }
                         }
                     )
 
