@@ -19,7 +19,7 @@ import java.time.LocalDate
 
 class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
     private val serviceCentral: SMServiceCentral by di()
-    private val mode: SMCRUDUtils.CRUDMode by param()
+    private val mode: SMCRUDUtils.CRUDMode by param(SMCRUDUtils.CRUDMode.NEW)
     private val teacherModel: SMTeacherModel by param(SMTeacherModel())
 
     override val root = form {
