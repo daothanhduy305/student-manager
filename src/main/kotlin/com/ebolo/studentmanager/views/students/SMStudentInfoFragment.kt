@@ -61,7 +61,7 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
                                     }
                                 }
 
-                                field("Nickname *") {
+                                field("Nickname") {
                                     this += JFXTextField().apply {
                                         bind(studentModel.nickname)
                                     }
