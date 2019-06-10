@@ -21,25 +21,60 @@ class SMSettingsGeneralFragment : Fragment() {
     private val databaseModel = ViewModel()
     private val databaseUriProperty = databaseModel.bind {
         SimpleStringProperty({
-            StudentManagerApplication.getSetting(Settings.DATABASE_URI) as String? ?: ""
+            var databaseUri = ""
+
+            preferences {
+                databaseUri = get(Settings.DATABASE_URI, "")
+            }
+
+            databaseUri
         }())
     }
     private val databaseNameProperty = databaseModel.bind {
         SimpleStringProperty({
-            StudentManagerApplication.getSetting(Settings.DATABASE_NAME) as String? ?: ""
+            var databaseName = ""
+
+            preferences {
+                databaseName = get(Settings.DATABASE_NAME, "")
+            }
+
+            databaseName
         }())
     }
 
     private val masterAccountModel = ViewModel()
     private val masterAccountUsernameProperty = masterAccountModel.bind {
         SimpleStringProperty({
-            StudentManagerApplication.getSetting(Settings.MASTER_ACCOUNT_USERNAME) as String? ?: ""
+            var masterUsername = ""
+
+            preferences {
+                masterUsername = get(Settings.MASTER_ACCOUNT_USERNAME, "")
+            }
+
+            masterUsername
         }())
     }
     private val masterAccountPasswordProperty = masterAccountModel.bind { SimpleStringProperty("DummyPassword") }
 
-    private val oldDBName = StudentManagerApplication.getSetting(Settings.DATABASE_NAME) as String? ?: ""
-    private val oldDBConnectionString = StudentManagerApplication.getSetting(Settings.DATABASE_URI) as String? ?: ""
+    private val oldDBName = {
+        var dbName = ""
+
+        preferences {
+            dbName = get(Settings.DATABASE_NAME, "")
+        }
+
+        dbName
+    }()
+
+    private val oldDBConnectionString = {
+        var connectionString = ""
+
+        preferences {
+            connectionString = get(Settings.DATABASE_URI, "")
+        }
+
+        connectionString
+    }()
 
     override val root = form {
         vbox {
@@ -128,32 +163,32 @@ class SMSettingsGeneralFragment : Fragment() {
                             val errorList = mutableListOf<StudentManagerApplication.SetupError>()
 
                             if (masterAccountModel.isDirty) {
-                                StudentManagerApplication.setSettings(
-                                    Settings.MASTER_ACCOUNT_USERNAME to masterAccountUsernameProperty.value,
-                                    Settings.MASTER_ACCOUNT_PASSWORD to BCryptPasswordEncoder().encode(masterAccountPasswordProperty.value)
-                                )
+                                preferences {
+                                    put(Settings.MASTER_ACCOUNT_USERNAME, masterAccountUsernameProperty.value)
+                                    put(Settings.MASTER_ACCOUNT_PASSWORD, BCryptPasswordEncoder().encode(masterAccountPasswordProperty.value))
+                                }
                             }
 
                             if (databaseModel.isDirty) {
-                                StudentManagerApplication.setSettings(
-                                    Settings.DATABASE_NAME to databaseNameProperty.value,
-                                    Settings.DATABASE_URI to databaseUriProperty.value
-                                )
+                                preferences {
+                                    put(Settings.DATABASE_NAME, databaseNameProperty.value)
+                                    put(Settings.DATABASE_URI, databaseUriProperty.value)
+                                }
 
                                 try {
-                                    (app as StudentManagerApplication).setupApp()
+                                    (app as StudentManagerApplication).setupApp(this@SMSettingsGeneralFragment)
                                 } catch (e: Exception) {
                                     logger.error("Could not setup the database connection. Falling back to the old info...", e)
 
-                                    StudentManagerApplication.setSettings(
-                                        Settings.DATABASE_NAME to oldDBName,
-                                        Settings.DATABASE_URI to oldDBConnectionString
-                                    )
+                                    preferences {
+                                        put(Settings.DATABASE_NAME, databaseNameProperty.value)
+                                        put(Settings.DATABASE_URI, databaseUriProperty.value)
+                                    }
 
                                     databaseNameProperty.value = oldDBName
                                     databaseUriProperty.value = oldDBConnectionString
 
-                                    (app as StudentManagerApplication).setupApp()
+                                    (app as StudentManagerApplication).setupApp(this@SMSettingsGeneralFragment)
 
                                     result = false
                                     errorList.add(StudentManagerApplication.SetupError.DATABASE_ERROR)

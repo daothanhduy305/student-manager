@@ -1,6 +1,5 @@
 package com.ebolo.studentmanager.views
 
-import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.models.SMUserModel
 import com.ebolo.studentmanager.services.SMGlobal.APP_NAME
 import com.ebolo.studentmanager.services.SMServiceCentral
@@ -67,17 +66,15 @@ class SMLoginFormFragment : View(APP_NAME) {
                         enableWhen(user.valid)
                         action {
                             if (serviceCentral.userService.login(user.getEntity())) {
-                                if (rememberMe.value) {
-                                    StudentManagerApplication.setSettings(
-                                        Settings.CREDENTIAL_USERNAME to user.username.value,
-                                        Settings.CREDENTIAL_PASSWORD to user.password.value,
-                                        Settings.REMEMBER_CREDENTIAL to rememberMe.value
-                                    )
-                                } else {
-                                    StudentManagerApplication.removeSettings(
-                                        Settings.CREDENTIAL_USERNAME,
-                                        Settings.CREDENTIAL_PASSWORD
-                                    )
+                                preferences {
+                                    if (rememberMe.value) {
+                                        put(Settings.CREDENTIAL_USERNAME, user.username.value)
+                                        put(Settings.CREDENTIAL_PASSWORD, user.password.value)
+                                        putBoolean(Settings.REMEMBER_CREDENTIAL, rememberMe.value)
+                                    } else {
+                                        remove(Settings.CREDENTIAL_USERNAME)
+                                        remove(Settings.CREDENTIAL_PASSWORD)
+                                    }
                                 }
 
                                 replaceWith<SMMainFragment>(

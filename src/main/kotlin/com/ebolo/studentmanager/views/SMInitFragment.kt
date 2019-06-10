@@ -39,7 +39,7 @@ class SMInitFragment : Fragment(APP_NAME) {
 
     override fun onDock() {
         runAsync {
-            (app as StudentManagerApplication).setupApp()
+            (app as StudentManagerApplication).setupApp(this@SMInitFragment)
         } ui {
             if (it.success) {
                 replaceWith<SMSplashFragment>(sizeToScene = true, centerOnScreen = true)

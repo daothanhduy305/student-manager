@@ -103,12 +103,19 @@ class SMSetupFragment : Fragment(APP_NAME) {
                             val masterAccountPassword = masterAccountPasswordProperty.value
 
                             runAsync {
-                                StudentManagerApplication.setSettings(
-                                    Settings.DATABASE_NAME to dbName,
-                                    Settings.DATABASE_URI to dbUri,
-                                    Settings.MASTER_ACCOUNT_USERNAME to masterAccountUsername,
-                                    Settings.MASTER_ACCOUNT_PASSWORD to BCryptPasswordEncoder().encode(masterAccountPassword)
-                                )
+                                preferences {
+                                    put(Settings.DATABASE_NAME, dbName)
+                                    put(Settings.DATABASE_URI, dbUri)
+
+                                    put(Settings.MASTER_ACCOUNT_USERNAME, masterAccountUsername)
+                                    put(Settings.MASTER_ACCOUNT_PASSWORD, BCryptPasswordEncoder().encode(masterAccountPassword))
+
+                                    putBoolean(Settings.DATABASE_SETUP, true)
+                                    putBoolean(Settings.MASTER_ACCOUNT_SETUP, true)
+                                }
+
+                                StudentManagerApplication.dbName = dbName
+                                StudentManagerApplication.dbUri = dbUri
                             } ui {
                                 messageView.close()
                                 replaceWith<SMInitFragment>()

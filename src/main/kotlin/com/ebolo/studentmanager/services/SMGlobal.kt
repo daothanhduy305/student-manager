@@ -38,6 +38,10 @@ object Settings {
      */
     const val DATABASE_URI = "DATABASE_URI"
     /**
+     * Indicates whether the db has been setup or not
+     */
+    const val DATABASE_SETUP = "DATABASE_SETUP"
+    /**
      * Save a master account into the cache - God mode
      */
     const val MASTER_ACCOUNT_USERNAME = "MASTER_USER_NAME"
@@ -45,6 +49,10 @@ object Settings {
      * Save a master password into the cache
      */
     const val MASTER_ACCOUNT_PASSWORD = "MASTER_PASSWORD"
+    /**
+     * Indicates whether the master account has been setup or not
+     */
+    const val MASTER_ACCOUNT_SETUP = "MASTER_ACCOUNT_SETUP"
     /**
      * Current using being logged into the system
      */

@@ -1,6 +1,5 @@
 package com.ebolo.studentmanager.services
 
-import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.ebolo.utils.getWhenPresentOr
 import com.ebolo.studentmanager.ebolo.utils.loggerFor
 import com.ebolo.studentmanager.entities.SMUserEntity
@@ -20,7 +19,6 @@ import javax.annotation.PreDestroy
  * @since 0.0.1-SNAPSHOT
  *
  * @property userRepository SMUserRepository
- * @property cacheService SMCacheService
  * @property logger Logger
  * @constructor
  */
@@ -146,23 +144,25 @@ class SMUserService(
 
         logger.info("Logging user: ${user.username} into the system")
 
-        // Get the master account info
-        val masterUsername = StudentManagerApplication.getSetting(Settings.MASTER_ACCOUNT_USERNAME) as String
-        val masterPassword = StudentManagerApplication.getSetting(Settings.MASTER_ACCOUNT_PASSWORD) as String
+        preferences {
+            // Get the master account info
+            val masterUsername = get(Settings.MASTER_ACCOUNT_USERNAME, "")
+            val masterPassword = get(Settings.MASTER_ACCOUNT_PASSWORD, "")
 
-        if (user.username == masterUsername && passwordEncoder.matches(user.password, masterPassword)) {
-            authenticated = true
-            StudentManagerApplication.setSettings(Settings.GOD_MODE to true)
-        } else {
-            val userInDB = userRepository.findByUsername(user.username)
+            if (user.username == masterUsername && passwordEncoder.matches(user.password, masterPassword)) {
+                authenticated = true
+                putBoolean(Settings.GOD_MODE, true)
+            } else {
+                val userInDB = userRepository.findByUsername(user.username)
 
-            if (userInDB.isPresent) {
-                authenticated = passwordEncoder.matches(user.password, userInDB.get().password)
+                if (userInDB.isPresent) {
+                    authenticated = passwordEncoder.matches(user.password, userInDB.get().password)
+                }
             }
-        }
 
-        if (authenticated) {
-            StudentManagerApplication.setSettings(Settings.LOGGING_USER to user.username)
+            if (authenticated) {
+                put(Settings.LOGGING_USER, user.username)
+            }
         }
 
         return authenticated
@@ -178,13 +178,15 @@ class SMUserService(
      */
     fun logout(): Boolean {
         logger.info("Logging out...")
-        StudentManagerApplication.removeSettings(
-            Settings.REMEMBER_CREDENTIAL,
-            Settings.CREDENTIAL_USERNAME,
-            Settings.CREDENTIAL_PASSWORD,
-            Settings.LOGGING_USER,
-            Settings.GOD_MODE
-        )
+        preferences {
+            listOf(
+                Settings.REMEMBER_CREDENTIAL,
+                Settings.CREDENTIAL_USERNAME,
+                Settings.CREDENTIAL_PASSWORD,
+                Settings.LOGGING_USER,
+                Settings.GOD_MODE
+            ).forEach { remove(it) }
+        }
         return true
     }
 
@@ -199,29 +201,29 @@ class SMUserService(
     fun checkCurrentUserAuthentication(): Boolean {
         var authenticated = false
 
-        if (StudentManagerApplication.getSetting(Settings.REMEMBER_CREDENTIAL, false) as Boolean) {
-            // If the remember has been ticked then check the saved credential
-            if (StudentManagerApplication.hasSetting(Settings.CREDENTIAL_USERNAME)
-                && StudentManagerApplication.hasSetting(Settings.CREDENTIAL_PASSWORD)) {
+        preferences {
+            if (getBoolean(Settings.REMEMBER_CREDENTIAL, false)) {
+                // If the remember has been ticked then check the saved credential
+                val savedUsername = get(Settings.CREDENTIAL_USERNAME, "")
+                val savedPassword = get(Settings.CREDENTIAL_PASSWORD, "")
 
-                val username = StudentManagerApplication.getSetting(Settings.CREDENTIAL_USERNAME) as String
-                val hashedPassword = StudentManagerApplication.getSetting(Settings.CREDENTIAL_PASSWORD) as String
+                if (savedUsername.isNotEmpty() && savedPassword.isNotEmpty()) {
+                    if (login(SMUserEntity().apply {
+                            this.username = savedUsername
+                            this.password = savedPassword
+                        })) {
 
-                if (login(SMUserEntity().apply {
-                        this.username = username
-                        this.password = hashedPassword
-                    })) {
-
-                    authenticated = true
+                        authenticated = true
+                    } else {
+                        listOf(
+                            Settings.CREDENTIAL_USERNAME,
+                            Settings.CREDENTIAL_PASSWORD,
+                            Settings.REMEMBER_CREDENTIAL
+                        ).forEach { remove(it) }
+                    }
                 } else {
-                    StudentManagerApplication.removeSettings(
-                        Settings.CREDENTIAL_USERNAME,
-                        Settings.CREDENTIAL_PASSWORD,
-                        Settings.REMEMBER_CREDENTIAL
-                    )
+                    remove(Settings.REMEMBER_CREDENTIAL)
                 }
-            } else {
-                StudentManagerApplication.removeSettings(Settings.REMEMBER_CREDENTIAL)
             }
         }
 

@@ -1,13 +1,11 @@
 package com.ebolo.studentmanager.components
 
 import com.ebolo.studentmanager.StudentManagerApplication
-import com.ebolo.studentmanager.services.Settings
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext
-import javax.annotation.PostConstruct
 
 
 /**
@@ -22,29 +20,8 @@ import javax.annotation.PostConstruct
  */
 @Configuration
 class SMMongoConfiguration : AbstractMongoConfiguration() {
-    private var mongoDB: String = ""
-    private var mongoURI: String = ""
-
-    @PostConstruct
-    fun setup() {
-        val mongoDbName = StudentManagerApplication.getSetting(Settings.DATABASE_NAME) as String?
-        if (mongoDbName != null) {
-            mongoDB = mongoDbName
-        }
-
-        val mongoDbUri = StudentManagerApplication.getSetting(Settings.DATABASE_URI) as String?
-        if (mongoDbUri != null) {
-            mongoURI = mongoDbUri
-        }
-        // Uncomment the below block to allow resetting the db configurations
-        /*cacheService.setSettings(
-            Settings.DATABASE_NAME to mongoDB,
-            Settings.DATABASE_URI to mongoURI
-        )*/
-    }
-
     override fun getDatabaseName(): String {
-        return mongoDB
+        return StudentManagerApplication.dbName
     }
 
     @Throws(ClassNotFoundException::class)
@@ -53,6 +30,6 @@ class SMMongoConfiguration : AbstractMongoConfiguration() {
     }
 
     override fun mongoClient(): MongoClient {
-        return MongoClient(MongoClientURI(mongoURI))
+        return MongoClient(MongoClientURI(StudentManagerApplication.dbUri))
     }
 }
