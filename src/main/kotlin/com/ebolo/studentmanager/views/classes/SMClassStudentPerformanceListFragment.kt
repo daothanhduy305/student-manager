@@ -115,7 +115,7 @@ class SMClassStudentPerformanceListFragment : Fragment() {
         }
 
         setOnMouseClicked {
-            if (it.clickCount == 2) {
+            if (it.clickCount == 2 && selectionModel.selectedItems.isNotEmpty()) {
                 if (selectedItem != null) {
                     val performanceInfo = classModel.item.studentPerformanceList.firstOrNull { performanceInfo ->
                         performanceInfo.student == selectedItem!!.id

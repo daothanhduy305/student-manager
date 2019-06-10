@@ -129,7 +129,7 @@ class SMStudentTableFragment : Fragment() {
                 }
 
                 setOnMouseClicked {
-                    if (it.clickCount == 2) {
+                    if (it.clickCount == 2 && selectionModel.selectedItems.isNotEmpty()) {
                         find<SMStudentInfoFragment>(
                             "mode" to SMCRUDUtils.CRUDMode.EDIT,
                             "studentModel" to SMStudentModel(selectedItem))

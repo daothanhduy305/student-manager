@@ -98,7 +98,7 @@ class SMTeacherTableFragment : Fragment() {
                 readonlyColumn("Ngày sinh", SMTeacherModel.SMTeacherDto::birthday).prefWidth(200.0)
 
                 setOnMouseClicked {
-                    if (it.clickCount == 2) {
+                    if (it.clickCount == 2 && selectionModel.selectedItems.isNotEmpty()) {
                         find<SMTeacherInfoFragment>(
                             "mode" to SMCRUDUtils.CRUDMode.EDIT,
                             "teacherModel" to SMTeacherModel(selectedItem)
