@@ -104,7 +104,7 @@ class SMSubjectTableFragment : Fragment() {
                             "onOKClicked" to {
                                 serviceCentral.subjectService.deleteSubjects(selectionModel.selectedItems.map { it.id }.toList())
                                 fire(SMDataProcessRequest {
-                                    fire(SMSubjectRefreshRequest)
+                                    fire(SMSubjectRefreshRequest())
                                 })
                             }
                         ).openModal()
@@ -130,7 +130,7 @@ class SMSubjectTableFragment : Fragment() {
     override fun onDock() {
         super.onDock()
         fire(SMDataProcessRequest {
-            fire(SMSubjectRefreshRequest)
+            fire(SMSubjectRefreshRequest())
         })
     }
 }

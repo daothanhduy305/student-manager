@@ -12,6 +12,7 @@ import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.PropertySource
 import org.springframework.data.mongodb.config.EnableMongoAuditing
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
+import org.springframework.scheduling.annotation.EnableScheduling
 import tornadofx.*
 import kotlin.reflect.KClass
 
@@ -19,6 +20,7 @@ import kotlin.reflect.KClass
 @SpringBootApplication
 @EnableMongoRepositories
 @EnableMongoAuditing
+@EnableScheduling
 @PropertySource("classpath:version.properties")
 class StudentManagerApplication : App(SMInitFragment::class) {
     private val logger = loggerFor(this.javaClass)

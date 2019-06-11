@@ -163,7 +163,7 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
                                     // refresh if success
                                     if (result.success) {
                                         fire(SMDataProcessRequest {
-                                            fire(SMStudentRefreshRequest)
+                                            fire(SMStudentRefreshRequest())
                                         })
                                         modalStage?.close()
                                     } else {

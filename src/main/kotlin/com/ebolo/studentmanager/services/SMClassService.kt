@@ -35,8 +35,8 @@ class SMClassService(
     @PostConstruct
     private fun setupSubscriptions() {
         // register the class list refresh request and event
-        smClassListRefreshRequestRegistration = subscribe<SMClassListRefreshRequest> {
-            fire(SMClassListRefreshEvent(getClassList()))
+        smClassListRefreshRequestRegistration = subscribe<SMClassListRefreshRequest> { request ->
+            fire(SMClassListRefreshEvent(getClassList(), request.source))
         }
 
         // register to the class list refresh request for a specific student
@@ -197,7 +197,7 @@ class SMClassService(
                         })
 
                         fire(SMClassRefreshEvent(classEntity.toDto()))
-                        fire(SMClassListRefreshRequest)
+                        fire(SMClassListRefreshRequest())
                         SMCRUDUtils.SMCRUDResult(true)
                     },
                     otherwise = {
@@ -237,7 +237,7 @@ class SMClassService(
                 classRepository.save(classEntity)
 
                 fire(SMClassRefreshEvent(classEntity.toDto()))
-                fire(SMClassListRefreshRequest)
+                fire(SMClassListRefreshRequest())
 
                 SMCRUDUtils.SMCRUDResult(true)
             },
@@ -401,7 +401,7 @@ class SMClassService(
  * @author ebolo (daothanhduy305@gmail.com)
  * @since 0.0.1-SNAPSHOT
  */
-object SMClassListRefreshRequest : FXEvent(EventBus.RunOn.BackgroundThread)
+class SMClassListRefreshRequest(val source: String = "") : FXEvent(EventBus.RunOn.BackgroundThread)
 
 /**
  * Event to refresh the class list when received
@@ -409,7 +409,7 @@ object SMClassListRefreshRequest : FXEvent(EventBus.RunOn.BackgroundThread)
  * @author ebolo (daothanhduy305@gmail.com)
  * @since 0.0.1-SNAPSHOT
  */
-class SMClassListRefreshEvent(val classes: List<SMClassModel.SMClassDto>) : FXEvent()
+class SMClassListRefreshEvent(val classes: List<SMClassModel.SMClassDto>, val source: String = "") : FXEvent()
 
 /**
  * Event to refresh a class info

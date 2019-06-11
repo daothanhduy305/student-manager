@@ -121,7 +121,7 @@ class SMStudentTableFragment : Fragment() {
                             "onOKClicked" to {
                                 serviceCentral.studentService.deleteStudents(selectionModel.selectedItems.map { it.id }.toList())
                                 fire(SMDataProcessRequest {
-                                    fire(SMStudentRefreshRequest)
+                                    fire(SMStudentRefreshRequest())
                                 })
                             }
                         ).openModal()
@@ -148,7 +148,7 @@ class SMStudentTableFragment : Fragment() {
     override fun onDock() {
         super.onDock()
         fire(SMDataProcessRequest {
-            fire(SMStudentRefreshRequest)
+            fire(SMStudentRefreshRequest())
         })
     }
 }

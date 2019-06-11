@@ -387,7 +387,7 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                     // refresh if success
                                     if (result.success) {
                                         fire(SMDataProcessRequest {
-                                            fire(SMClassListRefreshRequest)
+                                            fire(SMClassListRefreshRequest())
                                         })
                                         modalStage?.close()
                                     } else {

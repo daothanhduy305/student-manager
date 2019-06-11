@@ -132,7 +132,7 @@ class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
                         // refresh if success
                         if (result.success) {
                             fire(SMDataProcessRequest {
-                                fire(SMTeacherRefreshRequest)
+                                fire(SMTeacherRefreshRequest())
                             })
                             modalStage?.close()
                         } else {

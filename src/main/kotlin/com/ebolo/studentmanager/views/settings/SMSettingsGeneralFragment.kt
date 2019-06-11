@@ -1,79 +1,60 @@
 package com.ebolo.studentmanager.views.settings
 
-import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.ebolo.utils.loggerFor
-import com.ebolo.studentmanager.services.SMRestartAppRequest
+import com.ebolo.studentmanager.services.SMGlobal
 import com.ebolo.studentmanager.services.Settings
-import com.ebolo.studentmanager.views.utils.ui.SMErrorsDialog
+import com.ebolo.studentmanager.utils.formatDecimal
+import com.ebolo.studentmanager.utils.isFormattedLong
 import com.jfoenix.controls.JFXButton
-import com.jfoenix.controls.JFXPasswordField
+import com.jfoenix.controls.JFXCheckBox
 import com.jfoenix.controls.JFXTextField
-import javafx.beans.property.SimpleStringProperty
+import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.SimpleLongProperty
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
+import javafx.scene.control.TextFormatter
 import javafx.scene.layout.Priority
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import javafx.util.StringConverter
 import tornadofx.*
 
 class SMSettingsGeneralFragment : Fragment() {
     private val logger = loggerFor(this::class.java)
 
-    private val databaseModel = ViewModel()
-    private val databaseUriProperty = databaseModel.bind {
-        SimpleStringProperty({
-            var databaseUri = ""
+    private val useBackgroundSync = SimpleBooleanProperty(
+        {
+            var savedUseBgSync = false
 
             preferences {
-                databaseUri = get(Settings.DATABASE_URI, "")
+                savedUseBgSync = getBoolean(Settings.USE_BACGROUND_SYNC, false)
             }
 
-            databaseUri
-        }())
+            savedUseBgSync
+        }()
+    )
+
+    private val syncIntervalModel = ViewModel()
+    private val syncInterval = syncIntervalModel.bind {
+        SimpleLongProperty(
+            {
+                var savedSyncInterval = 0L
+
+                preferences {
+                    savedSyncInterval = getLong(Settings.SYNC_INTERVAL, SMGlobal.DEFAULT_SYNC_INTERVAL)
+                }
+
+                savedSyncInterval
+            }()
+        )
     }
-    private val databaseNameProperty = databaseModel.bind {
-        SimpleStringProperty({
-            var databaseName = ""
 
-            preferences {
-                databaseName = get(Settings.DATABASE_NAME, "")
-            }
-
-            databaseName
-        }())
-    }
-
-    private val masterAccountModel = ViewModel()
-    private val masterAccountUsernameProperty = masterAccountModel.bind {
-        SimpleStringProperty({
-            var masterUsername = ""
-
-            preferences {
-                masterUsername = get(Settings.MASTER_ACCOUNT_USERNAME, "")
-            }
-
-            masterUsername
-        }())
-    }
-    private val masterAccountPasswordProperty = masterAccountModel.bind { SimpleStringProperty("DummyPassword") }
-
-    private val oldDBName = {
-        var dbName = ""
+    private val oldSyncInterval = {
+        var savedSyncInterval = 0L
 
         preferences {
-            dbName = get(Settings.DATABASE_NAME, "")
+            savedSyncInterval = getLong(Settings.SYNC_INTERVAL, SMGlobal.DEFAULT_SYNC_INTERVAL)
         }
 
-        dbName
-    }()
-
-    private val oldDBConnectionString = {
-        var connectionString = ""
-
-        preferences {
-            connectionString = get(Settings.DATABASE_URI, "")
-        }
-
-        connectionString
+        savedSyncInterval
     }()
 
     override val root = form {
@@ -88,34 +69,55 @@ class SMSettingsGeneralFragment : Fragment() {
                 vbox(spacing = 20) {
                     hgrow = Priority.ALWAYS
 
-                    fieldset(labelPosition = Orientation.VERTICAL, text = "Dữ liệu") {
+                    fieldset(labelPosition = Orientation.HORIZONTAL, text = "Đồng bộ dữ liệu") {
                         spacing = 10.0
 
-                        field("Tên cơ sở dữ liệu") {
-                            this += JFXTextField().apply {
-                                bind(databaseNameProperty)
+                        hbox(spacing = 10) {
+                            field("Đồng bộ dữ liệu nền") {
+                                this += JFXCheckBox().apply {
+                                    bind(useBackgroundSync)
+                                }
                             }
-                        }
 
-                        field("Thông tin kết nối") {
-                            this += JFXTextField().apply {
-                                bind(databaseUriProperty)
-                            }
-                        }
-                    }
+                            field("Đồng bộ sau mỗi") {
+                                hbox(spacing = 5) {
+                                    this += JFXTextField().apply {
+                                        textFormatter = TextFormatter(object : StringConverter<Number?>() {
+                                            override fun fromString(string: String?): Number? {
+                                                return if (string != null && string.isFormattedLong())
+                                                    string.trim().replace("[^\\d]".toRegex(), "").toLong()
+                                                else null
+                                            }
 
-                    fieldset(labelPosition = Orientation.VERTICAL, text = "Tài khoản chủ") {
-                        spacing = 10.0
+                                            override fun toString(number: Number?): String {
+                                                return if (number != null) return number.toLong().toString().formatDecimal()
+                                                else ""
+                                            }
+                                        })
 
-                        field("Tên đăng nhập") {
-                            this += JFXTextField().apply {
-                                bind(masterAccountUsernameProperty)
-                            }
-                        }
+                                        textProperty().onChange {
+                                            runLater { commitValue() }
+                                        }
 
-                        field("Mật khẩu") {
-                            this += JFXPasswordField().apply {
-                                bind(masterAccountPasswordProperty)
+                                        bind(syncInterval)
+
+                                        validator { text ->
+                                            when {
+                                                !isDisabled && text.isNullOrBlank() -> error("This field is required")
+                                                !isDisabled && !text.isNullOrBlank() && !text.isFormattedLong() -> error("Number is required")
+                                                else -> null
+                                            }
+                                        }
+
+                                        enableWhen(useBackgroundSync)
+                                    }
+
+                                    label("(ms)") {
+                                        style {
+                                            fontSize = Dimension(12.0, Dimension.LinearUnits.pt)
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -151,67 +153,16 @@ class SMSettingsGeneralFragment : Fragment() {
                         backgroundColor += c("#fff")
                     }
 
-                    enableWhen((databaseModel.valid.and(databaseModel.dirty)
-                        .or(masterAccountModel.valid.and(masterAccountModel.dirty)))
-                        .and(masterAccountModel.valid.and(databaseModel.valid)))
-
                     action {
-                        val messageView = find<SMApplyingSettingsView>()
+                        preferences {
+                            putBoolean(Settings.USE_BACGROUND_SYNC, useBackgroundSync.value)
 
-                        runAsync {
-                            var result = true
-                            val errorList = mutableListOf<StudentManagerApplication.SetupError>()
-
-                            if (masterAccountModel.isDirty) {
-                                preferences {
-                                    put(Settings.MASTER_ACCOUNT_USERNAME, masterAccountUsernameProperty.value)
-                                    put(Settings.MASTER_ACCOUNT_PASSWORD, BCryptPasswordEncoder().encode(masterAccountPasswordProperty.value))
-                                }
-                            }
-
-                            if (databaseModel.isDirty) {
-                                preferences {
-                                    put(Settings.DATABASE_NAME, databaseNameProperty.value)
-                                    put(Settings.DATABASE_URI, databaseUriProperty.value)
-                                }
-
-                                try {
-                                    (app as StudentManagerApplication).setupApp(this@SMSettingsGeneralFragment)
-                                } catch (e: Exception) {
-                                    logger.error("Could not setup the database connection. Falling back to the old info...", e)
-
-                                    preferences {
-                                        put(Settings.DATABASE_NAME, databaseNameProperty.value)
-                                        put(Settings.DATABASE_URI, databaseUriProperty.value)
-                                    }
-
-                                    databaseNameProperty.value = oldDBName
-                                    databaseUriProperty.value = oldDBConnectionString
-
-                                    (app as StudentManagerApplication).setupApp(this@SMSettingsGeneralFragment)
-
-                                    result = false
-                                    errorList.add(StudentManagerApplication.SetupError.DATABASE_ERROR)
-                                }
-                            }
-
-                            StudentManagerApplication.SetupResult(result, errorList)
-                        } ui { result ->
-                            messageView.close()
-
-                            if (result.success) {
-                                close()
-                                if (databaseModel.isDirty) fire(SMRestartAppRequest)
-                            } else {
-                                find<SMErrorsDialog>(
-                                    "dialogTitle" to "Đã xảy ra lỗi:",
-                                    "errorList" to result.errors.map { it.friendlyMessage }
-                                ).openModal()
+                            if (syncIntervalModel.validate()) {
+                                putLong(Settings.SYNC_INTERVAL, syncInterval.value as Long)
                             }
                         }
 
-                        messageView.openModal(
-                            block = true, resizable = false, escapeClosesWindow = false)
+                        close()
                     }
                 }
             }

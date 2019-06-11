@@ -35,8 +35,8 @@ class SMStudentService(
     @PostConstruct
     fun setupSubscriptions() {
         // register the student list refresh request and event
-        smStudentRefreshRequestRegistration = subscribe<SMStudentRefreshRequest> {
-            fire(SMStudentRefreshEvent(getStudentList()))
+        smStudentRefreshRequestRegistration = subscribe<SMStudentRefreshRequest> { request ->
+            fire(SMStudentRefreshEvent(getStudentList(), request.source))
         }
     }
 
@@ -135,7 +135,7 @@ class SMStudentService(
  * @author ebolo (daothanhduy305@gmail.com)
  * @since 0.0.1-SNAPSHOT
  */
-object SMStudentRefreshRequest : FXEvent(EventBus.RunOn.BackgroundThread)
+class SMStudentRefreshRequest(val source: String = "") : FXEvent(EventBus.RunOn.BackgroundThread)
 
 /**
  * Event to refresh the student list when received
@@ -143,4 +143,4 @@ object SMStudentRefreshRequest : FXEvent(EventBus.RunOn.BackgroundThread)
  * @author ebolo (daothanhduy305@gmail.com)
  * @since 0.0.1-SNAPSHOT
  */
-class SMStudentRefreshEvent(val students: List<SMStudentModel.SMStudentDto>) : FXEvent()
+class SMStudentRefreshEvent(val students: List<SMStudentModel.SMStudentDto>, val source: String = "") : FXEvent()

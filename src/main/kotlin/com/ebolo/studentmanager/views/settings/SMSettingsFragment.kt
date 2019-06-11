@@ -21,6 +21,14 @@ class SMSettingsFragment : Fragment("Cài đặt") {
                 }
             }
 
+            tab("Cài đặt quản trị") {
+                borderpane {
+                    center {
+                        this += find<SMSettingsAdminFragment>().root
+                    }
+                }
+            }
+
             tab("Tài khoản") {
                 borderpane {
                     center {

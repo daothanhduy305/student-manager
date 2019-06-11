@@ -30,8 +30,8 @@ class SMTeacherService(
     @PostConstruct
     fun setupSubscriptions() {
         // register the student list refresh request and event
-        smTeacherRefreshRequestRegistration = subscribe<SMTeacherRefreshRequest> {
-            fire(SMTeacherRefreshEvent(getTeacherList()))
+        smTeacherRefreshRequestRegistration = subscribe<SMTeacherRefreshRequest> { request ->
+            fire(SMTeacherRefreshEvent(getTeacherList(), request.source))
         }
     }
 
@@ -117,7 +117,7 @@ class SMTeacherService(
  * @author ebolo (daothanhduy305@gmail.com)
  * @since 0.0.1-SNAPSHOT
  */
-object SMTeacherRefreshRequest : FXEvent(EventBus.RunOn.BackgroundThread)
+class SMTeacherRefreshRequest(val source: String = "") : FXEvent(EventBus.RunOn.BackgroundThread)
 
 /**
  * Event to refresh the teacher list when received
@@ -125,4 +125,4 @@ object SMTeacherRefreshRequest : FXEvent(EventBus.RunOn.BackgroundThread)
  * @author ebolo (daothanhduy305@gmail.com)
  * @since 0.0.1-SNAPSHOT
  */
-class SMTeacherRefreshEvent(val teachers: List<SMTeacherModel.SMTeacherDto>) : FXEvent()
+class SMTeacherRefreshEvent(val teachers: List<SMTeacherModel.SMTeacherDto>, val source: String = "") : FXEvent()

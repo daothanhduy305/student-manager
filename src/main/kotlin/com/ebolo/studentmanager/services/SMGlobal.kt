@@ -13,6 +13,7 @@ object SMGlobal {
     // region system
     const val SYSTEM_USER = "System"
     val decimalFormatter = DecimalFormat("#,###")
+    const val DEFAULT_SYNC_INTERVAL = 10000L
     // endregion
 }
 
@@ -61,4 +62,16 @@ object Settings {
      * Indicates whether the app is being run in god mode
      */
     const val GOD_MODE = "GOD_MODE"
+    /**
+     * Turn on or off background sync feature
+     */
+    const val USE_BACGROUND_SYNC = "BACKGROUND_SYNC"
+    /**
+     * Interval for the background sync
+     */
+    const val SYNC_INTERVAL = "SYNC_INTERVAL"
+    /**
+     * Last sync stamp
+     */
+    const val LAST_SYNC = "LAST_SYNC"
 }

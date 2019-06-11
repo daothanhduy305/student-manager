@@ -30,8 +30,8 @@ class SMSubjectService(
     @PostConstruct
     fun setupSubscriptions() {
         // register the subject list refresh request and event
-        smSubjectRefreshRequestRegistration = subscribe<SMSubjectRefreshRequest> {
-            fire(SMSubjectRefreshEvent(getSubjects()))
+        smSubjectRefreshRequestRegistration = subscribe<SMSubjectRefreshRequest> { request ->
+            fire(SMSubjectRefreshEvent(getSubjects(), request.source))
         }
     }
 
@@ -71,7 +71,7 @@ class SMSubjectService(
         }
 
         fire(SMDataProcessRequest {
-            fire(SMSubjectRefreshRequest)
+            fire(SMSubjectRefreshRequest())
         })
 
         return SMCRUDUtils.SMCRUDResult(
@@ -105,7 +105,7 @@ class SMSubjectService(
  * @author ebolo (daothanhduy305@gmail.com)
  * @since 0.0.1-SNAPSHOT
  */
-object SMSubjectRefreshRequest : FXEvent(EventBus.RunOn.BackgroundThread)
+class SMSubjectRefreshRequest(val source: String = "") : FXEvent(EventBus.RunOn.BackgroundThread)
 
 /**
  * Event to refresh the student list when received
@@ -113,4 +113,4 @@ object SMSubjectRefreshRequest : FXEvent(EventBus.RunOn.BackgroundThread)
  * @author ebolo (daothanhduy305@gmail.com)
  * @since 0.0.1-SNAPSHOT
  */
-class SMSubjectRefreshEvent(val subjects: List<SMSubjectModel.SMSubjectDto>) : FXEvent()
+class SMSubjectRefreshEvent(val subjects: List<SMSubjectModel.SMSubjectDto>, val source: String = "") : FXEvent()
