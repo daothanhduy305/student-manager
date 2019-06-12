@@ -12,5 +12,12 @@ import java.util.List;
  * @since 0.0.1-SNAPSHOT
  */
 public interface SMUserRepository extends EboloBaseUserMongoRepository<SMUserEntity> {
-    void deleteAllByIdIn(final List<String> idList);
+    /**
+     * Method to get a list of users by ids list
+     *
+     * @param idList list of the users' id
+     * @author ebolo
+     * @since 0.0.1-SNAPSHOT
+     */
+    List<SMUserEntity> findAllByIdInAndDisabledFalse(final List<String> idList);
 }

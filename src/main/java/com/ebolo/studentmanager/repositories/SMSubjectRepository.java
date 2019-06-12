@@ -21,14 +21,14 @@ public interface SMSubjectRepository extends EboloBaseMongoRepository<SMSubjectE
      * @author ebolo
      * @since 0.0.1-SNAPSHOT
      */
-    Optional<SMSubjectEntity> findByNameIgnoreCase(final String subjectName);
+    Optional<SMSubjectEntity> findByNameIgnoreCaseAndDisabledFalse(final String subjectName);
 
     /**
-     * Method to delete a list of subjects that have the Id being contained
+     * Method to get a list of subjects that have the Id being contained
      *
      * @param subjectIdList list of subjects' id being deleted
      * @author ebolo
      * @since 0.0.1-SNAPSHOT
      */
-    void deleteAllByIdIn(final List<String> subjectIdList);
+    List<SMSubjectEntity> findAllByIdInAndDisabledFalse(final List<String> subjectIdList);
 }

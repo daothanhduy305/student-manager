@@ -23,7 +23,7 @@ public interface SMFeePaidRepository extends EboloBaseMongoRepository<SMFeePaidE
      * @param month     month of the payment made
      * @return optional that might contain the payment info if there is any
      */
-    Optional<SMFeePaidEntity> findByClassIdAndStudentIdAndYearAndMonth(
+    Optional<SMFeePaidEntity> findByClassIdAndStudentIdAndYearAndMonthAndDisabledFalse(
             final String classId,
             final String studentId,
             final int year,
@@ -38,18 +38,18 @@ public interface SMFeePaidRepository extends EboloBaseMongoRepository<SMFeePaidE
      * @param month   month of the payments made
      * @return list of the payments made
      */
-    List<SMFeePaidEntity> findAllByClassIdAndYearAndMonth(
+    List<SMFeePaidEntity> findAllByClassIdAndYearAndMonthAndDisabledFalse(
             final String classId,
             final int year,
             final Month month
     );
 
     /**
-     * Method to delete all the fee payment info having the mentioned class id
+     * Method to get all the fee payment info having the mentioned class id
      *
      * @param classIds list of id of the classes to delete the fee payment info
      * @author ebolo
      * @since 0.0.1-SNAPSHOT
      */
-    void deleteAllByClassIdIn(final List<String> classIds);
+    List<SMFeePaidEntity> findAllByClassIdInAndDisabledFalse(final List<String> classIds);
 }

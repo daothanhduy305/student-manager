@@ -63,7 +63,7 @@ class SMClassService(
      *
      * @return List<SMClassDto>
      */
-    fun getClassList() = classRepository.findAll().map { it.toDto() }
+    fun getClassList() = classRepository.findAllByDisabledFalse().map { it.toDto() }
 
     /**
      * Method to return a list of all classes that this student has been registered to
@@ -75,7 +75,7 @@ class SMClassService(
      * @return List<SMClassDto>
      */
     fun getClassListOfStudent(studentId: String) = classRepository
-        .findAllByStudentListContains(studentId)
+        .findAllByStudentListContainsAndDisabledFalse(studentId)
         .map { it.toDto() }
 
     /**
@@ -104,9 +104,15 @@ class SMClassService(
      */
     fun deleteClasses(classIds: List<String>): SMCRUDUtils.SMCRUDResult = try {
         logger.info("Deleting Class(es) '${classIds.joinToString()}'")
-        attendanceRepository.deleteAllByClassIdIn(classIds)
-        feePaidRepository.deleteAllByClassIdIn(classIds)
-        classRepository.deleteAllByIdIn(classIds)
+        attendanceRepository.saveAll(attendanceRepository.findAllByClassIdInAndDisabledFalse(classIds).map {
+            it.apply { disabled = true }
+        })
+        feePaidRepository.saveAll(feePaidRepository.findAllByClassIdInAndDisabledFalse(classIds).map {
+            it.apply { it.disabled = true }
+        })
+        classRepository.saveAll(classRepository.findAllByIdInAndDisabledFalse(classIds).map {
+            it.apply { disabled = true }
+        })
 
         SMCRUDUtils.SMCRUDResult(true)
     } catch (e: Exception) {
@@ -279,7 +285,7 @@ class SMClassService(
     fun SMClassModel.SMClassDto.deleteAbsenceInfo(
         studentId: String, forDate: LocalDate
     ): SMCRUDUtils.SMCRUDResult = attendanceRepository
-        .findByClassIdAndStudentIdAndYearAndMonthAndDay(this.id, studentId, forDate.year, forDate.month, forDate.dayOfMonth)
+        .findByClassIdAndStudentIdAndYearAndMonthAndDayAndDisabledFalse(this.id, studentId, forDate.year, forDate.month, forDate.dayOfMonth)
         .getWhenPresentOr(
             ifPresentHandler = {
                 attendanceRepository.delete(it)
@@ -302,9 +308,9 @@ class SMClassService(
      */
     fun SMClassModel.SMClassDto.getAttendanceInfoList(forDate: LocalDate? = null): List<SMAttendanceEntity> =
         if (forDate == null)
-            attendanceRepository.findAllByClassId(this.id)
+            attendanceRepository.findAllByClassIdInAndDisabledFalse(listOf(this.id))
         else
-            attendanceRepository.findAllByClassIdAndYearAndMonthAndDay(
+            attendanceRepository.findAllByClassIdAndYearAndMonthAndDayAndDisabledFalse(
                 this.id, forDate.year, forDate.month, forDate.dayOfMonth)
 
     /**
@@ -340,7 +346,7 @@ class SMClassService(
     fun SMClassModel.SMClassDto.deleteFeePaidInfo(
         studentId: String, forDate: LocalDate
     ): SMCRUDUtils.SMCRUDResult = feePaidRepository
-        .findByClassIdAndStudentIdAndYearAndMonth(this.id, studentId, forDate.year, forDate.month)
+        .findByClassIdAndStudentIdAndYearAndMonthAndDisabledFalse(this.id, studentId, forDate.year, forDate.month)
         .getWhenPresentOr(
             ifPresentHandler = {
                 feePaidRepository.delete(it)
@@ -368,7 +374,7 @@ class SMClassService(
         forDate: LocalDate,
         paidDate: LocalDate? = null
     ): SMCRUDUtils.SMCRUDResult = feePaidRepository
-        .findByClassIdAndStudentIdAndYearAndMonth(this.id, studentId, forDate.year, forDate.month)
+        .findByClassIdAndStudentIdAndYearAndMonthAndDisabledFalse(this.id, studentId, forDate.year, forDate.month)
         .getWhenPresentOr(
             ifPresentHandler = { feePaidEntity ->
                 feePaidRepository.save(feePaidEntity.apply {
@@ -392,7 +398,7 @@ class SMClassService(
      * @return List<SMFeePaidEntity>
      */
     fun SMClassModel.SMClassDto.getTuitionFeePaymentInfo(forDate: LocalDate): List<SMFeePaidEntity> = feePaidRepository
-        .findAllByClassIdAndYearAndMonth(this.id, forDate.year, forDate.month)
+        .findAllByClassIdAndYearAndMonthAndDisabledFalse(this.id, forDate.year, forDate.month)
 }
 
 /**

@@ -80,18 +80,13 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                                 subjectList.firstOrNull { it.id == classModel.item.subject.id }
                                             }
 
-                                            cellFormat { subject ->
-                                                if (subject != null)
-                                                    text = subject.name
-                                            }
-
                                             vgrow = Priority.ALWAYS
                                             useMaxWidth = true
 
                                             required()
 
                                             subscribe<SMSubjectRefreshEvent> { event ->
-                                                subjectList.setAll(event.subjects)
+                                                asyncItems { event.subjects }
                                             }
                                         }
 
@@ -121,11 +116,6 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                                 teacherList.firstOrNull()
                                             } else {
                                                 teacherList.firstOrNull { it.id == classModel.item.teacher.id }
-                                            }
-
-                                            cellFormat { teacher ->
-                                                if (teacher != null)
-                                                    text = "${teacher.lastName} ${teacher.firstName}"
                                             }
 
                                             vgrow = Priority.ALWAYS

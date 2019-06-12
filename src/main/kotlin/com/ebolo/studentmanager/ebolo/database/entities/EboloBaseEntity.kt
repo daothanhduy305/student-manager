@@ -24,4 +24,5 @@ open class EboloBaseEntity : Serializable {
     @LastModifiedBy
     lateinit var lastModifiedBy: String
     var otherInfo: MutableMap<String, Any> = mutableMapOf()
+    var disabled: Boolean = false
 }

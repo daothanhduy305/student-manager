@@ -52,7 +52,7 @@ class SMSubjectService(
      *
      * @return List<SMSubjectModel>
      */
-    fun getSubjects(): List<SMSubjectModel.SMSubjectDto> = subjectRepository.findAll().map { it.toDto() }
+    fun getSubjects(): List<SMSubjectModel.SMSubjectDto> = subjectRepository.findAllByDisabledFalse().map { it.toDto() }
 
     /**
      * Method check if the db has already contained the subject or not and add new if not
@@ -64,7 +64,7 @@ class SMSubjectService(
      * @return SMCRUDUtils
      */
     fun createNewOrUpdateSubject(subjectModel: SMSubjectModel): SMCRUDUtils.SMCRUDResult {
-        val added = subjectRepository.findByNameIgnoreCase(subjectModel.name.value).isPresent
+        val added = subjectRepository.findByNameIgnoreCaseAndDisabledFalse(subjectModel.name.value).isPresent
 
         if (!added) {
             subjectRepository.save(subjectModel.getEntity())
@@ -92,7 +92,9 @@ class SMSubjectService(
     fun deleteSubjects(idList: List<String>): SMCRUDUtils.SMCRUDResult = try {
         logger.info("Deleting Subjects(s) '${idList.joinToString()}'")
 
-        subjectRepository.deleteAllByIdIn(idList)
+        subjectRepository.saveAll(subjectRepository.findAllByIdInAndDisabledFalse(idList).map {
+            it.apply { disabled = true }
+        })
         SMCRUDUtils.SMCRUDResult(true)
     } catch (e: Exception) {
         SMCRUDUtils.SMCRUDResult(false, errorMessage = e.message ?: "Something went wrong")

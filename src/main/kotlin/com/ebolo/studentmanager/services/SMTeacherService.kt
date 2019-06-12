@@ -53,7 +53,7 @@ class SMTeacherService(
      * @return List<SMTeacherModel.SMTeacherDto>
      */
     fun getTeacherList(): List<SMTeacherModel.SMTeacherDto> = teacherRepository
-        .findAll()
+        .findAllByDisabledFalse()
         .map { it.toDto() }
 
     /**
@@ -103,7 +103,9 @@ class SMTeacherService(
      */
     fun deleteTeachers(idList: List<String>): SMCRUDUtils.SMCRUDResult = try {
         logger.info("Deleting Teachers(s) '${idList.joinToString()}'")
-        teacherRepository.deleteAllByIdIn(idList)
+        teacherRepository.saveAll(teacherRepository.findAllByIdInAndDisabledFalse(idList).map {
+            it.apply { disabled = true }
+        })
 
         SMCRUDUtils.SMCRUDResult(true)
     } catch (e: Exception) {

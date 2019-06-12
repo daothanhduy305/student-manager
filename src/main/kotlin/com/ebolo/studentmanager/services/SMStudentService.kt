@@ -74,7 +74,7 @@ class SMStudentService(
      * @return List<SMStudentModel.SMStudentDto>
      */
     fun getStudentList(): List<SMStudentModel.SMStudentDto> = studentRepository
-        .findAll()
+        .findAllByDisabledFalse()
         .map { studentEntity ->
             studentEntity.copyProperties(
                 destination = SMStudentModel.SMStudentDto(),
@@ -101,7 +101,9 @@ class SMStudentService(
      */
     fun deleteStudents(idList: List<String>): SMCRUDUtils.SMCRUDResult = try {
         logger.info("Deleting Student(s) '${idList.joinToString()}'")
-        studentRepository.deleteAllByIdIn(idList)
+        studentRepository.saveAll(studentRepository.findAllByIdInAndDisabledFalse(idList).map {
+            it.apply { disabled = true }
+        })
         SMCRUDUtils.SMCRUDResult(true)
     } catch (e: Exception) {
         SMCRUDUtils.SMCRUDResult(false, errorMessage = e.message ?: "Something went wrong")

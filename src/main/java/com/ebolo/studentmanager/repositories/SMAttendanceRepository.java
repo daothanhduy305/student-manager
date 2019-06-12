@@ -26,7 +26,7 @@ public interface SMAttendanceRepository extends EboloBaseMongoRepository<SMAtten
      * @author ebolo
      * @since 0.0.1-SNAPSHOT
      */
-    Optional<SMAttendanceEntity> findByClassIdAndStudentIdAndYearAndMonthAndDay(
+    Optional<SMAttendanceEntity> findByClassIdAndStudentIdAndYearAndMonthAndDayAndDisabledFalse(
             final String classId,
             final String studentId,
             final int year,
@@ -45,7 +45,7 @@ public interface SMAttendanceRepository extends EboloBaseMongoRepository<SMAtten
      * @author ebolo
      * @since 0.0.1-SNAPSHOT
      */
-    List<SMAttendanceEntity> findAllByClassIdAndYearAndMonthAndDay(
+    List<SMAttendanceEntity> findAllByClassIdAndYearAndMonthAndDayAndDisabledFalse(
             final String classId,
             final int year,
             final Month month,
@@ -58,14 +58,5 @@ public interface SMAttendanceRepository extends EboloBaseMongoRepository<SMAtten
      * @param classId id of the class to get the info
      * @return list of absence info for this class
      */
-    List<SMAttendanceEntity> findAllByClassId(final String classId);
-
-    /**
-     * Method to delete all the attendance info having the mentioned class id
-     *
-     * @param classIds list of ids of the classes to delete the attendance info
-     * @author ebolo
-     * @since 0.0.1-SNAPSHOT
-     */
-    void deleteAllByClassIdIn(final List<String> classIds);
+    List<SMAttendanceEntity> findAllByClassIdInAndDisabledFalse(final List<String> classId);
 }

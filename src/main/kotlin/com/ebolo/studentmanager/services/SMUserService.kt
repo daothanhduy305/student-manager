@@ -60,7 +60,7 @@ class SMUserService(
      * @return List<SMUserModel.SMUserDto>
      */
     fun getUserList(): List<SMUserModel.SMUserDto> = userRepository
-        .findAll()
+        .findAllByDisabledFalse()
         .map {
             it.toDto()
         }
@@ -121,7 +121,9 @@ class SMUserService(
      */
     fun deleteUsers(idList: List<String>): SMCRUDUtils.SMCRUDResult = try {
         logger.info("Deleting user(s) '${idList.joinToString()}'")
-        userRepository.deleteAllByIdIn(idList)
+        userRepository.saveAll(userRepository.findAllByIdInAndDisabledFalse(idList).map {
+            it.apply { disabled = true }
+        })
 
         SMCRUDUtils.SMCRUDResult(true)
     } catch (ex: Exception) {

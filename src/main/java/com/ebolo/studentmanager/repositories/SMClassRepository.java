@@ -20,15 +20,15 @@ public interface SMClassRepository extends EboloBaseMongoRepository<SMClassEntit
      * @author ebolo
      * @since 0.0.1-SNAPSHOT
      */
-    List<SMClassEntity> findAllByStudentListContains(final String studentId);
+    List<SMClassEntity> findAllByStudentListContainsAndDisabledFalse(final String studentId);
 
     /**
-     * Delete a list of students by ids
+     * Get a list of students by ids
      *
      * @author ebolo
      * @since 0.0.1-SNAPSHOT
      *
      * @param classIds list of student's id to be deleted
      */
-    void deleteAllByIdIn(final List<String> classIds);
+    List<SMClassEntity> findAllByIdInAndDisabledFalse(final List<String> classIds);
 }
