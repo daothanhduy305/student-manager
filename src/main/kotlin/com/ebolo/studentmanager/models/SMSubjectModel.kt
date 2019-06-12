@@ -11,6 +11,10 @@ class SMSubjectModel(
     class SMSubjectDto : SMBaseDto() {
         var name by property<String>()
         fun nameProperty() = getProperty(SMSubjectDto::name)
+
+        override fun toString(): String {
+            return name
+        }
     }
     // endregion
 

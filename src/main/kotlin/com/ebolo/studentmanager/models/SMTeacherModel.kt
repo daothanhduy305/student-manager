@@ -25,6 +25,10 @@ class SMTeacherModel(
 
         var birthday by property<LocalDate>()
         fun birthdayProperty() = getProperty(SMTeacherDto::birthday)
+
+        override fun toString(): String {
+            return "$lastName $firstName"
+        }
     }
     // endregion
 
@@ -41,6 +45,6 @@ class SMTeacherModel(
         entity.lastName = lastName.value
         entity.birthday = birthday.value?.atStartOfDay()?.toInstant(ZoneOffset.UTC)
         entity.phone = phone.value
-        entity.address = address.value
+        entity.address = address.value ?: ""
     }
 }

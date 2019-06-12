@@ -52,11 +52,11 @@ class SMStudentModel(
     override fun specificEntitySetup(entity: SMStudentEntity) {
         entity.firstName = firstName.value
         entity.lastName = lastName.value
-        entity.nickname = nickname.value
+        entity.nickname = nickname.value ?: ""
         entity.birthday = birthday.value?.atStartOfDay()?.toInstant(ZoneOffset.UTC)
         entity.phone = phone.value
-        entity.parentPhone = parentPhone.value
-        entity.address = address.value
+        entity.parentPhone = parentPhone.value ?: ""
+        entity.address = address.value ?: ""
         entity.educationLevel = educationLevel.value ?: EducationLevel.NONE
     }
 }
