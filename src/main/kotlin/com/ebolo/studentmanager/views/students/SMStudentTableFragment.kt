@@ -6,6 +6,7 @@ import com.ebolo.studentmanager.services.SMStudentRefreshEvent
 import com.ebolo.studentmanager.services.SMStudentRefreshRequest
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.ebolo.studentmanager.views.utils.ui.SMConfirmDialog
+import com.ebolo.studentmanager.views.utils.ui.tableview.handleItemsUpdated
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXTextField
 import javafx.collections.FXCollections
@@ -118,8 +119,12 @@ class SMStudentTableFragment : Fragment() {
                         find<SMConfirmDialog>(
                             "dialogContent" to "Tiếp tục xóa?",
                             "onOKClicked" to {
-                                serviceCentral.studentService.deleteStudents(selectionModel.selectedItems.map { it.id }.toList())
-                                fire(SMStudentRefreshRequest())
+                                val selectingIds = selectionModel.selectedItems.map { it.id }.toList()
+                                runAsyncWithOverlay {
+                                    serviceCentral.studentService.deleteStudents(selectingIds)
+                                } ui {
+                                    fire(SMStudentRefreshRequest())
+                                }
                             }
                         ).openModal()
                     }
@@ -136,7 +141,7 @@ class SMStudentTableFragment : Fragment() {
 
                 // subscribe to the refresh event to reset the list
                 subscribe<SMStudentRefreshEvent> { event ->
-                    runAsync { studentList.setAll(event.students) }
+                    handleItemsUpdated(event.students, studentList)
                 }
             }
         }

@@ -6,6 +6,7 @@ import com.ebolo.studentmanager.services.SMSubjectRefreshEvent
 import com.ebolo.studentmanager.services.SMSubjectRefreshRequest
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.ebolo.studentmanager.views.utils.ui.SMConfirmDialog
+import com.ebolo.studentmanager.views.utils.ui.tableview.handleItemsUpdated
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXTextField
 import javafx.collections.FXCollections
@@ -101,8 +102,13 @@ class SMSubjectTableFragment : Fragment() {
                         find<SMConfirmDialog>(
                             "dialogContent" to "Tiếp tục xóa?",
                             "onOKClicked" to {
-                                serviceCentral.subjectService.deleteSubjects(selectionModel.selectedItems.map { it.id }.toList())
-                                fire(SMSubjectRefreshRequest())
+                                val deletingIds = selectionModel.selectedItems.map { it.id }.toList()
+
+                                runAsyncWithOverlay {
+                                    serviceCentral.subjectService.deleteSubjects(deletingIds)
+                                } ui {
+                                    fire(SMSubjectRefreshRequest())
+                                }
                             }
                         ).openModal()
                     }
@@ -118,7 +124,7 @@ class SMSubjectTableFragment : Fragment() {
                 }
 
                 subscribe<SMSubjectRefreshEvent> { event ->
-                    runAsync { subjectList.setAll(event.subjects) }
+                    handleItemsUpdated(event.subjects, subjectList)
                 }
             }
         }

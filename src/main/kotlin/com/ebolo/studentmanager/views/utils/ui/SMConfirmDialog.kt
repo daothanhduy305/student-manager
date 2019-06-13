@@ -8,7 +8,7 @@ import tornadofx.*
 
 class SMConfirmDialog : Fragment(SMGlobal.APP_NAME) {
     private val dialogContent: String by param()
-    private val onOKClicked: (() -> Unit)? by param()
+    private val onOKClicked: (() -> Any?)? by param()
 
     override val root = borderpane {
         prefWidth = 400.0
