@@ -1,7 +1,6 @@
 package com.ebolo.studentmanager.views.teachers
 
 import com.ebolo.studentmanager.models.SMTeacherModel
-import com.ebolo.studentmanager.services.SMDataProcessRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.SMTeacherRefreshRequest
 import com.ebolo.studentmanager.utils.SMCRUDUtils
@@ -118,25 +117,22 @@ class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
 
                     action {
                         // base on the crud mode, we define the appropriate action
-                        val result: SMCRUDUtils.SMCRUDResult = runAsync {
+                        runAsync {
                             when (mode) {
                                 SMCRUDUtils.CRUDMode.NEW -> serviceCentral.teacherService.createNewTeacher(teacherModel)
                                 SMCRUDUtils.CRUDMode.EDIT -> serviceCentral.teacherService.editTeacher(teacherModel)
                                 else -> {
-                                    error("Đã xảy ra lỗi", "Unsupported CRUD mode", ButtonType.CLOSE)
-                                    SMCRUDUtils.SMCRUDResult(false)
+                                    SMCRUDUtils.SMCRUDResult(false, "Unsupported CRUD mode")
                                 }
                             }
-                        }.get()
-
-                        // refresh if success
-                        if (result.success) {
-                            fire(SMDataProcessRequest {
+                        } ui {
+                            // refresh if success
+                            if (it.success) {
                                 fire(SMTeacherRefreshRequest())
-                            })
-                            modalStage?.close()
-                        } else {
-                            error("Đã xảy ra lỗi", result.errorMessage, ButtonType.CLOSE)
+                                modalStage?.close()
+                            } else {
+                                error("Đã xảy ra lỗi", it.errorMessage, ButtonType.CLOSE)
+                            }
                         }
                     }
                 }

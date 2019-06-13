@@ -1,5 +1,6 @@
 package com.ebolo.studentmanager.services
 
+import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.ebolo.utils.loggerFor
 import com.ebolo.studentmanager.models.SMSubjectModel
 import com.ebolo.studentmanager.repositories.SMSubjectRepository
@@ -31,8 +32,13 @@ class SMSubjectService(
     fun setupSubscriptions() {
         // register the subject list refresh request and event
         smSubjectRefreshRequestRegistration = subscribe<SMSubjectRefreshRequest> { request ->
-            val subjectList = getSubjects()
-            fire(SMSubjectRefreshEvent(subjectList, request.source))
+            runLater {
+                StudentManagerApplication.startSync()
+                runAsync {
+                    val subjectList = getSubjects()
+                    fire(SMSubjectRefreshEvent(subjectList, request.source))
+                }
+            }
         }
     }
 
@@ -71,9 +77,7 @@ class SMSubjectService(
             subjectRepository.save(subjectModel.getEntity())
         }
 
-        fire(SMDataProcessRequest {
-            fire(SMSubjectRefreshRequest())
-        })
+        fire(SMSubjectRefreshRequest())
 
         return SMCRUDUtils.SMCRUDResult(
             success = !added,

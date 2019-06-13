@@ -1,5 +1,6 @@
 package com.ebolo.studentmanager.services
 
+import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.ebolo.utils.getWhenPresentOr
 import com.ebolo.studentmanager.ebolo.utils.loggerFor
 import com.ebolo.studentmanager.models.SMTeacherModel
@@ -31,8 +32,14 @@ class SMTeacherService(
     fun setupSubscriptions() {
         // register the student list refresh request and event
         smTeacherRefreshRequestRegistration = subscribe<SMTeacherRefreshRequest> { request ->
-            val teacherList = getTeacherList()
-            fire(SMTeacherRefreshEvent(teacherList, request.source))
+            runLater {
+                StudentManagerApplication.startSync()
+
+                runAsync {
+                    val teacherList = getTeacherList()
+                    fire(SMTeacherRefreshEvent(teacherList, request.source))
+                }
+            }
         }
     }
 

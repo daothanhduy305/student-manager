@@ -1,7 +1,6 @@
 package com.ebolo.studentmanager.views.subjects
 
 import com.ebolo.studentmanager.models.SMSubjectModel
-import com.ebolo.studentmanager.services.SMDataProcessRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.SMSubjectRefreshEvent
 import com.ebolo.studentmanager.services.SMSubjectRefreshRequest
@@ -103,9 +102,7 @@ class SMSubjectTableFragment : Fragment() {
                             "dialogContent" to "Tiếp tục xóa?",
                             "onOKClicked" to {
                                 serviceCentral.subjectService.deleteSubjects(selectionModel.selectedItems.map { it.id }.toList())
-                                fire(SMDataProcessRequest {
-                                    fire(SMSubjectRefreshRequest())
-                                })
+                                fire(SMSubjectRefreshRequest())
                             }
                         ).openModal()
                     }
@@ -129,8 +126,6 @@ class SMSubjectTableFragment : Fragment() {
 
     override fun onDock() {
         super.onDock()
-        fire(SMDataProcessRequest {
-            fire(SMSubjectRefreshRequest())
-        })
+        fire(SMSubjectRefreshRequest())
     }
 }

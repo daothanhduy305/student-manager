@@ -2,7 +2,6 @@ package com.ebolo.studentmanager.views.students
 
 import com.ebolo.studentmanager.entities.EducationLevel
 import com.ebolo.studentmanager.models.SMStudentModel
-import com.ebolo.studentmanager.services.SMDataProcessRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.SMStudentRefreshRequest
 import com.ebolo.studentmanager.utils.SMCRUDUtils
@@ -149,25 +148,22 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
 
                                 action {
                                     // base on the crud mode, we define the appropriate action
-                                    val result: SMCRUDUtils.SMCRUDResult = runAsync {
+                                    runAsync {
                                         when (mode) {
                                             SMCRUDUtils.CRUDMode.NEW -> serviceCentral.studentService.createNewStudent(studentModel)
                                             SMCRUDUtils.CRUDMode.EDIT -> serviceCentral.studentService.editStudent(studentModel)
                                             else -> {
-                                                error("Đã xảy ra lỗi", "Unsupported CRUD mode", ButtonType.CLOSE)
-                                                SMCRUDUtils.SMCRUDResult(false)
+                                                SMCRUDUtils.SMCRUDResult(false, "Unsupported CRUD mode")
                                             }
                                         }
-                                    }.get()
-
-                                    // refresh if success
-                                    if (result.success) {
-                                        fire(SMDataProcessRequest {
+                                    } ui {
+                                        // refresh if success
+                                        if (it.success) {
                                             fire(SMStudentRefreshRequest())
-                                        })
-                                        modalStage?.close()
-                                    } else {
-                                        error("Đã xảy ra lỗi", result.errorMessage, ButtonType.CLOSE)
+                                            modalStage?.close()
+                                        } else {
+                                            error("Đã xảy ra lỗi", it.errorMessage, ButtonType.CLOSE)
+                                        }
                                     }
                                 }
                             }

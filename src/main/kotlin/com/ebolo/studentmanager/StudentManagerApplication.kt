@@ -3,6 +3,7 @@ package com.ebolo.studentmanager
 import com.ebolo.studentmanager.ebolo.utils.loggerFor
 import com.ebolo.studentmanager.services.Settings
 import com.ebolo.studentmanager.views.SMInitFragment
+import javafx.beans.property.SimpleIntegerProperty
 import javafx.scene.image.Image
 import javafx.stage.Stage
 import org.springframework.boot.SpringApplication
@@ -94,7 +95,7 @@ class StudentManagerApplication : App(SMInitFragment::class) {
         lateinit var currentApplication: StudentManagerApplication
         var dbName: String = ""
         var dbUri: String = ""
-        var syncCount = 0
+        val syncCount = SimpleIntegerProperty(0)
 
         @JvmStatic
         fun main(args: Array<String>) {
@@ -123,7 +124,7 @@ class StudentManagerApplication : App(SMInitFragment::class) {
          */
         fun stopSync() {
             synchronized(syncCount) {
-                if (syncCount > 0) syncCount--
+                if (syncCount > 0) syncCount.value--
             }
         }
 

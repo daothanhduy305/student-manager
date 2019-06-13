@@ -1,7 +1,6 @@
 package com.ebolo.studentmanager.views.students
 
 import com.ebolo.studentmanager.models.SMStudentModel
-import com.ebolo.studentmanager.services.SMDataProcessRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.SMStudentRefreshEvent
 import com.ebolo.studentmanager.services.SMStudentRefreshRequest
@@ -120,9 +119,7 @@ class SMStudentTableFragment : Fragment() {
                             "dialogContent" to "Tiếp tục xóa?",
                             "onOKClicked" to {
                                 serviceCentral.studentService.deleteStudents(selectionModel.selectedItems.map { it.id }.toList())
-                                fire(SMDataProcessRequest {
-                                    fire(SMStudentRefreshRequest())
-                                })
+                                fire(SMStudentRefreshRequest())
                             }
                         ).openModal()
                     }
@@ -147,8 +144,6 @@ class SMStudentTableFragment : Fragment() {
 
     override fun onDock() {
         super.onDock()
-        fire(SMDataProcessRequest {
-            fire(SMStudentRefreshRequest())
-        })
+        fire(SMStudentRefreshRequest())
     }
 }

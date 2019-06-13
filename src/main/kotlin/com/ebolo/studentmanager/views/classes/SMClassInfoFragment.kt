@@ -1,8 +1,12 @@
 package com.ebolo.studentmanager.views.classes
 
+import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.models.SMStudentModel
-import com.ebolo.studentmanager.services.*
+import com.ebolo.studentmanager.services.SMClassListRefreshRequest
+import com.ebolo.studentmanager.services.SMServiceCentral
+import com.ebolo.studentmanager.services.SMSubjectRefreshEvent
+import com.ebolo.studentmanager.services.SMTeacherRefreshEvent
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.ebolo.studentmanager.utils.formatDecimal
 import com.ebolo.studentmanager.utils.isFormattedLong
@@ -366,22 +370,26 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
 
                                 action {
                                     // base on the crud mode, we define the appropriate action
-                                    val result: SMCRUDUtils.SMCRUDResult = when (mode) {
-                                        SMCRUDUtils.CRUDMode.NEW -> serviceCentral.classService.createNewClass(classModel)
-                                        SMCRUDUtils.CRUDMode.EDIT -> serviceCentral.classService.editClass(classModel)
-                                        else -> {
-                                            error("Đã xảy ra lỗi", "Unsupported CRUD mode", ButtonType.CLOSE)
-                                            SMCRUDUtils.SMCRUDResult(false)
+                                    runAsync {
+                                        StudentManagerApplication.startSync()
+
+                                        when (mode) {
+                                            SMCRUDUtils.CRUDMode.NEW -> serviceCentral.classService.createNewClass(classModel)
+                                            SMCRUDUtils.CRUDMode.EDIT -> serviceCentral.classService.editClass(classModel)
+                                            else -> {
+                                                SMCRUDUtils.SMCRUDResult(false, "Unsupported CRUD mode")
+                                            }
                                         }
-                                    }
-                                    // refresh if success
-                                    if (result.success) {
-                                        fire(SMDataProcessRequest {
+                                    } ui {
+                                        StudentManagerApplication.stopSync()
+                                        // refresh if success
+                                        if (it.success) {
                                             fire(SMClassListRefreshRequest())
-                                        })
-                                        modalStage?.close()
-                                    } else {
-                                        error("Đã xảy ra lỗi", result.errorMessage, ButtonType.CLOSE)
+
+                                            modalStage?.close()
+                                        } else {
+                                            error("Đã xảy ra lỗi", it.errorMessage, ButtonType.CLOSE)
+                                        }
                                     }
                                 }
 

@@ -1,5 +1,6 @@
 package com.ebolo.studentmanager.services
 
+import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.ebolo.utils.loggerFor
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -93,13 +94,14 @@ class SMBackgroundSyncService : Controller() {
 
         if (lastSyncStamp <= now.toEpochMilli() - syncInterval) {
             logger.info("Syncing...")
+            runLater {
+                StudentManagerApplication.startSync(4)
 
-            fire(SMDataProcessRequest(source = "sync") {
                 fire(SMSubjectRefreshRequest(source = "sync"))
                 fire(SMTeacherRefreshRequest(source = "sync"))
                 fire(SMStudentRefreshRequest(source = "sync"))
                 fire(SMClassListRefreshRequest(source = "sync"))
-            })
+            }
         } else {
             synchronized(synced) {
                 synced = 0

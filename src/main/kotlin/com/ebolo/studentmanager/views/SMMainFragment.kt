@@ -175,36 +175,23 @@ class SMMainFragment : Fragment("Student Manager") {
                                 paddingVertical = 4
                                 paddingHorizontal = 8
 
-                                fun handleSyncFinished() {
-                                    StudentManagerApplication.stopSync()
-                                    if (!StudentManagerApplication.isSyncing()) {
-                                        statusString.value = ""
-                                    }
-                                }
-
                                 label {
                                     bind(statusString)
 
-                                    subscribe<SMDataProcessRequest> { event ->
-                                        if (event.source == "sync") {
-                                            StudentManagerApplication.startSync(4)
-                                        } else {
-                                            StudentManagerApplication.startSync(1)
-                                        }
-
-                                        statusString.value = "Đang xử lý..."
+                                    StudentManagerApplication.syncCount.onChange {
+                                        text = if (it == 0) "" else "Đang xử lý..."
                                     }
                                     subscribe<SMClassListRefreshEvent> {
-                                        runLater { handleSyncFinished() }
+                                        runLater { StudentManagerApplication.stopSync() }
                                     }
                                     subscribe<SMStudentRefreshEvent> {
-                                        runLater { handleSyncFinished() }
+                                        runLater { StudentManagerApplication.stopSync() }
                                     }
                                     subscribe<SMTeacherRefreshEvent> {
-                                        runLater { handleSyncFinished() }
+                                        runLater { StudentManagerApplication.stopSync() }
                                     }
                                     subscribe<SMSubjectRefreshEvent> {
-                                        runLater { handleSyncFinished() }
+                                        runLater { StudentManagerApplication.stopSync() }
                                     }
                                 }
                             }
