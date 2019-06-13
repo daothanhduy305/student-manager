@@ -193,6 +193,9 @@ class SMMainFragment : Fragment("Student Manager") {
                                     subscribe<SMSubjectRefreshEvent> {
                                         runLater { StudentManagerApplication.stopSync() }
                                     }
+                                    subscribe<SMUserListRefreshEvent> {
+                                        runLater { StudentManagerApplication.stopSync() }
+                                    }
                                 }
                             }
                         }
