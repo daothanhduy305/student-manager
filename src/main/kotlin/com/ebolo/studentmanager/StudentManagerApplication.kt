@@ -85,6 +85,8 @@ class StudentManagerApplication : App(SMInitFragment::class) {
                 override fun <T : Any> getInstance(type: KClass<T>): T = springContext!!.getBean(type.java)
             }
 
+            syncCount.value = 0
+
             setupResult = SetupResult(true, listOf(SetupError.NONE))
         }
 
