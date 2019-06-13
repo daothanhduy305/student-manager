@@ -175,36 +175,31 @@ class SMMainFragment : Fragment("Student Manager") {
                                 paddingVertical = 4
                                 paddingHorizontal = 8
 
+                                fun handleSyncFinished() {
+                                    StudentManagerApplication.stopSync()
+                                    if (!StudentManagerApplication.isSyncing()) {
+                                        statusString.value = ""
+                                    }
+                                }
+
                                 label {
                                     bind(statusString)
 
                                     subscribe<SMDataProcessRequest> {
-                                        StudentManagerApplication.isProcessingData.set(true)
+                                        StudentManagerApplication.startSync()
                                         statusString.value = "Đang xử lý..."
                                     }
                                     subscribe<SMClassListRefreshEvent> {
-                                        runLater {
-                                            statusString.value = ""
-                                            StudentManagerApplication.isProcessingData.set(false)
-                                        }
+                                        runLater { handleSyncFinished() }
                                     }
                                     subscribe<SMStudentRefreshEvent> {
-                                        runLater {
-                                            statusString.value = ""
-                                            StudentManagerApplication.isProcessingData.set(false)
-                                        }
+                                        runLater { handleSyncFinished() }
                                     }
                                     subscribe<SMTeacherRefreshEvent> {
-                                        runLater {
-                                            statusString.value = ""
-                                            StudentManagerApplication.isProcessingData.set(false)
-                                        }
+                                        runLater { handleSyncFinished() }
                                     }
                                     subscribe<SMSubjectRefreshEvent> {
-                                        runLater {
-                                            statusString.value = ""
-                                            StudentManagerApplication.isProcessingData.set(false)
-                                        }
+                                        runLater { handleSyncFinished() }
                                     }
                                 }
                             }

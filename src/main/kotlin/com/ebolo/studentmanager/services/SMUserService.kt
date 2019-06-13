@@ -38,7 +38,8 @@ class SMUserService(
     fun setupSubscriptions() {
         // register the student list refresh request and event
         smUserListRefreshRequestRegistration = subscribe<SMUserListRefreshRequest> {
-            fire(SMUserListRefreshEvent(getUserList()))
+            val userList = getUserList()
+            fire(SMUserListRefreshEvent(userList))
         }
     }
 

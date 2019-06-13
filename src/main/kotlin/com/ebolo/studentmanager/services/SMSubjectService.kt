@@ -31,7 +31,8 @@ class SMSubjectService(
     fun setupSubscriptions() {
         // register the subject list refresh request and event
         smSubjectRefreshRequestRegistration = subscribe<SMSubjectRefreshRequest> { request ->
-            fire(SMSubjectRefreshEvent(getSubjects(), request.source))
+            val subjectList = getSubjects()
+            fire(SMSubjectRefreshEvent(subjectList, request.source))
         }
     }
 

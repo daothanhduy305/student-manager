@@ -36,7 +36,8 @@ class SMStudentService(
     fun setupSubscriptions() {
         // register the student list refresh request and event
         smStudentRefreshRequestRegistration = subscribe<SMStudentRefreshRequest> { request ->
-            fire(SMStudentRefreshEvent(getStudentList(), request.source))
+            val studentList = getStudentList()
+            fire(SMStudentRefreshEvent(studentList, request.source))
         }
     }
 

@@ -3,7 +3,6 @@ package com.ebolo.studentmanager
 import com.ebolo.studentmanager.ebolo.utils.loggerFor
 import com.ebolo.studentmanager.services.Settings
 import com.ebolo.studentmanager.views.SMInitFragment
-import javafx.beans.property.SimpleBooleanProperty
 import javafx.scene.image.Image
 import javafx.stage.Stage
 import org.springframework.boot.SpringApplication
@@ -93,14 +92,28 @@ class StudentManagerApplication : App(SMInitFragment::class) {
 
     companion object {
         lateinit var currentApplication: StudentManagerApplication
-        val isProcessingData = SimpleBooleanProperty(true)
         var dbName: String = ""
         var dbUri: String = ""
+        var syncCount = 0
 
         @JvmStatic
         fun main(args: Array<String>) {
             launch(StudentManagerApplication::class.java, *args)
         }
+
+        fun startSync() {
+            synchronized(syncCount) {
+                syncCount++
+            }
+        }
+
+        fun stopSync() {
+            synchronized(syncCount) {
+                if (syncCount > 0) syncCount--
+            }
+        }
+
+        fun isSyncing(): Boolean = syncCount > 0
     }
 
     class SetupResult(val success: Boolean, val errors: List<SetupError>)

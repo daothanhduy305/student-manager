@@ -36,12 +36,14 @@ class SMClassService(
     private fun setupSubscriptions() {
         // register the class list refresh request and event
         smClassListRefreshRequestRegistration = subscribe<SMClassListRefreshRequest> { request ->
-            fire(SMClassListRefreshEvent(getClassList(), request.source))
+            val classList = getClassList()
+            fire(SMClassListRefreshEvent(classList, request.source))
         }
 
         // register to the class list refresh request for a specific student
         smClassListForStudentRefreshRequestRegistration = subscribe<SMClassListForStudentRefreshRequest> { request ->
-            fire(SMClassListForStudentRefreshEvent(getClassListOfStudent(request.studentId)))
+            val classList = getClassListOfStudent(request.studentId)
+            fire(SMClassListForStudentRefreshEvent(classList))
         }
     }
 
