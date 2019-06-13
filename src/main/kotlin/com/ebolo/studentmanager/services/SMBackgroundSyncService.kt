@@ -56,7 +56,7 @@ class SMBackgroundSyncService : Controller() {
      * @author ebolo
      * @since 0.5.0
      */
-    @Scheduled(fixedDelay = 1000)
+    @Scheduled(fixedDelay = 1000, initialDelay = 10000)
     fun doBackgroundRefresh() {
         logger.info("Checking sync settings")
         var useBgSync = false
@@ -66,31 +66,43 @@ class SMBackgroundSyncService : Controller() {
         }
 
         if (useBgSync) {
+            var continueSync = false
             logger.info("Starting background sync")
             synchronized(synced) {
                 if (synced == 0) {
-                    val now = Instant.now()
-                    var lastSyncStamp = 0L
-                    var syncInterval = 0L
-
-                    preferences {
-                        syncInterval = getLong(Settings.SYNC_INTERVAL, SMGlobal.DEFAULT_SYNC_INTERVAL)
-                        lastSyncStamp = getLong(Settings.LAST_SYNC, now.toEpochMilli() - syncInterval)
-                    }
-
-                    if (lastSyncStamp <= now.toEpochMilli() - syncInterval) {
-                        logger.info("Syncing...")
-
-                        fire(SMDataProcessRequest {
-                            fire(SMSubjectRefreshRequest(source = "sync"))
-                            fire(SMTeacherRefreshRequest(source = "sync"))
-                            fire(SMStudentRefreshRequest(source = "sync"))
-                            fire(SMClassListRefreshRequest(source = "sync"))
-                        })
-                    }
+                    synced = 4
+                    continueSync = true
                 } else {
-                    logger.info("There might has been a sync in progress. Exiting and waiting...")
+                    logger.info("($synced) There might has been a sync in progress. Exiting and waiting...")
                 }
+            }
+
+            if (continueSync) startSync()
+        }
+    }
+
+    fun startSync() {
+        val now = Instant.now()
+        var lastSyncStamp = 0L
+        var syncInterval = 0L
+
+        preferences {
+            syncInterval = getLong(Settings.SYNC_INTERVAL, SMGlobal.DEFAULT_SYNC_INTERVAL)
+            lastSyncStamp = getLong(Settings.LAST_SYNC, now.toEpochMilli() - syncInterval)
+        }
+
+        if (lastSyncStamp <= now.toEpochMilli() - syncInterval) {
+            logger.info("Syncing...")
+
+            fire(SMDataProcessRequest(source = "sync") {
+                fire(SMSubjectRefreshRequest(source = "sync"))
+                fire(SMTeacherRefreshRequest(source = "sync"))
+                fire(SMStudentRefreshRequest(source = "sync"))
+                fire(SMClassListRefreshRequest(source = "sync"))
+            })
+        } else {
+            synchronized(synced) {
+                synced = 0
             }
         }
     }
@@ -106,17 +118,14 @@ class SMBackgroundSyncService : Controller() {
     private fun handleSynced(source: String) {
         if (source == "sync") {
             synchronized(synced) {
-                val now = Instant.now()
-                synced++
+                if (synced > 0) synced--
 
-                if (synced == 4) {
+                if (synced == 0) {
                     logger.info("Sync finished")
 
                     preferences {
-                        putLong(Settings.LAST_SYNC, now.toEpochMilli())
+                        putLong(Settings.LAST_SYNC, Instant.now().toEpochMilli())
                     }
-
-                    synced = 0
                 }
             }
         }

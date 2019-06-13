@@ -101,18 +101,40 @@ class StudentManagerApplication : App(SMInitFragment::class) {
             launch(StudentManagerApplication::class.java, *args)
         }
 
-        fun startSync() {
+        /**
+         * Method to increase the sync counter when there is a sync happening
+         *
+         * @author ebolo
+         * @since 0.5.0
+         *
+         * @param numSync Int
+         */
+        fun startSync(numSync: Int = 1) {
             synchronized(syncCount) {
-                syncCount++
+                syncCount += numSync
             }
         }
 
+        /**
+         * Method to decrease the sync counter whenever a sync is finished
+         *
+         * @author ebolo
+         * @since 0.5.0
+         */
         fun stopSync() {
             synchronized(syncCount) {
                 if (syncCount > 0) syncCount--
             }
         }
 
+        /**
+         * Method to return whether there is still any sync in process
+         *
+         * @author ebolo
+         * @since 0.5.0
+         *
+         * @return Boolean
+         */
         fun isSyncing(): Boolean = syncCount > 0
     }
 

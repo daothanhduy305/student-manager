@@ -38,7 +38,7 @@ class SMUIService : Controller() {
  *
  * @constructor
  */
-class SMDataProcessRequest(val processFunction: () -> Unit) : FXEvent()
+class SMDataProcessRequest(val source: String = "", val processFunction: () -> Unit) : FXEvent()
 
 /**
  * Request to be fired to make the application to reload the springContext

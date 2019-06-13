@@ -185,8 +185,13 @@ class SMMainFragment : Fragment("Student Manager") {
                                 label {
                                     bind(statusString)
 
-                                    subscribe<SMDataProcessRequest> {
-                                        StudentManagerApplication.startSync()
+                                    subscribe<SMDataProcessRequest> { event ->
+                                        if (event.source == "sync") {
+                                            StudentManagerApplication.startSync(4)
+                                        } else {
+                                            StudentManagerApplication.startSync(1)
+                                        }
+
                                         statusString.value = "Đang xử lý..."
                                     }
                                     subscribe<SMClassListRefreshEvent> {
@@ -291,7 +296,7 @@ class SMMainFragment : Fragment("Student Manager") {
 
                 try {
                     systemMenuAdapter.setAppleMenu(GlobalMenuAdapter.adapt(Menu(
-                        SMGlobal.APP_NAME,
+                        APP_NAME,
                         null
                     ).apply {
                         item("Giới thiệu") {
