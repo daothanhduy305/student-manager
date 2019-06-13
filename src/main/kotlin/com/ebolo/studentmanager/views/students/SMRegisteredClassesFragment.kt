@@ -8,6 +8,7 @@ import com.ebolo.studentmanager.services.SMClassListForStudentRefreshRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.views.classes.SMClassPerformanceFragment
 import javafx.beans.property.SimpleObjectProperty
+import javafx.geometry.Pos
 import tornadofx.*
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -23,15 +24,23 @@ class SMRegisteredClassesFragment : Fragment() {
     override val root = borderpane {
         center {
             tableview(classesList) {
-                readonlyColumn("Tên lớp", SMClassModel.SMClassDto::name)
+                prefWidth = 600.0
+
+                makeIndexColumn("STT").apply {
+                    style {
+                        alignment = Pos.TOP_CENTER
+                    }
+                }.prefWidth(75)
+
+                readonlyColumn("Tên lớp", SMClassModel.SMClassDto::name).prefWidth(150)
 
                 readonlyColumn("Giáo viên", SMClassModel.SMClassDto::teacher) {
                     cellFormat { teacher -> text = "${teacher.lastName} ${teacher.firstName}" }
-                }
+                }.prefWidth(150)
 
                 readonlyColumn("Môn", SMClassModel.SMClassDto::subject) {
                     cellFormat { subject -> text = subject.name }
-                }
+                }.prefWidth(100)
 
                 column<SMClassModel.SMClassDto, LocalDate>("Ngày bắt đầu", "studentStartDate") {
                     setCellValueFactory { cellData ->
@@ -42,7 +51,7 @@ class SMRegisteredClassesFragment : Fragment() {
                         else
                             SimpleObjectProperty<LocalDate>()
                     }
-                }
+                }.remainingWidth()
 
                 contextmenu {
                     item("Sửa...").action {
@@ -89,8 +98,6 @@ class SMRegisteredClassesFragment : Fragment() {
                         }
                     }
                 }
-
-                smartResize()
 
                 // subscribe to events
                 subscribe<SMClassListForStudentRefreshEvent> { event ->
