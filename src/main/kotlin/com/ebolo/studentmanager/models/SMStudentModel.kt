@@ -35,6 +35,9 @@ class SMStudentModel(
 
         var educationLevel by property<EducationLevel>()
         fun educationLevelProperty() = getProperty(SMStudentDto::educationLevel)
+
+        var studyLevel by property<String>()
+        fun studyLevelProperty() = getProperty(SMStudentDto::studyLevel)
     }
     // endregion
 
@@ -47,6 +50,7 @@ class SMStudentModel(
     val parentPhone = bind(SMStudentDto::parentPhoneProperty)
     val address = bind(SMStudentDto::addressProperty)
     val educationLevel = bind(SMStudentDto::educationLevelProperty)
+    val studyLevel = bind(SMStudentDto::studyLevelProperty)
     // endregion
 
     override fun specificEntitySetup(entity: SMStudentEntity) {
@@ -58,5 +62,6 @@ class SMStudentModel(
         entity.parentPhone = parentPhone.value ?: ""
         entity.address = address.value ?: ""
         entity.educationLevel = educationLevel.value ?: EducationLevel.NONE
+        entity.studyLevel = studyLevel.value ?: ""
     }
 }

@@ -92,15 +92,17 @@ class SMStudentTableFragment : Fragment() {
                     }
                 }.prefWidth(100.0)
 
-                readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName).prefWidth(200.0)
-
                 readonlyColumn("Họ", SMStudentModel.SMStudentDto::lastName).prefWidth(200.0)
+
+                readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName).prefWidth(200.0)
 
                 readonlyColumn("Nickname", SMStudentModel.SMStudentDto::nickname).prefWidth(200.0)
 
                 readonlyColumn("Học vấn", SMStudentModel.SMStudentDto::educationLevel) {
                     cellFormat { text = it.title }
                 }.prefWidth(300.0)
+
+                readonlyColumn("Cấp độ", SMStudentModel.SMStudentDto::studyLevel).prefWidth(200.0)
 
                 readonlyColumn("Sinh nhật", SMStudentModel.SMStudentDto::birthday).prefWidth(200.0)
 

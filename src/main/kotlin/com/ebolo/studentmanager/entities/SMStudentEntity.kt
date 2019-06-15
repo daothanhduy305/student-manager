@@ -9,7 +9,8 @@ import org.springframework.data.mongodb.core.mapping.Document
 class SMStudentEntity(
     var nickname: String = "",
     var parentPhone: String? = null,
-    var educationLevel: EducationLevel = EducationLevel.NONE
+    var educationLevel: EducationLevel = EducationLevel.NONE,
+    var studyLevel: String = ""
 ) : EboloBaseUserEntity(), SMIEntity<SMStudentModel.SMStudentDto> {
 
     override fun toDto(): SMStudentModel.SMStudentDto = this unsafeCastTo SMStudentModel.SMStudentDto::class

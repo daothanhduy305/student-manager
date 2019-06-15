@@ -69,6 +69,21 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
                                     }
                                 }
 
+                                field("Học vấn *") {
+                                    this += JFXComboBox(EducationLevel.values().toList().observable()).apply {
+                                        bind(studentModel.educationLevel)
+                                        cellFormat { text = it.title }
+
+                                        required()
+                                    }
+                                }
+
+                                field("Cấp độ") {
+                                    this += JFXTextField().apply {
+                                        bind(studentModel.studyLevel)
+                                    }
+                                }
+
                                 field("Ngày sinh") {
                                     this += JFXDatePicker().apply {
                                         bind(studentModel.birthday)
@@ -87,11 +102,9 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
                                     }
                                 }
 
-                                field("Số điện thoại *") {
+                                field("Số điện thoại") {
                                     this += JFXTextField().apply {
                                         bind(studentModel.phone)
-
-                                        required()
                                     }
                                 }
 
@@ -104,15 +117,6 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
                                 field("Địa chỉ") {
                                     this += JFXTextField().apply {
                                         bind(studentModel.address)
-                                    }
-                                }
-
-                                field("Học vấn *") {
-                                    this += JFXComboBox(EducationLevel.values().toList().observable()).apply {
-                                        bind(studentModel.educationLevel)
-                                        cellFormat { text = it.title }
-
-                                        required()
                                     }
                                 }
                             }
