@@ -98,7 +98,7 @@ macAppBundle {
     //backgroundImage = "doc/macbackground.png"
     jarTask = 'bootJar'
     appName = 'Student Manager'
-    dmgName = 'Student Manager'
+    dmgName = "Student Manager $details.lastTag"
     volumeName = 'Student Manager ' + version
 }
 
