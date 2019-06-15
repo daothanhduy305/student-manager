@@ -144,6 +144,57 @@ class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
                         }
                     }
                 }
+
+                if (mode == SMCRUDUtils.CRUDMode.NEW || mode == SMCRUDUtils.CRUDMode.EDIT) {
+                    val buttonTitle = when (mode) {
+                        SMCRUDUtils.CRUDMode.NEW -> "Tiếp tục thêm"
+                        SMCRUDUtils.CRUDMode.EDIT -> "Tạo lặp"
+                        else -> ""
+                    }
+                    this += JFXButton(buttonTitle).apply {
+                        useMaxWidth = true
+                        buttonType = JFXButton.ButtonType.RAISED
+                        paddingVertical = 15
+                        paddingHorizontal = 30
+
+                        style {
+                            backgroundColor += c("#fff")
+                        }
+
+                        enableWhen(teacherModel.dirty.or(SimpleBooleanProperty(mode == SMCRUDUtils.CRUDMode.EDIT)).and(teacherModel.valid).and(isProcessing.not()))
+
+                        action {
+                            isProcessing.value = true
+                            StudentManagerApplication.startSync()
+                            // base on the crud mode, we define the appropriate action
+                            runAsync {
+                                when (mode) {
+                                    SMCRUDUtils.CRUDMode.NEW -> serviceCentral.teacherService.createNewTeacher(teacherModel)
+                                    SMCRUDUtils.CRUDMode.EDIT -> serviceCentral.teacherService.editTeacher(teacherModel)
+                                    else -> {
+                                        SMCRUDUtils.SMCRUDResult(false, "Unsupported CRUD mode")
+                                    }
+                                }
+                            } ui {
+                                isProcessing.value = false
+                                StudentManagerApplication.stopSync()
+                                // refresh if success
+                                if (it.success) {
+                                    fire(SMTeacherRefreshRequest())
+                                    modalStage?.close()
+                                    find<SMTeacherInfoFragment>(
+                                        "mode" to SMCRUDUtils.CRUDMode.NEW,
+                                        "studentModel" to teacherModel.apply {
+                                            id.value = null
+                                        }
+                                    ).openModal()
+                                } else {
+                                    error("Đã xảy ra lỗi", it.errorMessage, ButtonType.CLOSE)
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

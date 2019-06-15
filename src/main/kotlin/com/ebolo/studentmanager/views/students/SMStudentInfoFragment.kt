@@ -176,6 +176,57 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
                                     }
                                 }
                             }
+
+                            if (mode == SMCRUDUtils.CRUDMode.NEW || mode == SMCRUDUtils.CRUDMode.EDIT) {
+                                val buttonTitle = when (mode) {
+                                    SMCRUDUtils.CRUDMode.NEW -> "Tiếp tục thêm"
+                                    SMCRUDUtils.CRUDMode.EDIT -> "Tạo lặp"
+                                    else -> ""
+                                }
+                                this += JFXButton(buttonTitle).apply {
+                                    useMaxWidth = true
+                                    buttonType = JFXButton.ButtonType.RAISED
+                                    paddingVertical = 15
+                                    paddingHorizontal = 30
+
+                                    style {
+                                        backgroundColor += c("#fff")
+                                    }
+
+                                    enableWhen(studentModel.dirty.or(SimpleBooleanProperty(mode == SMCRUDUtils.CRUDMode.EDIT)).and(studentModel.valid).and(isProcessing.not()))
+
+                                    action {
+                                        isProcessing.value = true
+                                        StudentManagerApplication.startSync()
+                                        // base on the crud mode, we define the appropriate action
+                                        runAsync {
+                                            when (mode) {
+                                                SMCRUDUtils.CRUDMode.NEW -> serviceCentral.studentService.createNewStudent(studentModel)
+                                                SMCRUDUtils.CRUDMode.EDIT -> serviceCentral.studentService.editStudent(studentModel)
+                                                else -> {
+                                                    SMCRUDUtils.SMCRUDResult(false, "Unsupported CRUD mode")
+                                                }
+                                            }
+                                        } ui {
+                                            isProcessing.value = false
+                                            StudentManagerApplication.stopSync()
+                                            // refresh if success
+                                            if (it.success) {
+                                                fire(SMStudentRefreshRequest())
+                                                modalStage?.close()
+                                                find<SMStudentInfoFragment>(
+                                                    "mode" to SMCRUDUtils.CRUDMode.NEW,
+                                                    "studentModel" to studentModel.apply {
+                                                        id.value = null
+                                                    }
+                                                ).openModal()
+                                            } else {
+                                                error("Đã xảy ra lỗi", it.errorMessage, ButtonType.CLOSE)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
