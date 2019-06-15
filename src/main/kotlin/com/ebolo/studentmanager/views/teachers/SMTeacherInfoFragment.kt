@@ -1,5 +1,6 @@
 package com.ebolo.studentmanager.views.teachers
 
+import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.models.SMTeacherModel
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.SMTeacherRefreshRequest
@@ -7,7 +8,7 @@ import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXDatePicker
 import com.jfoenix.controls.JFXTextField
-import javafx.beans.binding.Bindings
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.control.ButtonType
@@ -20,6 +21,8 @@ class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
     private val serviceCentral: SMServiceCentral by di()
     private val mode: SMCRUDUtils.CRUDMode by param(SMCRUDUtils.CRUDMode.NEW)
     private val teacherModel: SMTeacherModel by param(SMTeacherModel())
+
+    private val isProcessing = SimpleBooleanProperty(false)
 
     override val root = form {
         paddingAll = 20
@@ -100,6 +103,7 @@ class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
                         textFill = c("#fff")
                     }
 
+                    enableWhen(isProcessing.not())
                     action { modalStage?.close() }
                 }
 
@@ -113,9 +117,11 @@ class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
                         backgroundColor += c("#fff")
                     }
 
-                    enableWhen(Bindings.and(teacherModel.dirty, teacherModel.valid))
+                    enableWhen(teacherModel.dirty.and(teacherModel.valid).and(isProcessing.not()))
 
                     action {
+                        isProcessing.value = true
+                        StudentManagerApplication.startSync()
                         // base on the crud mode, we define the appropriate action
                         runAsync {
                             when (mode) {
@@ -126,6 +132,8 @@ class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
                                 }
                             }
                         } ui {
+                            isProcessing.value = false
+                            StudentManagerApplication.stopSync()
                             // refresh if success
                             if (it.success) {
                                 fire(SMTeacherRefreshRequest())

@@ -16,6 +16,7 @@ import com.jfoenix.controls.*
 import de.jensd.fx.glyphs.materialicons.MaterialIcon
 import de.jensd.fx.glyphs.materialicons.MaterialIconView
 import javafx.beans.binding.Bindings
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleLongProperty
 import javafx.event.EventTarget
 import javafx.geometry.Orientation
@@ -40,6 +41,8 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
 
     private val month = SimpleLongProperty()
     private val fee = SimpleLongProperty()
+
+    private val isProcessing = SimpleBooleanProperty(false)
 
     override val root = stackpane {
 
@@ -354,6 +357,8 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
 
                                 action { modalStage?.close() }
 
+                                enableWhen(isProcessing.not())
+
                                 style {
                                     backgroundColor += c("#ff5533")
                                     textFill = c("#fff")
@@ -366,13 +371,13 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                 paddingVertical = 15
                                 paddingHorizontal = 30
 
-                                enableWhen(Bindings.and(classModel.dirty, classModel.valid))
+                                enableWhen(classModel.dirty.and(classModel.valid).and(isProcessing.not()))
 
                                 action {
+                                    isProcessing.value = true
+                                    StudentManagerApplication.startSync()
                                     // base on the crud mode, we define the appropriate action
                                     runAsync {
-                                        StudentManagerApplication.startSync()
-
                                         when (mode) {
                                             SMCRUDUtils.CRUDMode.NEW -> serviceCentral.classService.createNewClass(classModel)
                                             SMCRUDUtils.CRUDMode.EDIT -> serviceCentral.classService.editClass(classModel)
@@ -381,6 +386,7 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                             }
                                         }
                                     } ui {
+                                        isProcessing.value = false
                                         StudentManagerApplication.stopSync()
                                         // refresh if success
                                         if (it.success) {

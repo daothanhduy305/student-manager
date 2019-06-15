@@ -1,12 +1,13 @@
 package com.ebolo.studentmanager.views.students
 
+import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.entities.EducationLevel
 import com.ebolo.studentmanager.models.SMStudentModel
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.SMStudentRefreshRequest
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.jfoenix.controls.*
-import javafx.beans.binding.Bindings
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.control.ButtonType
@@ -20,6 +21,8 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
     private val serviceCentral: SMServiceCentral by di()
     private val mode: SMCRUDUtils.CRUDMode by param()
     private val studentModel: SMStudentModel by param(SMStudentModel())
+
+    private val isProcessing = SimpleBooleanProperty(false)
 
     override val root = stackpane {
 
@@ -131,6 +134,8 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
                                     textFill = c("#fff")
                                 }
 
+                                enableWhen(isProcessing.not())
+
                                 action { modalStage?.close() }
                             }
 
@@ -144,9 +149,11 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
                                     backgroundColor += c("#fff")
                                 }
 
-                                enableWhen(Bindings.and(studentModel.dirty, studentModel.valid))
+                                enableWhen(studentModel.dirty.and(studentModel.valid).and(isProcessing.not()))
 
                                 action {
+                                    isProcessing.value = true
+                                    StudentManagerApplication.startSync()
                                     // base on the crud mode, we define the appropriate action
                                     runAsync {
                                         when (mode) {
@@ -157,6 +164,8 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
                                             }
                                         }
                                     } ui {
+                                        isProcessing.value = false
+                                        StudentManagerApplication.stopSync()
                                         // refresh if success
                                         if (it.success) {
                                             fire(SMStudentRefreshRequest())
