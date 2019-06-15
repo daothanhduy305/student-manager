@@ -46,12 +46,6 @@ class SMClassService(
                 }
             }
         }
-
-        // register to the class list refresh request for a specific student
-        smClassListForStudentRefreshRequestRegistration = subscribe<SMClassListForStudentRefreshRequest> { request ->
-            val classList = getClassListOfStudent(request.studentId)
-            fire(SMClassListForStudentRefreshEvent(classList))
-        }
     }
 
     /**
@@ -173,6 +167,7 @@ class SMClassService(
                             })
 
                             fire(SMClassRefreshEvent(classEntity.toDto()))
+                            fire(SMClassListRefreshRequest())
                             SMCRUDUtils.SMCRUDResult(true)
                         }
                     },
@@ -433,22 +428,6 @@ class SMClassListRefreshEvent(val classes: List<SMClassModel.SMClassDto>, val so
  * @since 0.0.1-SNAPSHOT
  */
 class SMClassRefreshEvent(val classDto: SMClassModel.SMClassDto) : FXEvent()
-
-/**
- * Request to refresh the class list for a specific student when fired
- *
- * @author ebolo (daothanhduy305@gmail.com)
- * @since 0.0.1-SNAPSHOT
- */
-class SMClassListForStudentRefreshRequest(val studentId: String) : FXEvent(EventBus.RunOn.BackgroundThread)
-
-/**
- * Event to refresh the class list for a specific student when received
- *
- * @author ebolo (daothanhduy305@gmail.com)
- * @since 0.0.1-SNAPSHOT
- */
-class SMClassListForStudentRefreshEvent(val classes: List<SMClassModel.SMClassDto>) : FXEvent()
 
 /**
  * Request to refresh the attendance list for a specific class when fired
