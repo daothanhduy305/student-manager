@@ -31,4 +31,9 @@ class SMServiceCentral(
  * @author ebolo
  * @since 0.0.1-SNAPSHOT
  */
-object SMRestartAppRequest : FXEvent()
+class SMRestartAppRequest(val restartMode: RestartMode = RestartMode.PARTIAL) : FXEvent()
+
+enum class RestartMode {
+    PARTIAL,
+    FULL
+}

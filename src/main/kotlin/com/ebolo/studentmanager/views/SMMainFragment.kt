@@ -344,7 +344,12 @@ class SMMainFragment : Fragment("Student Manager") {
             }*/
         }
 
-        subscribe<SMRestartAppRequest> { replaceWith<SMSplashFragment>(sizeToScene = true, centerOnScreen = true) }
+        subscribe<SMRestartAppRequest> { event ->
+            when (event.restartMode) {
+                RestartMode.FULL -> replaceWith<SMInitFragment>(sizeToScene = true, centerOnScreen = true)
+                RestartMode.PARTIAL -> replaceWith<SMSplashFragment>(sizeToScene = true, centerOnScreen = true)
+            }
+        }
     }
 
     /**
