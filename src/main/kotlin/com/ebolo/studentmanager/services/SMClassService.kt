@@ -31,7 +31,6 @@ class SMClassService(
     private val logger = loggerFor(SMClassService::class.java)
 
     private var smClassListRefreshRequestRegistration by singleAssign<FXEventRegistration>()
-    private var smClassListForStudentRefreshRequestRegistration by singleAssign<FXEventRegistration>()
 
     @PostConstruct
     private fun setupSubscriptions() {
@@ -55,7 +54,6 @@ class SMClassService(
     fun shutdown() {
         logger.info("Shutting down class service")
         smClassListRefreshRequestRegistration.unsubscribe()
-        smClassListForStudentRefreshRequestRegistration.unsubscribe()
     }
 
     /**
