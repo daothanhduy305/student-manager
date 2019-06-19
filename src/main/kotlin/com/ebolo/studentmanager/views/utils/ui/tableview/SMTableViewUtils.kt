@@ -2,6 +2,7 @@ package com.ebolo.studentmanager.views.utils.ui.tableview
 
 import com.ebolo.studentmanager.models.SMBaseModel
 import javafx.collections.ObservableList
+import javafx.scene.control.TableColumn
 import javafx.scene.control.TableView
 import tornadofx.*
 
@@ -25,4 +26,19 @@ fun <S : SMBaseModel.SMBaseDto> (TableView<S>).handleItemsUpdated(newItems: List
 
         }
     }
+}
+
+fun <S : SMBaseModel.SMBaseDto, T : Any> (TableColumn<S, T>).setupSizeListeners(
+    config: ConfigProperties,
+    columnId: String,
+    defaultValue: Double
+) {
+    widthProperty().onChange { newWidth: Double ->
+        with(config) {
+            set(columnId to newWidth)
+            save()
+        }
+    }
+
+    this.prefWidth(config.double(columnId, defaultValue))
 }

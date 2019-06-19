@@ -7,6 +7,7 @@ import com.ebolo.studentmanager.services.SMStudentRefreshRequest
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.ebolo.studentmanager.views.utils.ui.SMConfirmDialog
 import com.ebolo.studentmanager.views.utils.ui.tableview.handleItemsUpdated
+import com.ebolo.studentmanager.views.utils.ui.tableview.setupSizeListeners
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXTextField
 import javafx.collections.FXCollections
@@ -90,23 +91,37 @@ class SMStudentTableFragment : Fragment() {
                     style {
                         alignment = Pos.TOP_CENTER
                     }
-                }.prefWidth(100.0)
+                    setupSizeListeners(config, "IndexWidth", 100.0)
+                }
 
-                readonlyColumn("Họ", SMStudentModel.SMStudentDto::lastName).prefWidth(200.0)
+                readonlyColumn("Họ", SMStudentModel.SMStudentDto::lastName) {
+                    setupSizeListeners(config, "LastNameWidth", 200.0)
+                }
 
-                readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName).prefWidth(200.0)
+                readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName) {
+                    setupSizeListeners(config, "FirstNameWidth", 200.0)
+                }
 
-                readonlyColumn("Nickname", SMStudentModel.SMStudentDto::nickname).prefWidth(200.0)
+                readonlyColumn("Nickname", SMStudentModel.SMStudentDto::nickname) {
+                    setupSizeListeners(config, "NickNameWidth", 200.0)
+                }
 
                 readonlyColumn("Học vấn", SMStudentModel.SMStudentDto::educationLevel) {
                     cellFormat { text = it.title }
-                }.prefWidth(300.0)
+                    setupSizeListeners(config, "DegreeWidth", 300.0)
+                }
 
-                readonlyColumn("Cấp độ", SMStudentModel.SMStudentDto::studyLevel).prefWidth(200.0)
+                readonlyColumn("Cấp độ", SMStudentModel.SMStudentDto::studyLevel) {
+                    setupSizeListeners(config, "LevelWidth", 200.0)
+                }
 
-                readonlyColumn("Sinh nhật", SMStudentModel.SMStudentDto::birthday).prefWidth(200.0)
+                readonlyColumn("Sinh nhật", SMStudentModel.SMStudentDto::birthday) {
+                    setupSizeListeners(config, "BirthdayWidth", 200.0)
+                }
 
-                readonlyColumn("Số điện thoại", SMStudentModel.SMStudentDto::phone).prefWidth(200.0)
+                readonlyColumn("Số điện thoại", SMStudentModel.SMStudentDto::phone) {
+                    setupSizeListeners(config, "PhoneWidth", 200.0)
+                }
 
                 // set up the context menu
                 contextmenu {

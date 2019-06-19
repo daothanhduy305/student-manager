@@ -7,6 +7,7 @@ import com.ebolo.studentmanager.services.SMSubjectRefreshRequest
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.ebolo.studentmanager.views.utils.ui.SMConfirmDialog
 import com.ebolo.studentmanager.views.utils.ui.tableview.handleItemsUpdated
+import com.ebolo.studentmanager.views.utils.ui.tableview.setupSizeListeners
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXTextField
 import javafx.collections.FXCollections
@@ -86,9 +87,13 @@ class SMSubjectTableFragment : Fragment() {
                     style {
                         alignment = Pos.TOP_CENTER
                     }
-                }.prefWidth(100.0)
 
-                readonlyColumn("Tên môn học", SMSubjectModel.SMSubjectDto::name).prefWidth(200.0)
+                    setupSizeListeners(config, "IndexWidth", 100.0)
+                }
+
+                readonlyColumn("Tên môn học", SMSubjectModel.SMSubjectDto::name) {
+                    setupSizeListeners(config, "IndexWidth", 200.0)
+                }
 
                 contextmenu {
                     item("Sửa...").action {

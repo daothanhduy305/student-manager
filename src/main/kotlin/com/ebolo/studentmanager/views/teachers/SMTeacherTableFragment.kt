@@ -7,6 +7,7 @@ import com.ebolo.studentmanager.services.SMTeacherRefreshRequest
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.ebolo.studentmanager.views.utils.ui.SMConfirmDialog
 import com.ebolo.studentmanager.views.utils.ui.tableview.handleItemsUpdated
+import com.ebolo.studentmanager.views.utils.ui.tableview.setupSizeListeners
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXTextField
 import javafx.collections.FXCollections
@@ -89,13 +90,20 @@ class SMTeacherTableFragment : Fragment() {
                     style {
                         alignment = Pos.TOP_CENTER
                     }
-                }.prefWidth(100.0)
+                    setupSizeListeners(config, "IndexWidth", 100.0)
+                }
 
-                readonlyColumn("Họ", SMTeacherModel.SMTeacherDto::lastName).prefWidth(200.0)
+                readonlyColumn("Họ", SMTeacherModel.SMTeacherDto::lastName) {
+                    setupSizeListeners(config, "LastNameWidth", 200.0)
+                }
 
-                readonlyColumn("Tên", SMTeacherModel.SMTeacherDto::firstName).prefWidth(200.0)
+                readonlyColumn("Tên", SMTeacherModel.SMTeacherDto::firstName) {
+                    setupSizeListeners(config, "FirstNameWidth", 200.0)
+                }
 
-                readonlyColumn("Ngày sinh", SMTeacherModel.SMTeacherDto::birthday).prefWidth(200.0)
+                readonlyColumn("Ngày sinh", SMTeacherModel.SMTeacherDto::birthday) {
+                    setupSizeListeners(config, "BirthdayWidth", 200.0)
+                }
 
                 setOnMouseClicked {
                     if (it.clickCount == 2 && selectionModel.selectedItems.isNotEmpty()) {

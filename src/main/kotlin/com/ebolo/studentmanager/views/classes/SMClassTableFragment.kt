@@ -7,6 +7,7 @@ import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.ebolo.studentmanager.views.utils.ui.SMConfirmDialog
 import com.ebolo.studentmanager.views.utils.ui.tableview.handleItemsUpdated
+import com.ebolo.studentmanager.views.utils.ui.tableview.setupSizeListeners
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXTextField
 import javafx.collections.FXCollections
@@ -91,17 +92,22 @@ class SMClassTableFragment : Fragment() {
                     style {
                         alignment = Pos.TOP_CENTER
                     }
-                }.prefWidth(100.0)
+                    setupSizeListeners(config, "IndexWidth", 100.0)
+                }
 
-                readonlyColumn("Tên lớp", SMClassModel.SMClassDto::name).prefWidth(200.0)
+                readonlyColumn("Tên lớp", SMClassModel.SMClassDto::name) {
+                    setupSizeListeners(config, "ClassNameWidth", 200.0)
+                }
 
                 readonlyColumn("Giáo viên", SMClassModel.SMClassDto::teacher) {
                     cellFormat { teacher -> text = "${teacher.lastName} ${teacher.firstName}" }
-                }.prefWidth(200.0)
+                    setupSizeListeners(config, "TeacherNameWidth", 200.0)
+                }
 
                 readonlyColumn("Môn", SMClassModel.SMClassDto::subject) {
                     cellFormat { subject -> text = subject.name }
-                }.prefWidth(200.0)
+                    setupSizeListeners(config, "SubjectNameWidth", 200.0)
+                }
 
                 // set up the context menu
                 contextmenu {
