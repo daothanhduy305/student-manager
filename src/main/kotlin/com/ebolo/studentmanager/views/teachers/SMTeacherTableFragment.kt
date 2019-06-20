@@ -86,23 +86,37 @@ class SMTeacherTableFragment : Fragment() {
             tableview<SMTeacherModel.SMTeacherDto>(filteredTeacherList) {
                 multiSelect()
 
-                makeIndexColumn("STT").apply {
-                    style {
-                        alignment = Pos.TOP_CENTER
+                config.string(
+                    "column_orders",
+                    "index_column, last_name_column, first_name_column, birthday_column"
+                ).split(',').forEach { columnId ->
+                    when (columnId.trim()) {
+                        "index_column" -> makeIndexColumn("STT").apply {
+                            id = "index_column"
+                            style {
+                                alignment = Pos.TOP_CENTER
+                            }
+                            setupSizeListeners(config, 100.0)
+                        }
+                        "last_name_column" -> readonlyColumn("Họ", SMTeacherModel.SMTeacherDto::lastName) {
+                            id = "last_name_column"
+                            setupSizeListeners(config, 200.0)
+                        }
+                        "first_name_column" -> readonlyColumn("Tên", SMTeacherModel.SMTeacherDto::firstName) {
+                            id = "first_name_column"
+                            setupSizeListeners(config, 200.0)
+                        }
+                        "birthday_column" -> readonlyColumn("Ngày sinh", SMTeacherModel.SMTeacherDto::birthday) {
+                            id = "birthday_column"
+                            setupSizeListeners(config, 200.0)
+                        }
                     }
-                    setupSizeListeners(config, "IndexWidth", 100.0)
                 }
 
-                readonlyColumn("Họ", SMTeacherModel.SMTeacherDto::lastName) {
-                    setupSizeListeners(config, "LastNameWidth", 200.0)
-                }
-
-                readonlyColumn("Tên", SMTeacherModel.SMTeacherDto::firstName) {
-                    setupSizeListeners(config, "FirstNameWidth", 200.0)
-                }
-
-                readonlyColumn("Ngày sinh", SMTeacherModel.SMTeacherDto::birthday) {
-                    setupSizeListeners(config, "BirthdayWidth", 200.0)
+                columns.onChange { columnsChange ->
+                    with(config) {
+                        set("column_orders" to columnsChange.list.joinToString { it.id })
+                    }
                 }
 
                 setOnMouseClicked {

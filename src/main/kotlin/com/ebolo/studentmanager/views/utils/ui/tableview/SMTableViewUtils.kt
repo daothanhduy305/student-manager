@@ -30,15 +30,14 @@ fun <S : SMBaseModel.SMBaseDto> (TableView<S>).handleItemsUpdated(newItems: List
 
 fun <S : SMBaseModel.SMBaseDto, T : Any> (TableColumn<S, T>).setupSizeListeners(
     config: ConfigProperties,
-    columnId: String,
     defaultValue: Double
 ) {
     widthProperty().onChange { newWidth: Double ->
         with(config) {
-            set(columnId to newWidth)
+            set(id to newWidth)
             save()
         }
     }
 
-    this.prefWidth(config.double(columnId, defaultValue))
+    this.prefWidth(config.double(id, defaultValue))
 }

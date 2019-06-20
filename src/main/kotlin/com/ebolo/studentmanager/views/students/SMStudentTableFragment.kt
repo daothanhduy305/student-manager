@@ -87,40 +87,54 @@ class SMStudentTableFragment : Fragment() {
             tableview<SMStudentModel.SMStudentDto>(filteredStudentList) {
                 multiSelect()
 
-                makeIndexColumn("STT").apply {
-                    style {
-                        alignment = Pos.TOP_CENTER
+                config.string(
+                    "column_orders",
+                    "index_column, last_name_column, first_name_column, nickname_column, degree_column, level_column, birthday_column, phone_column"
+                ).split(',').forEach { columnId ->
+                    when (columnId.trim()) {
+                        "index_column" -> makeIndexColumn("STT").apply {
+                            id = "index_column"
+                            style {
+                                alignment = Pos.TOP_CENTER
+                            }
+                            setupSizeListeners(config, 100.0)
+                        }
+                        "last_name_column" -> readonlyColumn("Họ", SMStudentModel.SMStudentDto::lastName) {
+                            id = "last_name_column"
+                            setupSizeListeners(config, 200.0)
+                        }
+                        "first_name_column" -> readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName) {
+                            id = "first_name_column"
+                            setupSizeListeners(config, 200.0)
+                        }
+                        "nickname_column" -> readonlyColumn("Nickname", SMStudentModel.SMStudentDto::nickname) {
+                            id = "nickname_column"
+                            setupSizeListeners(config, 200.0)
+                        }
+                        "degree_column" -> readonlyColumn("Học vấn", SMStudentModel.SMStudentDto::educationLevel) {
+                            id = "degree_column"
+                            cellFormat { text = it.title }
+                            setupSizeListeners(config, 300.0)
+                        }
+                        "level_column" -> readonlyColumn("Cấp độ", SMStudentModel.SMStudentDto::studyLevel) {
+                            id = "level_column"
+                            setupSizeListeners(config, 200.0)
+                        }
+                        "birthday_column" -> readonlyColumn("Sinh nhật", SMStudentModel.SMStudentDto::birthday) {
+                            id = "birthday_column"
+                            setupSizeListeners(config, 200.0)
+                        }
+                        "phone_column" -> readonlyColumn("Số điện thoại", SMStudentModel.SMStudentDto::phone) {
+                            id = "phone_column"
+                            setupSizeListeners(config, 200.0)
+                        }
                     }
-                    setupSizeListeners(config, "IndexWidth", 100.0)
                 }
 
-                readonlyColumn("Họ", SMStudentModel.SMStudentDto::lastName) {
-                    setupSizeListeners(config, "LastNameWidth", 200.0)
-                }
-
-                readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName) {
-                    setupSizeListeners(config, "FirstNameWidth", 200.0)
-                }
-
-                readonlyColumn("Nickname", SMStudentModel.SMStudentDto::nickname) {
-                    setupSizeListeners(config, "NickNameWidth", 200.0)
-                }
-
-                readonlyColumn("Học vấn", SMStudentModel.SMStudentDto::educationLevel) {
-                    cellFormat { text = it.title }
-                    setupSizeListeners(config, "DegreeWidth", 300.0)
-                }
-
-                readonlyColumn("Cấp độ", SMStudentModel.SMStudentDto::studyLevel) {
-                    setupSizeListeners(config, "LevelWidth", 200.0)
-                }
-
-                readonlyColumn("Sinh nhật", SMStudentModel.SMStudentDto::birthday) {
-                    setupSizeListeners(config, "BirthdayWidth", 200.0)
-                }
-
-                readonlyColumn("Số điện thoại", SMStudentModel.SMStudentDto::phone) {
-                    setupSizeListeners(config, "PhoneWidth", 200.0)
+                columns.onChange { columnsChange ->
+                    with(config) {
+                        set("column_orders" to columnsChange.list.joinToString { it.id })
+                    }
                 }
 
                 // set up the context menu

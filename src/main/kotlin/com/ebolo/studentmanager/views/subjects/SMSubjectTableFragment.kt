@@ -83,16 +83,31 @@ class SMSubjectTableFragment : Fragment() {
             tableview<SMSubjectModel.SMSubjectDto>(filteredSubjectList) {
                 multiSelect()
 
-                makeIndexColumn("STT").apply {
-                    style {
-                        alignment = Pos.TOP_CENTER
+                config.string(
+                    "column_orders",
+                    "index_column, subject_column"
+                ).split(',').forEach { columnId ->
+                    when (columnId.trim()) {
+                        "index_column" -> makeIndexColumn("STT").apply {
+                            id = "index_column"
+                            style {
+                                alignment = Pos.TOP_CENTER
+                            }
+
+                            setupSizeListeners(config, 100.0)
+                        }
+                        "subject_column" -> readonlyColumn("Tên môn học", SMSubjectModel.SMSubjectDto::name) {
+                            id = "subject_column"
+                            setupSizeListeners(config, 200.0)
+                        }
                     }
 
-                    setupSizeListeners(config, "IndexWidth", 100.0)
                 }
 
-                readonlyColumn("Tên môn học", SMSubjectModel.SMSubjectDto::name) {
-                    setupSizeListeners(config, "IndexWidth", 200.0)
+                columns.onChange { columnsChange ->
+                    with(config) {
+                        set("column_orders" to columnsChange.list.joinToString { it.id })
+                    }
                 }
 
                 contextmenu {
