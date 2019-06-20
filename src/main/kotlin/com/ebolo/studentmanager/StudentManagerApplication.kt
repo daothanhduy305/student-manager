@@ -14,6 +14,8 @@ import org.springframework.data.mongodb.config.EnableMongoAuditing
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 import org.springframework.scheduling.annotation.EnableScheduling
 import tornadofx.*
+import java.nio.file.Path
+import java.nio.file.Paths
 import kotlin.reflect.KClass
 
 
@@ -27,6 +29,9 @@ class StudentManagerApplication : App(SMInitFragment::class) {
 
     var springContext: ConfigurableApplicationContext? = null
     lateinit var setupResult: SetupResult
+
+    override val configBasePath: Path
+        get() = Paths.get("${System.getProperty("user.home")}/Applications/StudentManager/conf")
 
     override fun init() {
         importStylesheet(javaClass.getResource("/css/jfx-table-view.css").toExternalForm())
