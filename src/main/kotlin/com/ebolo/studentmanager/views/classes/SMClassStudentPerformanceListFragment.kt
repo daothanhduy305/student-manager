@@ -100,7 +100,7 @@ class SMClassStudentPerformanceListFragment : Fragment() {
                     find<SMClassPerformanceFragment>(
                         "studentInfo" to selectedItem,
                         "performanceInfo" to performanceInfo,
-                        "classId" to classModel.id.value)
+                        "classInfo" to classModel.item)
                         .openModal()
                 }
             }
@@ -126,7 +126,7 @@ class SMClassStudentPerformanceListFragment : Fragment() {
                     find<SMClassPerformanceFragment>(
                         "studentInfo" to selectedItem,
                         "performanceInfo" to performanceInfo,
-                        "classId" to classModel.id.value)
+                        "classInfo" to classModel.item)
                         .openModal()
                 }
             }

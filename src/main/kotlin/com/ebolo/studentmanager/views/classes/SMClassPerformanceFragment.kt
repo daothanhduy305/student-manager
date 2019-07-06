@@ -1,6 +1,7 @@
 package com.ebolo.studentmanager.views.classes
 
 import com.ebolo.studentmanager.entities.SMStudentPerformanceInfo
+import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.models.SMStudentModel
 import com.ebolo.studentmanager.models.SMStudentPerformanceModel
 import com.ebolo.studentmanager.services.SMGlobal
@@ -18,7 +19,7 @@ class SMClassPerformanceFragment : Fragment(SMGlobal.APP_NAME) {
 
     private val studentInfo: SMStudentModel.SMStudentDto by param()
     private val performanceInfo: SMStudentPerformanceInfo by param()
-    private val classId: String by param()
+    private val classInfo: SMClassModel.SMClassDto by param()
 
     private val performanceInfoModel by lazy {
         SMStudentPerformanceModel(SMStudentPerformanceModel.SMStudentPerformanceDto(performanceInfo))
@@ -44,7 +45,7 @@ class SMClassPerformanceFragment : Fragment(SMGlobal.APP_NAME) {
                     vbox {
                         spacing = 20.0
 
-                        for (i in 0 until performanceInfo.results.size) {
+                        for (i in 0 until classInfo.numberOfExams.toInt()) {
                             field("Cột điểm ${i + 1}") {
                                 this += JFXTextField().apply {
                                     bind(performanceInfoModel.item.resultsPropertyList[i])
@@ -117,7 +118,7 @@ class SMClassPerformanceFragment : Fragment(SMGlobal.APP_NAME) {
                 action {
                     runAsync {
                         with(serviceCentral.classService) {
-                            studentInfo.updatePerformanceInfo(classId, performanceInfoModel.toEntity())
+                            studentInfo.updatePerformanceInfo(classInfo.id, performanceInfoModel.toEntity())
                         }
                     }.ui { modalStage?.close() }
                 }
