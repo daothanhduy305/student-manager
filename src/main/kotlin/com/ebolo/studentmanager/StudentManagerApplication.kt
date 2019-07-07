@@ -37,6 +37,7 @@ class StudentManagerApplication : App(SMInitFragment::class) {
         importStylesheet(javaClass.getResource("/css/jfx-table-view.css").toExternalForm())
         importStylesheet(javaClass.getResource("/css/jfx-tab-pane.css").toExternalForm())
         importStylesheet(javaClass.getResource("/css/jfx-hamburger.css").toExternalForm())
+        importStylesheet(javaClass.getResource("/css/jfx-generic.css").toExternalForm())
 
         currentApplication = this
     }

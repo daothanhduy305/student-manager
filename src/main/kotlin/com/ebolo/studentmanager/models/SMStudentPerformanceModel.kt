@@ -3,7 +3,10 @@ package com.ebolo.studentmanager.models
 import com.ebolo.studentmanager.entities.SMStudentPerformanceInfo
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
-import tornadofx.*
+import tornadofx.ItemViewModel
+import tornadofx.getProperty
+import tornadofx.isInt
+import tornadofx.property
 import java.time.LocalDate
 import java.time.ZoneOffset
 
@@ -25,11 +28,12 @@ class SMStudentPerformanceModel(
         var startDate by property<LocalDate>()
         fun startDateProperty() = getProperty(SMStudentPerformanceDto::startDate)
 
-        val resultsPropertyList: List<StringProperty>
+        val resultsPropertyList: MutableList<StringProperty> = performanceInfo
+            .results
+            .map { SimpleStringProperty(if (it > -1) it.toString() else "") }
+            .toMutableList()
 
         init {
-            resultsPropertyList = performanceInfo.results.map { SimpleStringProperty(if (it > -1) it.toString() else "") }
-
             startDateProperty().value = performanceInfo.startDate?.atOffset(ZoneOffset.UTC)?.toLocalDate()
             noteProperty().value = performanceInfo.note
         }

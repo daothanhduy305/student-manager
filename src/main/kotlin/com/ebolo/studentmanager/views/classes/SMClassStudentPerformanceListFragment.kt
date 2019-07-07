@@ -19,16 +19,17 @@ class SMClassStudentPerformanceListFragment : Fragment() {
 
     override val root = tableview(classModel.studentList) {
         isEditable = true
+        prefWidth = 600.0
 
         makeIndexColumn("STT").apply {
             style {
                 alignment = Pos.TOP_CENTER
             }
-        }.contentWidth(padding = 30.0)
+        }.weightedWidth(1, 30.0, true)
 
-        readonlyColumn("Họ và tên lót", SMStudentModel.SMStudentDto::lastName).weightedWidth(2, 20.0, true)
+        readonlyColumn("Họ và tên lót", SMStudentModel.SMStudentDto::lastName).weightedWidth(5, 20.0, true)
 
-        readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName).weightedWidth(2, 20.0, true)
+        readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName).weightedWidth(5, 20.0, true)
 
         // Dynamically add the result columns
         for (i in 0 until classModel.numberOfExams.value.toInt()) {
@@ -44,7 +45,7 @@ class SMClassStudentPerformanceListFragment : Fragment() {
                     }
 
                     SimpleIntegerProperty(
-                        if (performanceInfo != null) performanceInfo.results[i]
+                        if (performanceInfo != null && i < performanceInfo.results.size) performanceInfo.results[i]
                         else -1
                     ).observable(
                         getter = SimpleIntegerProperty::get,
@@ -82,7 +83,7 @@ class SMClassStudentPerformanceListFragment : Fragment() {
                 style {
                     alignment = Pos.TOP_CENTER
                 }
-            }.weightedWidth(1, 20.0, true)
+            }.weightedWidth(2, 20.0, true)
         }
 
         smartResize()

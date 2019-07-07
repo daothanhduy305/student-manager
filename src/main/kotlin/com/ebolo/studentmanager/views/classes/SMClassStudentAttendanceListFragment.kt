@@ -54,11 +54,11 @@ class SMClassStudentAttendanceListFragment : Fragment() {
                     style {
                         alignment = Pos.TOP_CENTER
                     }
-                }.contentWidth(padding = 30.0)
+                }.weightedWidth(1, 30.0, true)
 
-                readonlyColumn("Họ và tên lót", SMStudentModel.SMStudentDto::lastName).weightedWidth(2, 20.0, true)
+                readonlyColumn("Họ và tên lót", SMStudentModel.SMStudentDto::lastName).weightedWidth(5, 20.0, true)
 
-                readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName).weightedWidth(2, 20.0, true)
+                readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName).weightedWidth(5, 20.0, true)
 
                 column<SMStudentModel.SMStudentDto, Boolean>("Điểm danh", "attendance") {
                     cellFactory = JFXCheckboxTableCell.forTableColumn { studentDto, value ->
@@ -98,7 +98,7 @@ class SMClassStudentAttendanceListFragment : Fragment() {
                     style {
                         alignment = Pos.TOP_CENTER
                     }
-                }.weightedWidth(1, 20.0, true)
+                }.weightedWidth(2, 20.0, true)
 
                 column<SMStudentModel.SMStudentDto, Int>("Số ngày nghỉ", "absence") {
                     setCellValueFactory { cellData ->
@@ -116,7 +116,7 @@ class SMClassStudentAttendanceListFragment : Fragment() {
                     style {
                         alignment = Pos.TOP_CENTER
                     }
-                }.weightedWidth(1, 20.0, true)
+                }.weightedWidth(2, 20.0, true)
 
                 smartResize()
 

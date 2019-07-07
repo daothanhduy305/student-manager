@@ -6,12 +6,13 @@ import com.ebolo.studentmanager.models.SMStudentModel
 import com.ebolo.studentmanager.models.SMStudentPerformanceModel
 import com.ebolo.studentmanager.services.SMGlobal
 import com.ebolo.studentmanager.services.SMServiceCentral
-import com.jfoenix.controls.JFXButton
-import com.jfoenix.controls.JFXDatePicker
-import com.jfoenix.controls.JFXTextArea
-import com.jfoenix.controls.JFXTextField
+import com.jfoenix.controls.*
+import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
+import javafx.scene.control.Label
+import javafx.scene.control.ScrollPane
+import javafx.scene.layout.VBox
 import tornadofx.*
 
 class SMClassPerformanceFragment : Fragment(SMGlobal.APP_NAME) {
@@ -22,7 +23,15 @@ class SMClassPerformanceFragment : Fragment(SMGlobal.APP_NAME) {
     private val classInfo: SMClassModel.SMClassDto by param()
 
     private val performanceInfoModel by lazy {
-        SMStudentPerformanceModel(SMStudentPerformanceModel.SMStudentPerformanceDto(performanceInfo))
+        val info = SMStudentPerformanceModel.SMStudentPerformanceDto(performanceInfo)
+
+        if (classInfo.numberOfExams.toInt() > info.resultsPropertyList.size) {
+            for (i in info.resultsPropertyList.size until classInfo.numberOfExams.toInt()) {
+                info.resultsPropertyList.add(SimpleStringProperty(""))
+            }
+        }
+
+        SMStudentPerformanceModel(info)
     }
 
     override val root = vbox {
@@ -40,18 +49,31 @@ class SMClassPerformanceFragment : Fragment(SMGlobal.APP_NAME) {
         form {
             fieldset(labelPosition = Orientation.VERTICAL) {
                 hbox {
-                    spacing = 30.0
+                    this += JFXScrollPane().apply {
+                        maxHeight = 500.0
 
-                    vbox {
-                        spacing = 20.0
+                        stackpane {
+                            this += JFXListView<VBox>().apply {
+                                styleClass.add("mylistview")
 
-                        for (i in 0 until classInfo.numberOfExams.toInt()) {
-                            field("Cột điểm ${i + 1}") {
-                                this += JFXTextField().apply {
-                                    bind(performanceInfoModel.item.resultsPropertyList[i])
+                                for (i in 0 until classInfo.numberOfExams.toInt()) {
+                                    items.add(VBox().apply {
+                                        children.addAll(
+                                            Label("Cột điểm ${i + 1}").apply {
+                                                style {
+                                                    textFill = c("#000")
+                                                }
+                                            },
+                                            JFXTextField().apply {
+                                                bind(performanceInfoModel.item.resultsPropertyList[i])
+                                            }
+                                        )
+                                    })
                                 }
                             }
                         }
+
+                        JFXScrollPane.smoothScrolling(this.children[0] as ScrollPane)
                     }
 
                     pane {
@@ -67,6 +89,7 @@ class SMClassPerformanceFragment : Fragment(SMGlobal.APP_NAME) {
                     }
 
                     vbox {
+                        paddingLeft = 30
                         spacing = 20.0
 
                         field("Ngày bắt đầu") {
@@ -89,7 +112,7 @@ class SMClassPerformanceFragment : Fragment(SMGlobal.APP_NAME) {
         }
 
         hbox(spacing = 20) {
-            alignment = Pos.BOTTOM_RIGHT
+            alignment = Pos.TOP_RIGHT
             spacing = 20.0
             paddingVertical = 20
 
