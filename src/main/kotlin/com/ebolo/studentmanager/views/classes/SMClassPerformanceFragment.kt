@@ -37,6 +37,10 @@ class SMClassPerformanceFragment : Fragment(SMGlobal.APP_NAME) {
     override val root = vbox {
         paddingAll = 20
 
+        style {
+            backgroundColor += c("#fff")
+        }
+
         label("Thông tin cho học viên ${studentInfo.lastName} ${studentInfo.firstName}") {
             paddingLeft = 10
             paddingBottom = 30
