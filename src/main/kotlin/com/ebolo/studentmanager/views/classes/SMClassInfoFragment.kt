@@ -45,6 +45,10 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
     private val isProcessing = SimpleBooleanProperty(false)
 
     override val root = stackpane {
+        title = when (mode) {
+            SMCRUDUtils.CRUDMode.NEW -> "Thêm lớp mới"
+            else -> "Thông tin lớp ${classModel.name.value}"
+        }
 
         style {
             backgroundColor += c("#fff")

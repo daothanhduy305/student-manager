@@ -27,6 +27,11 @@ class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
     override val root = form {
         paddingAll = 20
 
+        title = when (mode) {
+            SMCRUDUtils.CRUDMode.NEW -> "Thêm giáo viên"
+            else -> "Thông tin giáo viên ${teacherModel.lastName.value} ${teacherModel.firstName.value}"
+        }
+
         style {
             backgroundColor += c("#fff")
         }

@@ -43,10 +43,19 @@ class SMClassPerformanceFragment : Fragment(SMGlobal.APP_NAME) {
 
         label("Thông tin cho học viên ${studentInfo.lastName} ${studentInfo.firstName}") {
             paddingLeft = 10
-            paddingBottom = 30
+            paddingBottom = 15
 
             style {
                 fontSize = Dimension(18.0, Dimension.LinearUnits.pt)
+            }
+        }
+
+        label("Lớp: ${classInfo.name}") {
+            paddingLeft = 10
+            paddingBottom = 30
+
+            style {
+                fontSize = Dimension(16.0, Dimension.LinearUnits.pt)
             }
         }
 

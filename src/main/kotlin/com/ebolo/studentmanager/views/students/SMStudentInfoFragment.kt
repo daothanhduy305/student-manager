@@ -25,6 +25,10 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
     private val isProcessing = SimpleBooleanProperty(false)
 
     override val root = stackpane {
+        title = when (mode) {
+            SMCRUDUtils.CRUDMode.NEW -> "Thêm học viên"
+            else -> "Thông tin học viên ${studentModel.lastName.value} ${studentModel.firstName.value}"
+        }
 
         style {
             backgroundColor += c("#fff")
