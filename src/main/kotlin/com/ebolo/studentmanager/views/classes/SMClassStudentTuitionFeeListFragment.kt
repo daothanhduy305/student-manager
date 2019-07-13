@@ -10,6 +10,7 @@ import com.ebolo.studentmanager.views.utils.ui.tableview.JFXDatePickerTableCell
 import com.ebolo.studentmanager.views.utils.ui.tableview.eboloObservable
 import com.jfoenix.controls.JFXDatePicker
 import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
@@ -20,7 +21,7 @@ import java.time.LocalDate
 import java.time.ZoneOffset
 
 class SMClassStudentTuitionFeeListFragment : Fragment() {
-    val paymentDateColumnId = "paymentDateColumn"
+    private val paymentDateColumnId = "paymentDateColumn"
 
     private val logger = loggerFor(SMClassStudentTuitionFeeListFragment::class.java)
     private val serviceCentral: SMServiceCentral by di()
@@ -149,6 +150,25 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
                             .eboloObservable(
                                 getter = SimpleObjectProperty<LocalDate?>::get,
                                 setter = SimpleObjectProperty<LocalDate?>::set,
+                                propertyName = "value"
+                            )
+                    }
+
+                    style {
+                        alignment = Pos.TOP_CENTER
+                    }
+                }.weightedWidth(5, 20.0, true)
+
+                column<SMStudentModel.SMStudentDto, Int>("Số tháng đã đóng", "totalPaymentMade") {
+                    setCellValueFactory { cellData ->
+                        val totalMade = paymentInfoList.count { info ->
+                            info.studentId == cellData.value.id
+                        }
+
+                        SimpleIntegerProperty(totalMade)
+                            .observable(
+                                getter = SimpleIntegerProperty::get,
+                                setter = SimpleIntegerProperty::set,
                                 propertyName = "value"
                             )
                     }
