@@ -78,6 +78,7 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
                                         classModel.item.deleteFeePaidInfo(studentDto.id, choosingDate.value)
                                     }
                                 }
+                                fire(SMFeePaidRefreshRequest(classModel.item.id, studentDto.id))
                             } ui {
                                 val columnIndex = tableView.columns.indexOfFirst { it.id == paymentDateColumnId }
                                 val rowIndex = classModel.studentList.value.indexOfFirst { it.id == studentDto.id }

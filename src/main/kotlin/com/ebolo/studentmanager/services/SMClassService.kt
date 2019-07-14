@@ -416,7 +416,7 @@ class SMClassService(
         val paymentList = mutableListOf<Pair<LocalDate, Boolean>>()
         var currentDate = this.startDate
 
-        (0..this.monthPeriods.toInt()).forEach { month ->
+        (1..this.monthPeriods.toInt()).forEach { _ ->
             val paymentMadeForThisMonth = madePayments
                 .firstOrNull { payment -> payment.year == currentDate.year && payment.month == currentDate.month }
             paymentList.add(currentDate to (paymentMadeForThisMonth != null))
