@@ -26,6 +26,7 @@ class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
 
     override val root = form {
         paddingAll = 20
+        prefWidth = 500.0
 
         title = when (mode) {
             SMCRUDUtils.CRUDMode.NEW -> "Thêm giáo viên"
