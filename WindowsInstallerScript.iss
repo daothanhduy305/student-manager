@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Student Manager"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.0.4"
 #define MyAppPublisher "Ebolo"
 #define MyAppExeName "student-manager.exe"
 
@@ -21,9 +21,9 @@ UsedUserAreasWarning=no
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-OutputDir=C:\Users\daoth\Desktop
-OutputBaseFilename=Student Manager v1.0.0
-SetupIconFile=C:\Users\daoth\IdeaProjects\student-manager\StudentManager.ico
+OutputDir=..\..\Desktop
+OutputBaseFilename=Student Manager v1.0.4
+SetupIconFile=.\StudentManager.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -36,7 +36,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 6.1; Check: not IsAdminInstallMode
 
 [Files]
-Source: "C:\Users\daoth\IdeaProjects\student-manager\build\launch4j\student-manager.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "build\launch4j\student-manager.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
