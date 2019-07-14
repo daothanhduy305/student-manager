@@ -234,19 +234,6 @@ class SMClassPerformanceFragment : Fragment(SMGlobal.APP_NAME) {
                     }.weightedWidth(8, 20.0, true)
 
                     smartResize()
-
-                    /*subscribe<SMFeePaidRefreshRequest> { request ->
-                        val classId = request.classId
-                        val studentId = request.studentId
-
-                        if (classId == classInfo.id && studentId == studentInfo.id) {
-                            asyncItems {
-                                with(serviceCentral.classService) {
-                                    classInfo.getTuitionFeePaymentInfo(studentInfo.id)
-                                }.observable()
-                            }
-                        }
-                    }*/
                 }
             }
         }
