@@ -4,9 +4,12 @@ import com.ebolo.studentmanager.entities.SMStudentPerformanceInfo
 import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.models.SMStudentModel
 import com.ebolo.studentmanager.models.SMStudentPerformanceModel
+import com.ebolo.studentmanager.services.SMFeePaidRefreshRequest
 import com.ebolo.studentmanager.services.SMGlobal
 import com.ebolo.studentmanager.services.SMServiceCentral
+import com.ebolo.studentmanager.views.utils.ui.tableview.JFXCheckboxTableCell
 import com.jfoenix.controls.*
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
@@ -14,6 +17,7 @@ import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
 import javafx.scene.layout.VBox
 import tornadofx.*
+import java.time.LocalDate
 
 class SMClassPerformanceFragment : Fragment(SMGlobal.APP_NAME) {
     private val serviceCentral: SMServiceCentral by di()
@@ -34,129 +38,215 @@ class SMClassPerformanceFragment : Fragment(SMGlobal.APP_NAME) {
         SMStudentPerformanceModel(info)
     }
 
-    override val root = vbox {
-        paddingAll = 20
+    private val tuitionFeeStatus by lazy {
+        with(serviceCentral.classService) {
+            classInfo.getTuitionFeePaymentInfo(studentInfo.id).observable()
+        }.observable()
+    }
 
+    override val root = stackpane {
         style {
             backgroundColor += c("#fff")
         }
 
-        label("Thông tin cho học viên ${studentInfo.lastName} ${studentInfo.firstName}") {
-            paddingLeft = 10
-            paddingBottom = 15
+        this += JFXTabPane().apply {
+            tab("Học lực") {
+                vbox {
+                    paddingAll = 20
 
-            style {
-                fontSize = Dimension(18.0, Dimension.LinearUnits.pt)
-            }
-        }
+                    label("Thông tin cho học viên ${studentInfo.lastName} ${studentInfo.firstName}") {
+                        paddingLeft = 10
+                        paddingBottom = 15
 
-        label("Lớp: ${classInfo.name}") {
-            paddingLeft = 10
-            paddingBottom = 30
+                        style {
+                            fontSize = Dimension(18.0, Dimension.LinearUnits.pt)
+                        }
+                    }
 
-            style {
-                fontSize = Dimension(16.0, Dimension.LinearUnits.pt)
-            }
-        }
+                    label("Lớp: ${classInfo.name}") {
+                        paddingLeft = 10
+                        paddingBottom = 30
 
-        form {
-            fieldset(labelPosition = Orientation.VERTICAL) {
-                hbox {
-                    this += JFXScrollPane().apply {
-                        maxHeight = 500.0
+                        style {
+                            fontSize = Dimension(16.0, Dimension.LinearUnits.pt)
+                        }
+                    }
 
-                        stackpane {
-                            this += JFXListView<VBox>().apply {
-                                styleClass.add("mylistview")
+                    form {
+                        fieldset(labelPosition = Orientation.VERTICAL) {
+                            hbox {
+                                this += JFXScrollPane().apply {
+                                    maxHeight = 500.0
 
-                                for (i in 0 until classInfo.numberOfExams.toInt()) {
-                                    items.add(VBox().apply {
-                                        children.addAll(
-                                            Label("Cột điểm ${i + 1}").apply {
-                                                style {
-                                                    textFill = c("#000")
-                                                }
-                                            },
-                                            JFXTextField().apply {
-                                                bind(performanceInfoModel.item.resultsPropertyList[i])
+                                    stackpane {
+                                        this += JFXListView<VBox>().apply {
+                                            styleClass.add("mylistview")
+
+                                            for (i in 0 until classInfo.numberOfExams.toInt()) {
+                                                items.add(VBox().apply {
+                                                    children.addAll(
+                                                        Label("Cột điểm ${i + 1}").apply {
+                                                            style {
+                                                                textFill = c("#000")
+                                                            }
+                                                        },
+                                                        JFXTextField().apply {
+                                                            bind(performanceInfoModel.item.resultsPropertyList[i])
+                                                        }
+                                                    )
+                                                })
                                             }
-                                        )
-                                    })
+                                        }
+                                    }
+
+                                    JFXScrollPane.smoothScrolling(this.children[0] as ScrollPane)
+                                }
+
+                                pane {
+                                    minWidth = 1.0
+                                    prefWidth = 1.0
+                                    maxWidth = 1.0
+
+                                    fitToParentHeight()
+
+                                    style {
+                                        backgroundColor += c("#ccc")
+                                    }
+                                }
+
+                                vbox {
+                                    paddingLeft = 30
+                                    spacing = 20.0
+
+                                    field("Ngày bắt đầu") {
+                                        this += JFXDatePicker().apply {
+                                            bind(performanceInfoModel.startDate)
+
+                                            defaultColor = c("#3f51b5")
+                                            isOverLay = false
+                                        }
+                                    }
+
+                                    field("Nhận xét") {
+                                        this += JFXTextArea().apply {
+                                            bind(performanceInfoModel.note)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    hbox(spacing = 20) {
+                        alignment = Pos.TOP_RIGHT
+                        spacing = 20.0
+                        paddingVertical = 20
+
+                        this += JFXButton("Hủy bỏ").apply {
+                            buttonType = JFXButton.ButtonType.RAISED
+                            paddingVertical = 15
+                            paddingHorizontal = 30
+
+                            action { modalStage?.close() }
+
+                            style {
+                                backgroundColor += c("#ff5533")
+                                textFill = c("#fff")
+                            }
+                        }
+
+                        this += JFXButton("Lưu lại").apply {
+                            buttonType = JFXButton.ButtonType.RAISED
+                            paddingVertical = 15
+                            paddingHorizontal = 30
+
+                            style {
+                                backgroundColor += c("#ffffff")
+                            }
+
+                            action {
+                                runAsync {
+                                    with(serviceCentral.classService) {
+                                        studentInfo.updatePerformanceInfo(classInfo.id, performanceInfoModel.toEntity())
+                                    }
+                                }.ui { modalStage?.close() }
+                            }
+                        }
+                    }
+                }
+            }
+
+            tab("Học phí") {
+                tableview(tuitionFeeStatus) {
+                    makeIndexColumn("STT").apply {
+                        style {
+                            alignment = Pos.TOP_CENTER
+                        }
+                    }.weightedWidth(1, 30.0, true)
+
+                    column<Pair<LocalDate, Boolean>, Boolean>("Đã đóng", "payment") {
+                        cellFactory = JFXCheckboxTableCell.forTableColumn { info, value ->
+                            if (info != null) {
+                                runAsync {
+                                    with(serviceCentral.classService) {
+                                        if (value) {
+                                            classInfo.addFeePaidInfo(studentInfo.id, info.first)
+                                        } else {
+                                            classInfo.deleteFeePaidInfo(studentInfo.id, info.first)
+                                        }
+                                    }
+                                    fire(SMFeePaidRefreshRequest(classInfo.id, studentInfo.id))
                                 }
                             }
                         }
 
-                        JFXScrollPane.smoothScrolling(this.children[0] as ScrollPane)
-                    }
-
-                    pane {
-                        minWidth = 1.0
-                        prefWidth = 1.0
-                        maxWidth = 1.0
-
-                        fitToParentHeight()
+                        setCellValueFactory { cellData ->
+                            SimpleBooleanProperty(cellData.value.second)
+                                .observable(
+                                    getter = SimpleBooleanProperty::get,
+                                    setter = SimpleBooleanProperty::set,
+                                    propertyName = "value",
+                                    propertyType = Boolean::class
+                                )
+                        }
 
                         style {
-                            backgroundColor += c("#ccc")
+                            alignment = Pos.TOP_CENTER
                         }
-                    }
+                    }.weightedWidth(1, 20.0, true)
 
-                    vbox {
-                        paddingLeft = 30
-                        spacing = 20.0
+                    column<Pair<LocalDate, Boolean>, String>("", "time") {
+                        setCellValueFactory { cellData ->
+                            val month = cellData.value.first.month.value
+                            val year = cellData.value.first.year
+                            SimpleStringProperty("Tháng $month, năm $year")
+                                .observable(
+                                    getter = SimpleStringProperty::get,
+                                    setter = SimpleStringProperty::set,
+                                    propertyName = "value",
+                                    propertyType = String::class
+                                )
+                        }
 
-                        field("Ngày bắt đầu") {
-                            this += JFXDatePicker().apply {
-                                bind(performanceInfoModel.startDate)
+                        style {
+                            alignment = Pos.TOP_LEFT
+                        }
+                    }.weightedWidth(8, 20.0, true)
 
-                                defaultColor = c("#3f51b5")
-                                isOverLay = false
+                    smartResize()
+
+                    /*subscribe<SMFeePaidRefreshRequest> { request ->
+                        val classId = request.classId
+                        val studentId = request.studentId
+
+                        if (classId == classInfo.id && studentId == studentInfo.id) {
+                            asyncItems {
+                                with(serviceCentral.classService) {
+                                    classInfo.getTuitionFeePaymentInfo(studentInfo.id)
+                                }.observable()
                             }
                         }
-
-                        field("Nhận xét") {
-                            this += JFXTextArea().apply {
-                                bind(performanceInfoModel.note)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        hbox(spacing = 20) {
-            alignment = Pos.TOP_RIGHT
-            spacing = 20.0
-            paddingVertical = 20
-
-            this += JFXButton("Hủy bỏ").apply {
-                buttonType = JFXButton.ButtonType.RAISED
-                paddingVertical = 15
-                paddingHorizontal = 30
-
-                action { modalStage?.close() }
-
-                style {
-                    backgroundColor += c("#ff5533")
-                    textFill = c("#fff")
-                }
-            }
-
-            this += JFXButton("Lưu lại").apply {
-                buttonType = JFXButton.ButtonType.RAISED
-                paddingVertical = 15
-                paddingHorizontal = 30
-
-                style {
-                    backgroundColor += c("#ffffff")
-                }
-
-                action {
-                    runAsync {
-                        with(serviceCentral.classService) {
-                            studentInfo.updatePerformanceInfo(classInfo.id, performanceInfoModel.toEntity())
-                        }
-                    }.ui { modalStage?.close() }
+                    }*/
                 }
             }
         }

@@ -401,6 +401,30 @@ class SMClassService(
      */
     fun SMClassModel.SMClassDto.getTuitionFeePaymentInfo(forDate: LocalDate): List<SMFeePaidEntity> = feePaidRepository
         .findAllByClassIdAndYearAndMonthAndDisabledFalse(this.id, forDate.year, forDate.month)
+
+    /**
+     * Method to retrieve the current status of the tution fee paid for a specific student
+     *
+     * @author ebolo
+     * @since 1.0.3
+     *
+     * @receiver SMClassModel.SMClassDto
+     * @param studentId String
+     */
+    fun SMClassModel.SMClassDto.getTuitionFeePaymentInfo(studentId: String): List<Pair<LocalDate, Boolean>> {
+        val madePayments = feePaidRepository.findAllByClassIdAndStudentId(this.id, studentId)
+        val paymentList = mutableListOf<Pair<LocalDate, Boolean>>()
+        var currentDate = this.startDate
+
+        (0..this.monthPeriods.toInt()).forEach { month ->
+            val paymentMadeForThisMonth = madePayments
+                .firstOrNull { payment -> payment.year == currentDate.year && payment.month == currentDate.month }
+            paymentList.add(currentDate to (paymentMadeForThisMonth != null))
+            currentDate = currentDate.plusMonths(1)
+        }
+
+        return paymentList
+    }
 }
 
 /**
@@ -434,3 +458,16 @@ class SMClassRefreshEvent(val classDto: SMClassModel.SMClassDto) : FXEvent()
  * @since 0.0.1-SNAPSHOT
  */
 class SMAttendanceListRefreshRequest(val classId: String) : FXEvent(EventBus.RunOn.BackgroundThread)
+
+
+/**
+ * Request to be thrown out when a fee payment info has been changed
+ *
+ * @author ebolo
+ * @since 1.0.3
+ *
+ * @property classId String?
+ * @property studentId String?
+ * @constructor
+ */
+class SMFeePaidRefreshRequest(val classId: String?, val studentId: String?) : FXEvent(EventBus.RunOn.BackgroundThread)

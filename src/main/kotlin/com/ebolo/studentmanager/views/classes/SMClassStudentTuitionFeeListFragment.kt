@@ -4,6 +4,7 @@ import com.ebolo.studentmanager.ebolo.utils.loggerFor
 import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.models.SMStudentModel
 import com.ebolo.studentmanager.services.SMClassRefreshEvent
+import com.ebolo.studentmanager.services.SMFeePaidRefreshRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.views.utils.ui.tableview.JFXCheckboxTableCell
 import com.ebolo.studentmanager.views.utils.ui.tableview.JFXDatePickerTableCell
@@ -193,6 +194,23 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
 
                 }
 
+                subscribe<SMFeePaidRefreshRequest> { request ->
+                    val classId = request.classId
+
+                    if (classId == classModel.id.value) {
+                        runAsync {
+                            with(serviceCentral.classService) {
+                                val date = LocalDate.now()
+                                val classDto = classModel.item
+                                classDto.getTuitionFeePaymentInfo(date)
+                            }
+                        } ui {
+                            paymentInfoList.setAll(it)
+                            refresh()
+                        }
+                    }
+                }
+
                 choosingDate.addListener { _, oldValue, newValue ->
                     runAsync {
                         logger.info("Changing the date from $oldValue to $newValue. Refreshing data...")
@@ -201,7 +219,7 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
                             with(serviceCentral.classService) {
                                 val classDto = classModel.item
                                 classDto.getTuitionFeePaymentInfo(newValue)
-                            }.observable()
+                            }
                         )
                     }.ui { refresh() }
                 }

@@ -52,4 +52,15 @@ public interface SMFeePaidRepository extends EboloBaseMongoRepository<SMFeePaidE
      * @since 0.0.1-SNAPSHOT
      */
     List<SMFeePaidEntity> findAllByClassIdInAndDisabledFalse(final List<String> classIds);
+
+    /**
+     * Method to retrieve all the payment info made by a student for a class
+     *
+     * @param classId   id of the class that this student is in
+     * @param studentId id of the student in request
+     * @return list of payment made
+     * @author ebolo
+     * @since 1.0.3
+     */
+    List<SMFeePaidEntity> findAllByClassIdAndStudentId(final String classId, final String studentId);
 }
