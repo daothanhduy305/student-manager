@@ -15,6 +15,7 @@ import de.jensd.fx.glyphs.materialicons.MaterialIconView
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleLongProperty
+import javafx.event.EventHandler
 import javafx.event.EventTarget
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
@@ -105,7 +106,7 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                                 fill = c("#3f51b5")
                                                 glyphSize = 24
 
-                                                onMouseClicked = {
+                                                onMouseClicked = EventHandler {
                                                     find<SMSubjectInfoFragment>().openModal()
                                                 }
                                             }
@@ -143,7 +144,7 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                                 fill = c("#3f51b5")
                                                 glyphSize = 24
 
-                                                onMouseClicked = {
+                                                onMouseClicked = EventHandler {
                                                     find<SMTeacherInfoFragment>().openModal()
                                                 }
                                             }

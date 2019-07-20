@@ -15,6 +15,7 @@ import javafx.geometry.Pos
 import javafx.scene.control.ButtonType
 import javafx.scene.control.DateCell
 import javafx.scene.layout.Priority
+import javafx.util.Callback
 import tornadofx.*
 import java.time.LocalDate
 
@@ -65,7 +66,7 @@ class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
                         this += JFXDatePicker().apply {
                             bind(teacherModel.birthday)
 
-                            dayCellFactory = {
+                            dayCellFactory = Callback {
                                 object : DateCell() {
                                     override fun updateItem(item: LocalDate?, empty: Boolean) {
                                         super.updateItem(item, empty)

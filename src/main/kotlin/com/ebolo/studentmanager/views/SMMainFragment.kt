@@ -19,6 +19,7 @@ import de.jensd.fx.glyphs.materialicons.MaterialIcon
 import de.jensd.fx.glyphs.materialicons.MaterialIconView
 import javafx.application.Platform
 import javafx.beans.property.SimpleStringProperty
+import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.Label
@@ -68,11 +69,9 @@ class SMMainFragment : Fragment("Student Manager") {
                                 rate = -1.0
                             }
 
-                            onMouseClicked = {
+                            onMouseClicked = EventHandler {
                                 drawer.toggle()
-
                                 backTransition.rate = if (drawer.isOpened || drawer.isOpening) 1.0 else -1.0
-
                                 backTransition.play()
                             }
                         }
@@ -97,7 +96,7 @@ class SMMainFragment : Fragment("Student Manager") {
                                 fill = c("#fff")
                                 glyphSize = 36
 
-                                onMouseClicked = {
+                                onMouseClicked = EventHandler {
                                     JFXPopup().apply contextualMenu@{
                                         popupContent = vbox {
                                             /**
@@ -264,7 +263,7 @@ class SMMainFragment : Fragment("Student Manager") {
                     })
 
                     // This is for when the user click outside the drawer
-                    onDrawerClosing = {
+                    onDrawerClosing = EventHandler {
                         if (backTransition.rate != -1.0) {
                             backTransition.rate = -1.0
                             backTransition.play()
