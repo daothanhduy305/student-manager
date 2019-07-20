@@ -7,6 +7,7 @@ import com.ebolo.studentmanager.models.SMStudentPerformanceModel
 import com.ebolo.studentmanager.services.SMFeePaidRefreshRequest
 import com.ebolo.studentmanager.services.SMGlobal
 import com.ebolo.studentmanager.services.SMServiceCentral
+import com.ebolo.studentmanager.services.SMTheme
 import com.ebolo.studentmanager.views.utils.ui.tableview.JFXCheckboxTableCell
 import com.jfoenix.controls.*
 import javafx.beans.property.SimpleBooleanProperty
@@ -150,7 +151,7 @@ class SMClassPerformanceFragment : Fragment(SMGlobal.APP_NAME) {
                             action { modalStage?.close() }
 
                             style {
-                                backgroundColor += c("#ff5533")
+                                backgroundColor += c(SMTheme.CANCEL_BUTTON_COLOR)
                                 textFill = c("#fff")
                             }
                         }

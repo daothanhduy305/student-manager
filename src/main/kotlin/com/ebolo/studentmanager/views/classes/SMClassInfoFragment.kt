@@ -3,10 +3,7 @@ package com.ebolo.studentmanager.views.classes
 import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.models.SMStudentModel
-import com.ebolo.studentmanager.services.SMClassListRefreshRequest
-import com.ebolo.studentmanager.services.SMServiceCentral
-import com.ebolo.studentmanager.services.SMSubjectRefreshEvent
-import com.ebolo.studentmanager.services.SMTeacherRefreshEvent
+import com.ebolo.studentmanager.services.*
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.ebolo.studentmanager.utils.formatDecimal
 import com.ebolo.studentmanager.utils.isFormattedLong
@@ -108,7 +105,7 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                                 fill = c("#3f51b5")
                                                 glyphSize = 24
 
-                                                setOnMouseClicked {
+                                                onMouseClicked = {
                                                     find<SMSubjectInfoFragment>().openModal()
                                                 }
                                             }
@@ -146,7 +143,7 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                                 fill = c("#3f51b5")
                                                 glyphSize = 24
 
-                                                setOnMouseClicked {
+                                                onMouseClicked = {
                                                     find<SMTeacherInfoFragment>().openModal()
                                                 }
                                             }
@@ -364,7 +361,7 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
                                 enableWhen(isProcessing.not())
 
                                 style {
-                                    backgroundColor += c("#ff5533")
+                                    backgroundColor += c(SMTheme.CANCEL_BUTTON_COLOR)
                                     textFill = c("#fff")
                                 }
                             }

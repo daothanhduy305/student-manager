@@ -59,7 +59,7 @@ class SMMainFragment : Fragment("Student Manager") {
                         paddingAll = 20
 
                         style {
-                            backgroundColor += c("#3f51b5")
+                            backgroundColor += c("#333")
                         }
 
                         // region left
@@ -68,7 +68,7 @@ class SMMainFragment : Fragment("Student Manager") {
                                 rate = -1.0
                             }
 
-                            setOnMouseClicked {
+                            onMouseClicked = {
                                 drawer.toggle()
 
                                 backTransition.rate = if (drawer.isOpened || drawer.isOpening) 1.0 else -1.0
@@ -97,7 +97,7 @@ class SMMainFragment : Fragment("Student Manager") {
                                 fill = c("#fff")
                                 glyphSize = 36
 
-                                setOnMouseClicked {
+                                onMouseClicked = {
                                     JFXPopup().apply contextualMenu@{
                                         popupContent = vbox {
                                             /**
@@ -264,7 +264,7 @@ class SMMainFragment : Fragment("Student Manager") {
                     })
 
                     // This is for when the user click outside the drawer
-                    setOnDrawerClosing {
+                    onDrawerClosing = {
                         if (backTransition.rate != -1.0) {
                             backTransition.rate = -1.0
                             backTransition.play()

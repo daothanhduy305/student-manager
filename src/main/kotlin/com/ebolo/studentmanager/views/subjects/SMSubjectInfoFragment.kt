@@ -2,6 +2,7 @@ package com.ebolo.studentmanager.views.subjects
 
 import com.ebolo.studentmanager.models.SMSubjectModel
 import com.ebolo.studentmanager.services.SMServiceCentral
+import com.ebolo.studentmanager.services.SMTheme
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXTextField
@@ -62,7 +63,7 @@ class SMSubjectInfoFragment : Fragment() {
                         paddingHorizontal = 30
 
                         style {
-                            backgroundColor += c("#ff5533")
+                            backgroundColor += c(SMTheme.CANCEL_BUTTON_COLOR)
                             textFill = c("#fff")
                         }
 

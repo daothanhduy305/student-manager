@@ -2,6 +2,7 @@ package com.ebolo.studentmanager.views.settings
 
 import com.ebolo.studentmanager.ebolo.utils.loggerFor
 import com.ebolo.studentmanager.services.SMGlobal
+import com.ebolo.studentmanager.services.SMTheme
 import com.ebolo.studentmanager.services.Settings
 import com.ebolo.studentmanager.utils.formatDecimal
 import com.ebolo.studentmanager.utils.isFormattedLong
@@ -134,7 +135,7 @@ class SMSettingsGeneralFragment : Fragment() {
                     paddingHorizontal = 30
 
                     style {
-                        backgroundColor += c("#ff5533")
+                        backgroundColor += c(SMTheme.CANCEL_BUTTON_COLOR)
                         textFill = c("#fff")
                     }
 

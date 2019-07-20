@@ -1,6 +1,7 @@
 package com.ebolo.studentmanager.views.utils.ui
 
 import com.ebolo.studentmanager.services.SMGlobal
+import com.ebolo.studentmanager.services.SMTheme
 import com.jfoenix.controls.JFXButton
 import javafx.geometry.Pos
 import javafx.scene.layout.Priority
@@ -42,7 +43,7 @@ class SMConfirmDialog : Fragment(SMGlobal.APP_NAME) {
                     action { close() }
 
                     style {
-                        backgroundColor += c("#ff5533")
+                        backgroundColor += c(SMTheme.CANCEL_BUTTON_COLOR)
                         textFill = c("#fff")
                     }
                 }

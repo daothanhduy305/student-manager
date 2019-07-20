@@ -4,6 +4,7 @@ import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.ebolo.utils.loggerFor
 import com.ebolo.studentmanager.services.RestartMode
 import com.ebolo.studentmanager.services.SMRestartAppRequest
+import com.ebolo.studentmanager.services.SMTheme
 import com.ebolo.studentmanager.services.Settings
 import com.ebolo.studentmanager.views.utils.ui.SMErrorsDialog
 import com.jfoenix.controls.JFXButton
@@ -133,7 +134,7 @@ class SMSettingsAdminFragment : Fragment() {
                     paddingHorizontal = 30
 
                     style {
-                        backgroundColor += c("#ff5533")
+                        backgroundColor += c(SMTheme.CANCEL_BUTTON_COLOR)
                         textFill = c("#fff")
                     }
 

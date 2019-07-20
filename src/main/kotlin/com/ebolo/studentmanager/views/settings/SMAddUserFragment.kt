@@ -2,6 +2,7 @@ package com.ebolo.studentmanager.views.settings
 
 import com.ebolo.studentmanager.models.SMUserModel
 import com.ebolo.studentmanager.services.SMServiceCentral
+import com.ebolo.studentmanager.services.SMTheme
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXPasswordField
@@ -77,7 +78,7 @@ class SMAddUserFragment : Fragment() {
                         paddingHorizontal = 30
 
                         style {
-                            backgroundColor += c("#ff5533")
+                            backgroundColor += c(SMTheme.CANCEL_BUTTON_COLOR)
                             textFill = c("#fff")
                         }
 

@@ -4,6 +4,7 @@ import com.ebolo.studentmanager.StudentManagerApplication
 import com.ebolo.studentmanager.models.SMTeacherModel
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.SMTeacherRefreshRequest
+import com.ebolo.studentmanager.services.SMTheme
 import com.ebolo.studentmanager.utils.SMCRUDUtils
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXDatePicker
@@ -64,7 +65,7 @@ class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
                         this += JFXDatePicker().apply {
                             bind(teacherModel.birthday)
 
-                            setDayCellFactory {
+                            dayCellFactory = {
                                 object : DateCell() {
                                     override fun updateItem(item: LocalDate?, empty: Boolean) {
                                         super.updateItem(item, empty)
@@ -104,7 +105,7 @@ class SMTeacherInfoFragment : Fragment("Thông tin giáo viên") {
                     paddingHorizontal = 30
 
                     style {
-                        backgroundColor += c("#ff5533")
+                        backgroundColor += c(SMTheme.CANCEL_BUTTON_COLOR)
                         textFill = c("#fff")
                     }
 
