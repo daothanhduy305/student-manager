@@ -34,7 +34,7 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
             val date = LocalDate.now()
             val classDto = classModel.item
             classDto.getTuitionFeePaymentInfo(date)
-        }.observable()
+        }.asObservable()
     }
 
     override val root = borderpane {

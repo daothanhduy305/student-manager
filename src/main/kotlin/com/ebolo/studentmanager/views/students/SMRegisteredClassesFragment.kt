@@ -22,14 +22,14 @@ class SMRegisteredClassesFragment : Fragment() {
     private val serviceCentral: SMServiceCentral by di()
 
     private val studentModel: SMStudentModel by param(SMStudentModel())
-    private val allClassesList by lazy { serviceCentral.classService.getClassList().observable() }
+    private val allClassesList by lazy { serviceCentral.classService.getClassList().asObservable() }
     private val classesList by lazy {
         allClassesList.filter { thisClass ->
             thisClass.studentList
                 .any { student -> student.id == studentModel.id.value }
         }
             .toMutableList()
-            .observable()
+            .asObservable()
     }
 
     override val root = stackpane {

@@ -33,9 +33,9 @@ class SMClassInfoFragment : Fragment("Thông tin lớp học") {
     private val mode: SMCRUDUtils.CRUDMode by param()
     private val classModel: SMClassModel by param(SMClassModel())
 
-    private val subjectList by lazy { serviceCentral.subjectService.getSubjects().observable() }
-    private val teacherList by lazy { serviceCentral.teacherService.getTeacherList().observable() }
-    private val studentList by lazy { serviceCentral.studentService.getStudentList().observable() }
+    private val subjectList by lazy { serviceCentral.subjectService.getSubjects().asObservable() }
+    private val teacherList by lazy { serviceCentral.teacherService.getTeacherList().asObservable() }
+    private val studentList by lazy { serviceCentral.studentService.getStudentList().asObservable() }
 
     private val month = SimpleLongProperty()
     private val fee = SimpleLongProperty()

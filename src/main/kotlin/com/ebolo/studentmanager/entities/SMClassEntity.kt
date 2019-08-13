@@ -59,8 +59,8 @@ class SMClassEntity(
             "subject" to this.subject.toDto(),
             "studentList" to this.studentList.map {
                 it.toDto()
-            }.observable(),
-            "studentPerformanceList" to this.studentPerformanceList.observable()
+            }.asObservable(),
+            "studentPerformanceList" to this.studentPerformanceList.asObservable()
         )
     )
 }

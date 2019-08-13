@@ -3,6 +3,7 @@ package com.ebolo.studentmanager.models
 import com.ebolo.studentmanager.entities.SMClassEntity
 import com.ebolo.studentmanager.entities.SMStudentPerformanceInfo
 import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import tornadofx.*
 import java.time.LocalDate
 import java.time.LocalTime
@@ -49,9 +50,9 @@ class SMClassModel(
         var toHour by property<LocalTime>()
         fun toHourProperty() = getProperty(SMClassDto::toHour)
 
-        var studentList = FXCollections.emptyObservableList<SMStudentModel.SMStudentDto>()
+        var studentList: ObservableList<SMStudentModel.SMStudentDto> = FXCollections.emptyObservableList<SMStudentModel.SMStudentDto>()
 
-        var studentPerformanceList = FXCollections.emptyObservableList<SMStudentPerformanceInfo>()
+        var studentPerformanceList: ObservableList<SMStudentPerformanceInfo> = FXCollections.emptyObservableList<SMStudentPerformanceInfo>()
     }
     // endregion
 

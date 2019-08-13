@@ -41,8 +41,8 @@ class SMClassPerformanceFragment : Fragment(SMGlobal.APP_NAME) {
 
     private val tuitionFeeStatus by lazy {
         with(serviceCentral.classService) {
-            classInfo.getTuitionFeePaymentInfo(studentInfo.id).observable()
-        }.observable()
+            classInfo.getTuitionFeePaymentInfo(studentInfo.id)
+        }.asObservable()
     }
 
     override val root = stackpane {

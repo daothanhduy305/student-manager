@@ -27,7 +27,7 @@ class SMClassStudentAttendanceListFragment : Fragment() {
             // val date = LocalDate.now()
             val classDto = classModel.item
             classDto.getAttendanceInfoList()
-        }.observable()
+        }.asObservable()
     }
 
     override val root = borderpane {
@@ -163,7 +163,7 @@ class SMClassStudentAttendanceListFragment : Fragment() {
             with(serviceCentral.classService) {
                 val classDto = classModel.item
                 classDto.getAttendanceInfoList()
-            }.observable()
+            }.asObservable()
         )
     }
 }

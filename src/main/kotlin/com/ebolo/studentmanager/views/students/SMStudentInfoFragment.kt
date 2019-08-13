@@ -76,7 +76,7 @@ class SMStudentInfoFragment : Fragment("Thông tin học viên") {
                                 }
 
                                 field("Học vấn *") {
-                                    this += JFXComboBox(EducationLevel.values().toList().observable()).apply {
+                                    this += JFXComboBox(EducationLevel.values().toList().asObservable()).apply {
                                         bind(studentModel.educationLevel)
                                         cellFormat { text = it.title }
 
