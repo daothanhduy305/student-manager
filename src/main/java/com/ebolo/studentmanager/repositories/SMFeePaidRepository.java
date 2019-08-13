@@ -47,7 +47,7 @@ public interface SMFeePaidRepository extends EboloBaseMongoRepository<SMFeePaidE
     /**
      * Method to get all the fee payment info having the mentioned class id
      *
-     * @param classIds list of id of the classes to delete the fee payment info
+     * @param classIds list of id of the classes to get the fee payment info
      * @author ebolo
      * @since 0.0.1-SNAPSHOT
      */

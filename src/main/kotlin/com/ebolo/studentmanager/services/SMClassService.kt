@@ -396,11 +396,10 @@ class SMClassService(
      * @since 0.0.1-SNAPSHOT
      *
      * @receiver SMClassModel.SMClassDto
-     * @param forDate LocalDate
      * @return List<SMFeePaidEntity>
      */
-    fun SMClassModel.SMClassDto.getTuitionFeePaymentInfo(forDate: LocalDate): List<SMFeePaidEntity> = feePaidRepository
-        .findAllByClassIdAndYearAndMonthAndDisabledFalse(this.id, forDate.year, forDate.month)
+    fun SMClassModel.SMClassDto.getTuitionFeePaymentInfo(): List<SMFeePaidEntity> = feePaidRepository
+        .findAllByClassIdInAndDisabledFalse(listOf(this.id))
 
     /**
      * Method to retrieve the current status of the tution fee paid for a specific student

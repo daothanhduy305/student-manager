@@ -31,9 +31,8 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
 
     private val paymentInfoList by lazy {
         with(serviceCentral.classService) {
-            val date = LocalDate.now()
             val classDto = classModel.item
-            classDto.getTuitionFeePaymentInfo(date)
+            classDto.getTuitionFeePaymentInfo()
         }.asObservable()
     }
 
@@ -98,6 +97,8 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
                     setCellValueFactory { cellData ->
                         val paymentInfo = paymentInfoList.firstOrNull { info ->
                             info.studentId == cellData.value.id
+                                && choosingDate.value.year == info.year
+                                && choosingDate.value.month == info.month
                         }
 
                         SimpleBooleanProperty(paymentInfo != null)
@@ -132,10 +133,11 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
                             it.isOverLay = false
                         },
                         enablePredicate = { studentDto ->
-                            logger.info("Called to this")
                             if (studentDto != null) {
                                 paymentInfoList.firstOrNull { info ->
                                     info.studentId == studentDto.id
+                                        && choosingDate.value.year == info.year
+                                        && choosingDate.value.month == info.month
                                 } == null
                             } else {
                                 false
@@ -146,9 +148,11 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
                     setCellValueFactory { cellData ->
                         val paymentInfo = paymentInfoList.firstOrNull { info ->
                             info.studentId == cellData.value.id
+                                && choosingDate.value.year == info.year
+                                && choosingDate.value.month == info.month
                         }
 
-                        SimpleObjectProperty(paymentInfo?.paidDate?.atOffset(ZoneOffset.UTC)?.toLocalDate())
+                        SimpleObjectProperty<LocalDate?>(paymentInfo?.paidDate?.atOffset(ZoneOffset.UTC)?.toLocalDate())
                             .eboloObservable(
                                 getter = SimpleObjectProperty<LocalDate?>::get,
                                 setter = SimpleObjectProperty<LocalDate?>::set,
@@ -201,9 +205,8 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
                     if (classId == classModel.id.value) {
                         runAsync {
                             with(serviceCentral.classService) {
-                                val date = LocalDate.now()
                                 val classDto = classModel.item
-                                classDto.getTuitionFeePaymentInfo(date)
+                                classDto.getTuitionFeePaymentInfo()
                             }
                         } ui {
                             paymentInfoList.setAll(it)
@@ -219,7 +222,7 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
                         paymentInfoList.setAll(
                             with(serviceCentral.classService) {
                                 val classDto = classModel.item
-                                classDto.getTuitionFeePaymentInfo(newValue)
+                                classDto.getTuitionFeePaymentInfo()
                             }
                         )
                     }.ui { refresh() }
