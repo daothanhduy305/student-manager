@@ -8,15 +8,18 @@ import com.ebolo.studentmanager.services.SMFeePaidRefreshRequest
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.views.utils.ui.tableview.JFXCheckboxTableCell
 import com.ebolo.studentmanager.views.utils.ui.tableview.JFXDatePickerTableCell
+import com.ebolo.studentmanager.views.utils.ui.tableview.JFXTextFieldTableCell
 import com.ebolo.studentmanager.views.utils.ui.tableview.eboloObservable
 import com.jfoenix.controls.JFXDatePicker
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.AccessibleAttribute
 import javafx.scene.control.TableCell
+import javafx.util.StringConverter
 import tornadofx.*
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -37,6 +40,8 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
     }
 
     override val root = borderpane {
+        prefWidth = 1000.0
+
         top {
             form {
                 fieldset(labelPosition = Orientation.HORIZONTAL) {
@@ -165,7 +170,7 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
                     }
                 }.weightedWidth(5, 20.0, true)
 
-                column<SMStudentModel.SMStudentDto, Int>("Số tháng đã đóng", "totalPaymentMade") {
+                column<SMStudentModel.SMStudentDto, Int>("Đã đóng", "totalPaymentMade") {
                     setCellValueFactory { cellData ->
                         val totalMade = paymentInfoList.count { info ->
                             info.studentId == cellData.value.id
@@ -179,8 +184,50 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
                             )
                     }
 
+                    cellFormat { text = "$it tháng" }
+
                     style {
                         alignment = Pos.TOP_CENTER
+                    }
+                }.weightedWidth(2, 20.0, true)
+
+                column<SMStudentModel.SMStudentDto, String>("Ghi chú", "paymentNote") {
+                    cellFactory = JFXTextFieldTableCell.forTableColumn(object : StringConverter<String>() {
+                        override fun toString(string: String?) = when {
+                            string.isNullOrEmpty() -> ""
+                            else -> string
+                        }
+
+                        override fun fromString(string: String) = string
+                    })
+
+                    setCellValueFactory { cellData ->
+                        val paymentInfo = paymentInfoList.firstOrNull { info ->
+                            info.studentId == cellData.value.id
+                                && choosingDate.value.year == info.year
+                                && choosingDate.value.month == info.month
+                        }
+
+                        SimpleStringProperty(paymentInfo?.note)
+                            .observable(
+                                getter = SimpleStringProperty::get,
+                                setter = SimpleStringProperty::set,
+                                propertyName = "value"
+                            )
+                    }
+
+                    this.setOnEditCommit { event ->
+                        runAsync {
+                            with(serviceCentral.classService) {
+                                classModel.item.updateFeePaidNote(event.rowValue.id, choosingDate.value, event.newValue)
+                            }
+                        }.ui {
+                            requestResize()
+                        }
+                    }
+
+                    style {
+                        alignment = Pos.TOP_LEFT
                     }
                 }.weightedWidth(5, 20.0, true)
 

@@ -1,5 +1,7 @@
 package com.ebolo.studentmanager.views.classes
 
+import com.ebolo.studentmanager.ebolo.utils.getWhenPresent
+import com.ebolo.studentmanager.entities.SMFeePaidEntity
 import com.ebolo.studentmanager.entities.SMStudentPerformanceInfo
 import com.ebolo.studentmanager.models.SMClassModel
 import com.ebolo.studentmanager.models.SMStudentModel
@@ -9,6 +11,7 @@ import com.ebolo.studentmanager.services.SMGlobal
 import com.ebolo.studentmanager.services.SMServiceCentral
 import com.ebolo.studentmanager.services.SMTheme
 import com.ebolo.studentmanager.views.utils.ui.tableview.JFXCheckboxTableCell
+import com.ebolo.studentmanager.views.utils.ui.tableview.JFXTextFieldTableCell
 import com.jfoenix.controls.*
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleStringProperty
@@ -17,8 +20,10 @@ import javafx.geometry.Pos
 import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
 import javafx.scene.layout.VBox
+import javafx.util.StringConverter
 import tornadofx.*
 import java.time.LocalDate
+import java.util.*
 
 class SMClassPerformanceFragment : Fragment(SMGlobal.APP_NAME) {
     private val serviceCentral: SMServiceCentral by di()
@@ -185,7 +190,25 @@ class SMClassPerformanceFragment : Fragment(SMGlobal.APP_NAME) {
                         }
                     }.weightedWidth(1, 30.0, true)
 
-                    column<Pair<LocalDate, Boolean>, Boolean>("Đã đóng", "payment") {
+                    column<Pair<LocalDate, Optional<SMFeePaidEntity>>, String>("Tháng", "time") {
+                        setCellValueFactory { cellData ->
+                            val month = cellData.value.first.month.value
+                            val year = cellData.value.first.year
+                            SimpleStringProperty("Tháng $month, năm $year")
+                                .observable(
+                                    getter = SimpleStringProperty::get,
+                                    setter = SimpleStringProperty::set,
+                                    propertyName = "value",
+                                    propertyType = String::class
+                                )
+                        }
+
+                        style {
+                            alignment = Pos.TOP_LEFT
+                        }
+                    }.weightedWidth(2, 20.0, true)
+
+                    column<Pair<LocalDate, Optional<SMFeePaidEntity>>, Boolean>("Đã đóng", "payment") {
                         cellFactory = JFXCheckboxTableCell.forTableColumn { info, value ->
                             if (info != null) {
                                 runAsync {
@@ -202,7 +225,7 @@ class SMClassPerformanceFragment : Fragment(SMGlobal.APP_NAME) {
                         }
 
                         setCellValueFactory { cellData ->
-                            SimpleBooleanProperty(cellData.value.second)
+                            SimpleBooleanProperty(cellData.value.second.isPresent)
                                 .observable(
                                     getter = SimpleBooleanProperty::get,
                                     setter = SimpleBooleanProperty::set,
@@ -216,25 +239,43 @@ class SMClassPerformanceFragment : Fragment(SMGlobal.APP_NAME) {
                         }
                     }.weightedWidth(1, 20.0, true)
 
-                    column<Pair<LocalDate, Boolean>, String>("", "time") {
+                    column<Pair<LocalDate, Optional<SMFeePaidEntity>>, String>("Ghi chú", "note") {
+                        cellFactory = JFXTextFieldTableCell.forTableColumn(object : StringConverter<String>() {
+                            override fun toString(string: String?) = when {
+                                string.isNullOrEmpty() -> ""
+                                else -> string
+                            }
+
+                            override fun fromString(string: String) = string
+                        })
+
                         setCellValueFactory { cellData ->
-                            val month = cellData.value.first.month.value
-                            val year = cellData.value.first.year
-                            SimpleStringProperty("Tháng $month, năm $year")
+                            SimpleStringProperty(cellData.value.second.getWhenPresent { it.note })
                                 .observable(
                                     getter = SimpleStringProperty::get,
                                     setter = SimpleStringProperty::set,
-                                    propertyName = "value",
-                                    propertyType = String::class
+                                    propertyName = "value"
                                 )
+                        }
+
+                        this.setOnEditCommit { event ->
+                            runAsync {
+                                with(serviceCentral.classService) {
+                                    classInfo.updateFeePaidNote(studentInfo.id, event.rowValue.first, event.newValue)
+                                }
+                                fire(SMFeePaidRefreshRequest(classInfo.id, studentInfo.id))
+                            }.ui {
+                                requestResize()
+                            }
                         }
 
                         style {
                             alignment = Pos.TOP_LEFT
                         }
-                    }.weightedWidth(8, 20.0, true)
+                    }.weightedWidth(6, 20.0, true)
 
                     smartResize()
+                    isEditable = true
                 }
             }
         }

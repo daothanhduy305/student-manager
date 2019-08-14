@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service
 import tornadofx.*
 import java.time.LocalDate
 import java.time.ZoneOffset
+import java.util.*
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 
@@ -360,7 +361,7 @@ class SMClassService(
         )
 
     /**
-     * Method to add an entry into db to mark a fee payment made by a student to a class
+     * Method to update the paid date for a fee payment entry
      *
      * @author ebolo
      * @since 0.0.1-SNAPSHOT
@@ -390,6 +391,36 @@ class SMClassService(
         )
 
     /**
+     * Method to update the note for a fee payment entry
+     *
+     * @author ebolo
+     * @since 0.0.1-SNAPSHOT
+     *
+     * @receiver SMClassModel.SMClassDto
+     * @param studentId String
+     * @param forDate LocalDate
+     * @param paidDate LocalDate?
+     * @return SMCRUDUtils.SMCRUDResult
+     */
+    fun SMClassModel.SMClassDto.updateFeePaidNote(
+        studentId: String,
+        forDate: LocalDate,
+        note: String = ""
+    ): SMCRUDUtils.SMCRUDResult = feePaidRepository
+        .findByClassIdAndStudentIdAndYearAndMonthAndDisabledFalse(this.id, studentId, forDate.year, forDate.month)
+        .getWhenPresentOr(
+            ifPresentHandler = { feePaidEntity ->
+                feePaidRepository.save(feePaidEntity.apply {
+                    this.note = note
+                })
+                SMCRUDUtils.SMCRUDResult(true)
+            },
+            otherwise = {
+                SMCRUDUtils.SMCRUDResult(false)
+            }
+        )
+
+    /**
      * Method to retrieve the list of all payment info available for this class and this specific month
      *
      * @author ebolo
@@ -402,7 +433,7 @@ class SMClassService(
         .findAllByClassIdInAndDisabledFalse(listOf(this.id))
 
     /**
-     * Method to retrieve the current status of the tution fee paid for a specific student
+     * Method to retrieve the info the tuition fee paid for a specific student
      *
      * @author ebolo
      * @since 1.0.3
@@ -410,15 +441,15 @@ class SMClassService(
      * @receiver SMClassModel.SMClassDto
      * @param studentId String
      */
-    fun SMClassModel.SMClassDto.getTuitionFeePaymentInfo(studentId: String): List<Pair<LocalDate, Boolean>> {
+    fun SMClassModel.SMClassDto.getTuitionFeePaymentInfo(studentId: String): List<Pair<LocalDate, Optional<SMFeePaidEntity>>> {
         val madePayments = feePaidRepository.findAllByClassIdAndStudentId(this.id, studentId)
-        val paymentList = mutableListOf<Pair<LocalDate, Boolean>>()
+        val paymentList = mutableListOf<Pair<LocalDate, Optional<SMFeePaidEntity>>>()
         var currentDate = this.startDate
 
         (1..this.monthPeriods.toInt()).forEach { _ ->
             val paymentMadeForThisMonth = madePayments
                 .firstOrNull { payment -> payment.year == currentDate.year && payment.month == currentDate.month }
-            paymentList.add(currentDate to (paymentMadeForThisMonth != null))
+            paymentList.add(currentDate to Optional.ofNullable(paymentMadeForThisMonth))
             currentDate = currentDate.plusMonths(1)
         }
 

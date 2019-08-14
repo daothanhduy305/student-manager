@@ -12,5 +12,6 @@ class SMFeePaidEntity(
     var classId: String = "",
     var year: Int = Year.MIN_VALUE,
     var month: Month = Month.JANUARY,
-    var paidDate: Instant? = null
+    var paidDate: Instant? = null,
+    var note: String = ""
 ) : EboloBaseEntity()
