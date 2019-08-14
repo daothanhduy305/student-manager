@@ -40,8 +40,6 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
     }
 
     override val root = borderpane {
-        prefWidth = 1000.0
-
         top {
             form {
                 fieldset(labelPosition = Orientation.HORIZONTAL) {
@@ -60,16 +58,17 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
         center {
             tableview(classModel.studentList) {
                 isEditable = true
+                prefWidth = 1000.0
 
                 makeIndexColumn("STT").apply {
                     style {
                         alignment = Pos.TOP_CENTER
                     }
-                }.weightedWidth(1, 30.0, true)
+                }.prefWidth(75)
 
-                readonlyColumn("Họ và tên lót", SMStudentModel.SMStudentDto::lastName).weightedWidth(5, 20.0, true)
+                readonlyColumn("Họ và tên lót", SMStudentModel.SMStudentDto::lastName).prefWidth(150)
 
-                readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName).weightedWidth(5, 20.0, true)
+                readonlyColumn("Tên", SMStudentModel.SMStudentDto::firstName).prefWidth(150)
 
                 column<SMStudentModel.SMStudentDto, Boolean>("Học phí", "payment") {
                     cellFactory = JFXCheckboxTableCell.forTableColumn { studentDto, value ->
@@ -118,7 +117,7 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
                     style {
                         alignment = Pos.TOP_CENTER
                     }
-                }.weightedWidth(2, 20.0, true)
+                }.prefWidth(75)
 
                 column<SMStudentModel.SMStudentDto, LocalDate?>("Ngày đóng học phí", "paymentDate") {
                     id = paymentDateColumnId
@@ -168,7 +167,7 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
                     style {
                         alignment = Pos.TOP_CENTER
                     }
-                }.weightedWidth(5, 20.0, true)
+                }.prefWidth(300)
 
                 column<SMStudentModel.SMStudentDto, Int>("Đã đóng", "totalPaymentMade") {
                     setCellValueFactory { cellData ->
@@ -189,7 +188,7 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
                     style {
                         alignment = Pos.TOP_CENTER
                     }
-                }.weightedWidth(2, 20.0, true)
+                }.prefWidth(100)
 
                 column<SMStudentModel.SMStudentDto, String>("Ghi chú", "paymentNote") {
                     cellFactory = JFXTextFieldTableCell.forTableColumn(object : StringConverter<String>() {
@@ -229,7 +228,7 @@ class SMClassStudentTuitionFeeListFragment : Fragment() {
                     style {
                         alignment = Pos.TOP_LEFT
                     }
-                }.weightedWidth(5, 20.0, true)
+                }.prefWidth(500)
 
                 smartResize()
 
