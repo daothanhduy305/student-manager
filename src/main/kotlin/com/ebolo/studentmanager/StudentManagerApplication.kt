@@ -48,9 +48,12 @@ class StudentManagerApplication : App(SMInitFragment::class) {
     }
 
     override fun stop() {
-        super.stop()
-        if (springContext != null) {
-            springContext!!.close()
+        try {
+            super.stop()
+        } finally {
+            if (springContext != null) {
+                springContext!!.close()
+            }
         }
     }
 
